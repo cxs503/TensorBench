@@ -13,7 +13,7 @@ authors = [{ name = "TensorBench contributors" }]
 dependencies = []
 
 [project.optional-dependencies]
-test = ["pytest>=8"]
+test = ["pytest>=8", "jsonschema>=4"]
 
 [project.scripts]
 tensorbench = "tensorbench.cli:main"
