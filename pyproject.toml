@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tensorbench"
+version = "0.1.0"
+description = "Reproducible benchmark execution and evidence infrastructure"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "Apache-2.0" }
+authors = [{ name = "TensorBench contributors" }]
+dependencies = []
+
+[project.scripts]
+tensorbench = "tensorbench.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["tensorbench*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
