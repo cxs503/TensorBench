@@ -1,5 +1,8 @@
 import json
 import sys
+from pathlib import Path
+
+import jsonschema
 
 from tensorbench.runner import run_benchmark
 
@@ -31,6 +34,10 @@ def test_success_writes_result_and_logs(tmp_path):
     assert len(result_files) == 1
     persisted = json.loads(result_files[0].read_text(encoding="utf-8"))
     assert persisted["run_id"] == result["run_id"]
+    schema = json.loads(
+        (Path(__file__).parents[1] / "schemas" / "benchmark-result.schema.json").read_text(encoding="utf-8")
+    )
+    jsonschema.validate(persisted, schema)
 
 
 def test_nonzero_exit_is_recorded_as_failure(tmp_path):
