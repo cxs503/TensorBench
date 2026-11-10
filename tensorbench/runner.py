@@ -11,7 +11,6 @@ import os
 import platform
 import shlex
 import subprocess
-import sys
 import time
 import uuid
 from datetime import datetime, timezone
@@ -162,7 +161,6 @@ def run_benchmark(
         "implementation": {
             "project": implementation_project or spec.get("implementation", {}).get("project", "unknown"),
             "revision": implementation_revision or spec.get("implementation", {}).get("revision", revision),
-            "dirty": dirty,
         },
         "workload": {
             "workload_id": workload["workload_id"],
@@ -209,6 +207,9 @@ def run_benchmark(
             "details": "Execution status is not a scientific correctness or reproducibility verdict.",
         },
     }
+
+    if dirty is not None:
+        result["implementation"]["dirty"] = dirty
 
     result_path.write_text(
         json.dumps(result, indent=2, ensure_ascii=False) + "\n",
