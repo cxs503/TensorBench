@@ -72,6 +72,20 @@ TensorBench/
 
 The layout will evolve as executable components are implemented.
 
+## Quick start
+
+Python 3.10+ is required. From the repository root:
+
+```bash
+python -m pip install -e ".[test]"
+tensorbench run --spec examples/hello-benchmark.json --output tensorbench-runs
+python -m pytest -q
+```
+
+The runner writes a `*.result.json` record and separate stdout/stderr logs for each run. The example is only a smoke test of the runner; it is not a scientific benchmark and its output must not be cited as performance evidence.
+
+The first runner deliberately executes a declared argv command locally with `shell=False`. It is not a sandbox for untrusted benchmark code. Run only workloads you trust, and use an appropriately isolated environment for external contributions.
+
 ## Development status
 
 <mark>Foundation / specification stage</mark>
