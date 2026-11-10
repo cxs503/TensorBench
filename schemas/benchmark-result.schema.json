@@ -1,0 +1,157 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/cxs503/TensorBench/blob/main/schemas/benchmark-result.schema.json",
+  "title": "TensorBench Run Result",
+  "description": "A traceable record of one benchmark execution. This schema describes evidence metadata; it does not itself certify scientific correctness or comparability.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "run_id",
+    "benchmark",
+    "implementation",
+    "workload",
+    "execution",
+    "metrics",
+    "validation"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1.0.0"
+    },
+    "run_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "benchmark": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["benchmark_id", "version"],
+      "properties": {
+        "benchmark_id": { "type": "string", "minLength": 1 },
+        "version": { "type": "string", "minLength": 1 }
+      }
+    },
+    "implementation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["project", "revision"],
+      "properties": {
+        "project": { "type": "string", "minLength": 1 },
+        "revision": { "type": "string", "minLength": 1 },
+        "dirty": { "type": "boolean" },
+        "version": { "type": "string" }
+      }
+    },
+    "workload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["workload_id", "version"],
+      "properties": {
+        "workload_id": { "type": "string", "minLength": 1 },
+        "version": { "type": "string", "minLength": 1 },
+        "dataset_refs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["dataset_id", "version"],
+            "properties": {
+              "dataset_id": { "type": "string", "minLength": 1 },
+              "version": { "type": "string", "minLength": 1 },
+              "checksum": { "type": "string" },
+              "source": { "type": "string" }
+            }
+          }
+        },
+        "configuration": { "type": "object" }
+      }
+    },
+    "environment": {
+      "type": "object",
+      "description": "Record only facts actually observed; omit unavailable values.",
+      "properties": {
+        "os": { "type": "string" },
+        "architecture": { "type": "string" },
+        "cpu": { "type": "string" },
+        "cpu_cores": { "type": "integer", "minimum": 1 },
+        "gpu": { "type": "array", "items": { "type": "string" } },
+        "memory_bytes": { "type": "integer", "minimum": 0 },
+        "runtime": { "type": "object" },
+        "dependencies": { "type": "object" },
+        "precision": { "type": "string" },
+        "parallelism": { "type": "object" }
+      }
+    },
+    "execution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "started_at", "ended_at"],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["success", "failed", "timeout", "interrupted", "invalid"]
+        },
+        "started_at": { "type": "string", "format": "date-time" },
+        "ended_at": { "type": "string", "format": "date-time" },
+        "duration_seconds": { "type": "number", "minimum": 0 },
+        "exit_code": { "type": ["integer", "null"] },
+        "command": { "type": "string" },
+        "timeout_seconds": { "type": "number", "minimum": 0 },
+        "notes": { "type": "string" }
+      }
+    },
+    "metrics": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "value", "unit", "kind"],
+        "properties": {
+          "name": { "type": "string", "minLength": 1 },
+          "value": { "type": "number" },
+          "unit": { "type": "string" },
+          "kind": { "type": "string", "enum": ["measured", "derived"] },
+          "aggregation": { "type": "string" },
+          "better": { "type": "string", "enum": ["lower", "higher", "target", "informational"] },
+          "method": { "type": "string" }
+        }
+      }
+    },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "uri"],
+        "properties": {
+          "name": { "type": "string" },
+          "uri": { "type": "string" },
+          "media_type": { "type": "string" },
+          "sha256": { "type": "string" },
+          "size_bytes": { "type": "integer", "minimum": 0 }
+        }
+      }
+    },
+    "validation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema", "execution", "correctness", "reproducibility", "comparability"],
+      "properties": {
+        "schema": { "$ref": "#/$defs/validationState" },
+        "execution": { "$ref": "#/$defs/validationState" },
+        "correctness": { "$ref": "#/$defs/validationState" },
+        "reproducibility": { "$ref": "#/$defs/validationState" },
+        "comparability": { "$ref": "#/$defs/validationState" },
+        "details": { "type": "string" }
+      }
+    }
+  },
+  "$defs": {
+    "validationState": {
+      "type": "string",
+      "enum": ["not_checked", "passed", "failed", "not_applicable", "inconclusive"]
+    }
+  }
+}
