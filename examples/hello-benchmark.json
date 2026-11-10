@@ -1,0 +1,25 @@
+{
+  "benchmark": {
+    "benchmark_id": "tensorbench.example.hello",
+    "version": "1.0.0"
+  },
+  "implementation": {
+    "project": "TensorBench example"
+  },
+  "workload": {
+    "workload_id": "hello-world",
+    "version": "1.0.0",
+    "command": [
+      "python",
+      "-c",
+      "print('TensorBench local runner works')"
+    ],
+    "cwd": ".",
+    "configuration": {
+      "purpose": "smoke test of the local runner"
+    }
+  },
+  "execution": {
+    "timeout_seconds": 30
+  }
+}
