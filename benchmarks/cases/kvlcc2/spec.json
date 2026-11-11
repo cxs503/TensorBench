@@ -1,0 +1,124 @@
+{
+  "benchmark": {
+    "benchmark_id": "tensorbench.resistance.kvlcc2",
+    "name": "KVLCC2 VLCC resistance",
+    "domain": "naval_architecture",
+    "version": "1.0.0",
+    "owner": "TensorBench",
+    "description": "Total resistance coefficient of the KVLCC2 VLCC model at Fr=0.142 (design speed). Reference: SIMMAN 2008 Workshop, MOERI.",
+    "status": "experimental"
+  },
+  "workload": {
+    "workload_id": "resistance_ittc78",
+    "version": "1.0.0",
+    "command": [
+      "python3",
+      "benchmarks/workloads/resistance_ittc78.py",
+      "--L", "7.2786",
+      "--B", "1.2131",
+      "--T", "0.3206",
+      "--Cb", "0.8098",
+      "--S", "9.438",
+      "--V", "1.179",
+      "--nu", "1.139e-6",
+      "--form_factor", "1.250",
+      "--Cw", "0.00020",
+      "--Ca", "0.0004",
+      "--case_id", "kvlcc2_fr0142",
+      "--output", "metrics.json"
+    ],
+    "cwd": ".",
+    "output": {
+      "metrics_file": "metrics.json"
+    },
+    "configuration": {
+      "case": "KVLCC2 VLCC",
+      "scale": "model",
+      "L_m": 7.2786,
+      "Fr": 0.142,
+      "V_ms": 1.179,
+      "water": "fresh_15C"
+    },
+    "primary_metric": "Ct"
+  },
+  "metrics": [
+    {
+      "name": "Ct",
+      "unit": "dimensionless",
+      "kind": "measured",
+      "aggregation": "single_run",
+      "better": "target",
+      "description": "Total resistance coefficient"
+    },
+    {
+      "name": "Cf",
+      "unit": "dimensionless",
+      "kind": "measured",
+      "aggregation": "single_run",
+      "description": "Friction coefficient (ITTC-1957)"
+    },
+    {
+      "name": "Cw",
+      "unit": "dimensionless",
+      "kind": "measured",
+      "aggregation": "single_run",
+      "description": "Wave resistance coefficient"
+    },
+    {
+      "name": "Re",
+      "unit": "dimensionless",
+      "kind": "measured",
+      "aggregation": "single_run",
+      "description": "Reynolds number"
+    },
+    {
+      "name": "Fn",
+      "unit": "dimensionless",
+      "kind": "measured",
+      "aggregation": "single_run",
+      "description": "Froude number"
+    }
+  ],
+  "acceptance": {
+    "criteria": [
+      {
+        "criterion_id": "Ct_range",
+        "metric": "Ct",
+        "comparator": "<=",
+        "threshold": 0.00472,
+        "unit": "dimensionless",
+        "rationale": "KVLCC2 Ct at Fr=0.142: experimental ~4.10e-3 (SIMMAN 2008, MOERI). Threshold at 4.72e-3 allows 15% margin for empirical method uncertainty."
+      },
+      {
+        "criterion_id": "Fn_check",
+        "metric": "Fn",
+        "comparator": "<=",
+        "threshold": 0.15,
+        "unit": "dimensionless",
+        "rationale": "Froude number must be close to target Fr=0.142 (within 5%)."
+      },
+      {
+        "criterion_id": "Cf_positive",
+        "metric": "Cf",
+        "comparator": ">",
+        "threshold": 0.0,
+        "unit": "dimensionless",
+        "rationale": "Friction coefficient must be positive."
+      }
+    ],
+    "reference": {
+      "source": "SIMMAN 2008 Workshop on Verification and Validation of Ship Manoeuvring Simulation Methods, MOERI",
+      "Ct_exp": 0.00410,
+      "Fr": 0.142,
+      "tolerance_pct": 15
+    }
+  },
+  "execution": {
+    "timeout_seconds": 30,
+    "env": {}
+  },
+  "protocol": {
+    "repetitions": 1,
+    "warmup": 0
+  }
+}

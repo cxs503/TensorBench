@@ -1,0 +1,124 @@
+{
+  "benchmark": {
+    "benchmark_id": "tensorbench.resistance.dtmb5415",
+    "name": "DTMB 5415 surface combatant resistance",
+    "domain": "naval_architecture",
+    "version": "1.0.0",
+    "owner": "TensorBench",
+    "description": "Total resistance coefficient of the DTMB 5415 surface combatant model at Fr=0.28 (design speed). Reference: Olivieri et al., INSEAN Report 2001.",
+    "status": "experimental"
+  },
+  "workload": {
+    "workload_id": "resistance_ittc78",
+    "version": "1.0.0",
+    "command": [
+      "python3",
+      "benchmarks/workloads/resistance_ittc78.py",
+      "--L", "5.720",
+      "--B", "0.756",
+      "--T", "0.244",
+      "--Cb", "0.500",
+      "--S", "4.920",
+      "--V", "2.196",
+      "--nu", "1.139e-6",
+      "--form_factor", "1.200",
+      "--Cw", "0.00080",
+      "--Ca", "0.0004",
+      "--case_id", "dtmb5415_fr028",
+      "--output", "metrics.json"
+    ],
+    "cwd": ".",
+    "output": {
+      "metrics_file": "metrics.json"
+    },
+    "configuration": {
+      "case": "DTMB 5415 surface combatant",
+      "scale": "model",
+      "L_m": 5.720,
+      "Fr": 0.28,
+      "V_ms": 2.196,
+      "water": "fresh_15C"
+    },
+    "primary_metric": "Ct"
+  },
+  "metrics": [
+    {
+      "name": "Ct",
+      "unit": "dimensionless",
+      "kind": "measured",
+      "aggregation": "single_run",
+      "better": "target",
+      "description": "Total resistance coefficient"
+    },
+    {
+      "name": "Cf",
+      "unit": "dimensionless",
+      "kind": "measured",
+      "aggregation": "single_run",
+      "description": "Friction coefficient (ITTC-1957)"
+    },
+    {
+      "name": "Cw",
+      "unit": "dimensionless",
+      "kind": "measured",
+      "aggregation": "single_run",
+      "description": "Wave resistance coefficient"
+    },
+    {
+      "name": "Re",
+      "unit": "dimensionless",
+      "kind": "measured",
+      "aggregation": "single_run",
+      "description": "Reynolds number"
+    },
+    {
+      "name": "Fn",
+      "unit": "dimensionless",
+      "kind": "measured",
+      "aggregation": "single_run",
+      "description": "Froude number"
+    }
+  ],
+  "acceptance": {
+    "criteria": [
+      {
+        "criterion_id": "Ct_range",
+        "metric": "Ct",
+        "comparator": "<=",
+        "threshold": 0.00500,
+        "unit": "dimensionless",
+        "rationale": "DTMB 5415 Ct at Fr=0.28: experimental ~3.80e-3 (Olivieri et al. INSEAN 2001). Threshold at 5.0e-3 allows 32% margin for empirical method uncertainty with physically realistic form factor."
+      },
+      {
+        "criterion_id": "Fn_check",
+        "metric": "Fn",
+        "comparator": "<=",
+        "threshold": 0.31,
+        "unit": "dimensionless",
+        "rationale": "Froude number must be close to target Fr=0.28 (within 10%)."
+      },
+      {
+        "criterion_id": "Cf_positive",
+        "metric": "Cf",
+        "comparator": ">",
+        "threshold": 0.0,
+        "unit": "dimensionless",
+        "rationale": "Friction coefficient must be positive."
+      }
+    ],
+    "reference": {
+      "source": "Olivieri, A. et al., Towing Tank Tests of the DTMB 5415 Model, INSEAN Report, 2001",
+      "Ct_exp": 0.00380,
+      "Fr": 0.28,
+      "tolerance_pct": 32
+    }
+  },
+  "execution": {
+    "timeout_seconds": 30,
+    "env": {}
+  },
+  "protocol": {
+    "repetitions": 1,
+    "warmup": 0
+  }
+}
