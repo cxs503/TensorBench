@@ -1,0 +1,125 @@
+{
+  "benchmark": {
+    "benchmark_id": "tensorbench.resistance.suboff",
+    "name": "DARPA SUBOFF bare hull resistance",
+    "domain": "naval_architecture",
+    "version": "1.0.0",
+    "owner": "TensorBench",
+    "description": "Total resistance coefficient of the DARPA SUBOFF submarine model (bare hull, no appendages) at Fr=0.2. Reference: Huang et al., DTRC-92/001.",
+    "status": "experimental"
+  },
+  "workload": {
+    "workload_id": "resistance_ittc78",
+    "version": "1.0.0",
+    "command": [
+      "python3",
+      "benchmarks/workloads/resistance_ittc78.py",
+      "--L", "4.356",
+      "--B", "0.508",
+      "--T", "0.254",
+      "--Cb", "0.556",
+      "--S", "4.576",
+      "--V", "1.314",
+      "--nu", "1.139e-6",
+      "--form_factor", "1.050",
+      "--Cw", "0.00000",
+      "--Ca", "0.0004",
+      "--case_id", "suboff_fr02",
+      "--output", "metrics.json"
+    ],
+    "cwd": ".",
+    "output": {
+      "metrics_file": "metrics.json"
+    },
+    "configuration": {
+      "case": "SUBOFF bare hull",
+      "scale": "model",
+      "L_m": 4.356,
+      "Fr": 0.2,
+      "V_ms": 1.314,
+      "water": "fresh_15C",
+      "note": "Submarine at low Fr: negligible wave resistance, form factor near 1.0 for streamlined body"
+    },
+    "primary_metric": "Ct"
+  },
+  "metrics": [
+    {
+      "name": "Ct",
+      "unit": "dimensionless",
+      "kind": "measured",
+      "aggregation": "single_run",
+      "better": "target",
+      "description": "Total resistance coefficient"
+    },
+    {
+      "name": "Cf",
+      "unit": "dimensionless",
+      "kind": "measured",
+      "aggregation": "single_run",
+      "description": "Friction coefficient (ITTC-1957)"
+    },
+    {
+      "name": "Cw",
+      "unit": "dimensionless",
+      "kind": "measured",
+      "aggregation": "single_run",
+      "description": "Wave resistance coefficient"
+    },
+    {
+      "name": "Re",
+      "unit": "dimensionless",
+      "kind": "measured",
+      "aggregation": "single_run",
+      "description": "Reynolds number"
+    },
+    {
+      "name": "Fn",
+      "unit": "dimensionless",
+      "kind": "measured",
+      "aggregation": "single_run",
+      "description": "Froude number"
+    }
+  ],
+  "acceptance": {
+    "criteria": [
+      {
+        "criterion_id": "Ct_range",
+        "metric": "Ct",
+        "comparator": "<=",
+        "threshold": 0.00400,
+        "unit": "dimensionless",
+        "rationale": "SUBOFF bare hull Ct at Fr=0.2: experimental ~3.15e-3 (Huang et al. DTRC-92/001). Threshold at 4.0e-3 allows 27% margin for empirical method uncertainty with physically realistic form factor."
+      },
+      {
+        "criterion_id": "Fn_check",
+        "metric": "Fn",
+        "comparator": "<=",
+        "threshold": 0.21,
+        "unit": "dimensionless",
+        "rationale": "Froude number must be close to target Fr=0.2 (within 5%)."
+      },
+      {
+        "criterion_id": "Cf_positive",
+        "metric": "Cf",
+        "comparator": ">",
+        "threshold": 0.0,
+        "unit": "dimensionless",
+        "rationale": "Friction coefficient must be positive."
+      }
+    ],
+    "reference": {
+      "source": "Huang, T.T. et al., DARPA SUBOFF Model Configurations, DTRC-92/001, 1992",
+      "Ct_exp": 0.00315,
+      "Fr": 0.2,
+      "tolerance_pct": 27
+    }
+  },
+  "execution": {
+    "timeout_seconds": 30,
+    "env": {}
+  },
+  "protocol": {
+    "repetitions": 1,
+    "warmup": 0
+  }
+}
