@@ -1,0 +1,155 @@
+{
+  "audited_mission": 14899,
+  "cases_found": 3,
+  "cases_marked_passed_by_own_specs": 3,
+  "cases_passing_platform_15pct": 1,
+  "kpi": "KPI-BENCH-10",
+  "kpi_case_target": 10,
+  "kpi_coverage_fraction": 0.3,
+  "platform_error_limit_pct": 15.0,
+  "rows": [
+    {
+      "Cf": 0.0033935268438345456,
+      "Ct": 0.003963203186026273,
+      "Ct_exp": 0.00315,
+      "Fn": 0.20104398862975406,
+      "Fn_vs_anchor_delta_pct": 0.5219943148770251,
+      "Fr_anchor": 0.2,
+      "Re": 5025271.290605795,
+      "Rt_N": 15.628260960992666,
+      "abs_err_pct": 25.815974159564213,
+      "anchor": "Huang et al., DTRC-92/001, 1992",
+      "anchor_reachable_with_physical_form_factor": false,
+      "ct_floor_at_form_factor_1": 0.003793526843834546,
+      "err_floor_pct": 20.429423613795105,
+      "err_vs_anchor_pct": 25.815974159564213,
+      "form_factor_needed_for_exact_match": 0.8103663611785705,
+      "form_factor_physical": false,
+      "passes_platform_15pct": false,
+      "passes_spec_threshold_rule": true,
+      "passes_spec_tolerance": true,
+      "replication_delta_Ct": 0.0,
+      "replication_delta_Fn": 0.0,
+      "reported_Ct": 0.003963203186026273,
+      "reported_Fn": 0.20104398862975406,
+      "reported_run_id": "tb-ab3005bd5068491eaf47688c70d0cafb",
+      "spec_Ct_threshold": 0.004,
+      "spec_tolerance_pct": 27.0
+    },
+    {
+      "Cf": 0.0029496375290460706,
+      "Ct": 0.004739565034855285,
+      "Ct_exp": 0.0038,
+      "Fn": 0.29320676315564886,
+      "Fn_vs_anchor_delta_pct": 4.7167011270174415,
+      "Fr_anchor": 0.28,
+      "Re": 11028200.175592626,
+      "Rt_N": 56.1249324214811,
+      "abs_err_pct": 24.72539565408644,
+      "anchor": "Olivieri et al., INSEAN 2001",
+      "anchor_reachable_with_physical_form_factor": true,
+      "ct_floor_at_form_factor_1": 0.0033496375290460708,
+      "err_floor_pct": -11.851643972471821,
+      "err_vs_anchor_pct": 24.72539565408644,
+      "form_factor_needed_for_exact_match": 0.8814642390452818,
+      "form_factor_physical": false,
+      "passes_platform_15pct": false,
+      "passes_spec_threshold_rule": true,
+      "passes_spec_tolerance": true,
+      "replication_delta_Ct": 0.0,
+      "replication_delta_Fn": 0.0,
+      "reported_Ct": 0.004739565034855285,
+      "reported_Fn": 0.29320676315564886,
+      "reported_run_id": "tb-a95adde3f7a34a02a8c34e33f33b3619",
+      "spec_Ct_threshold": 0.005,
+      "spec_tolerance_pct": 32.0
+    },
+    {
+      "Cf": 0.003153181691313777,
+      "Ct": 0.004541477114142221,
+      "Ct_exp": 0.0041,
+      "Fn": 0.13954990357849692,
+      "Fn_vs_anchor_delta_pct": -1.7254200151430052,
+      "Fr_anchor": 0.142,
+      "Re": 7534213.696224758,
+      "Rt_N": 29.736666557386293,
+      "abs_err_pct": 10.767734491273679,
+      "anchor": "SIMMAN 2008, MOERI",
+      "anchor_reachable_with_physical_form_factor": true,
+      "ct_floor_at_form_factor_1": 0.0035531816913137774,
+      "err_floor_pct": -13.337031919176171,
+      "err_vs_anchor_pct": 10.767734491273679,
+      "form_factor_needed_for_exact_match": 1.109989953843009,
+      "form_factor_physical": true,
+      "passes_platform_15pct": true,
+      "passes_spec_threshold_rule": true,
+      "passes_spec_tolerance": true,
+      "replication_delta_Ct": 0.0,
+      "replication_delta_Fn": 0.0,
+      "reported_Ct": 0.004541477114142221,
+      "reported_Fn": 0.13954990357849692,
+      "reported_run_id": "tb-7823fedb31a54e4cad2af9d54b010966",
+      "spec_Ct_threshold": 0.00472,
+      "spec_tolerance_pct": 15.0
+    }
+  ],
+  "transcription_ok": true,
+  "tree_cross_check": {
+    "problems": [],
+    "results": {
+      "dtmb5415": [
+        {
+          "Ct": 0.004739565034855285,
+          "Fn": 0.29320676315564886,
+          "acceptance_status": "passed",
+          "file": "tensorbench-runs/dtmb5415/tb-803af1c1fbee4fc391b3e0b39d1f6872.result.json",
+          "run_id": "tb-803af1c1fbee4fc391b3e0b39d1f6872"
+        },
+        {
+          "Ct": 0.004739565034855285,
+          "Fn": 0.29320676315564886,
+          "acceptance_status": "passed",
+          "file": "tensorbench-runs/dtmb5415/tb-a95adde3f7a34a02a8c34e33f33b3619.result.json",
+          "run_id": "tb-a95adde3f7a34a02a8c34e33f33b3619"
+        }
+      ],
+      "kvlcc2": [
+        {
+          "Ct": 0.004541477114142221,
+          "Fn": 0.13954990357849692,
+          "acceptance_status": "passed",
+          "file": "tensorbench-runs/kvlcc2/tb-7823fedb31a54e4cad2af9d54b010966.result.json",
+          "run_id": "tb-7823fedb31a54e4cad2af9d54b010966"
+        },
+        {
+          "Ct": 0.004541477114142221,
+          "Fn": 0.13954990357849692,
+          "acceptance_status": "passed",
+          "file": "tensorbench-runs/kvlcc2/tb-da5fae4c1e9d42e2bd338efea1385796.result.json",
+          "run_id": "tb-da5fae4c1e9d42e2bd338efea1385796"
+        }
+      ],
+      "suboff": [
+        {
+          "Ct": 0.003963203186026273,
+          "Fn": 0.20104398862975406,
+          "acceptance_status": "passed",
+          "file": "tensorbench-runs/suboff/tb-5d5f6e8140ec4a8793e14d9c34698796.result.json",
+          "run_id": "tb-5d5f6e8140ec4a8793e14d9c34698796"
+        },
+        {
+          "Ct": 0.003963203186026273,
+          "Fn": 0.20104398862975406,
+          "acceptance_status": "passed",
+          "file": "tensorbench-runs/suboff/tb-ab3005bd5068491eaf47688c70d0cafb.result.json",
+          "run_id": "tb-ab3005bd5068491eaf47688c70d0cafb"
+        }
+      ]
+    },
+    "specs_found": [
+      "suboff",
+      "dtmb5415",
+      "kvlcc2"
+    ]
+  }
+}
