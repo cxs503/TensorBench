@@ -18,7 +18,10 @@
   "properties": {
     "schema_version": {
       "type": "string",
-      "const": "1.0.0"
+      "enum": [
+        "1.0.0",
+        "1.1.0"
+      ]
     },
     "run_id": {
       "type": "string",
@@ -27,79 +30,185 @@
     "benchmark": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["benchmark_id", "version"],
+      "required": [
+        "benchmark_id",
+        "version"
+      ],
       "properties": {
-        "benchmark_id": { "type": "string", "minLength": 1 },
-        "version": { "type": "string", "minLength": 1 }
+        "benchmark_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1
+        }
       }
     },
     "implementation": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["project", "revision"],
+      "required": [
+        "project",
+        "revision"
+      ],
       "properties": {
-        "project": { "type": "string", "minLength": 1 },
-        "revision": { "type": "string", "minLength": 1 },
-        "dirty": { "type": "boolean" },
-        "version": { "type": "string" }
+        "project": {
+          "type": "string",
+          "minLength": 1
+        },
+        "revision": {
+          "type": "string",
+          "minLength": 1
+        },
+        "dirty": {
+          "type": "boolean"
+        },
+        "version": {
+          "type": "string"
+        }
       }
     },
     "workload": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["workload_id", "version"],
+      "required": [
+        "workload_id",
+        "version"
+      ],
       "properties": {
-        "workload_id": { "type": "string", "minLength": 1 },
-        "version": { "type": "string", "minLength": 1 },
+        "workload_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1
+        },
         "dataset_refs": {
           "type": "array",
           "items": {
             "type": "object",
             "additionalProperties": false,
-            "required": ["dataset_id", "version"],
+            "required": [
+              "dataset_id",
+              "version"
+            ],
             "properties": {
-              "dataset_id": { "type": "string", "minLength": 1 },
-              "version": { "type": "string", "minLength": 1 },
-              "checksum": { "type": "string" },
-              "source": { "type": "string" }
+              "dataset_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "version": {
+                "type": "string",
+                "minLength": 1
+              },
+              "checksum": {
+                "type": "string"
+              },
+              "source": {
+                "type": "string"
+              }
             }
           }
         },
-        "configuration": { "type": "object" }
+        "configuration": {
+          "type": "object"
+        },
+        "repetitions": {
+          "type": "integer",
+          "minimum": 1
+        }
       }
     },
     "environment": {
       "type": "object",
       "description": "Record only facts actually observed; omit unavailable values.",
       "properties": {
-        "os": { "type": "string" },
-        "architecture": { "type": "string" },
-        "cpu": { "type": "string" },
-        "cpu_cores": { "type": "integer", "minimum": 1 },
-        "gpu": { "type": "array", "items": { "type": "string" } },
-        "memory_bytes": { "type": "integer", "minimum": 0 },
-        "runtime": { "type": "object" },
-        "dependencies": { "type": "object" },
-        "precision": { "type": "string" },
-        "parallelism": { "type": "object" }
+        "os": {
+          "type": "string"
+        },
+        "architecture": {
+          "type": "string"
+        },
+        "cpu": {
+          "type": "string"
+        },
+        "cpu_cores": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "gpu": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "memory_bytes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "runtime": {
+          "type": "object"
+        },
+        "dependencies": {
+          "type": "object"
+        },
+        "precision": {
+          "type": "string"
+        },
+        "parallelism": {
+          "type": "object"
+        }
       }
     },
     "execution": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["status", "started_at", "ended_at"],
+      "required": [
+        "status",
+        "started_at",
+        "ended_at"
+      ],
       "properties": {
         "status": {
           "type": "string",
-          "enum": ["success", "failed", "timeout", "interrupted", "invalid"]
+          "enum": [
+            "success",
+            "failed",
+            "timeout",
+            "interrupted",
+            "invalid"
+          ]
         },
-        "started_at": { "type": "string", "format": "date-time" },
-        "ended_at": { "type": "string", "format": "date-time" },
-        "duration_seconds": { "type": "number", "minimum": 0 },
-        "exit_code": { "type": ["integer", "null"] },
-        "command": { "type": "string" },
-        "timeout_seconds": { "type": "number", "minimum": 0 },
-        "notes": { "type": "string" }
+        "started_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "ended_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "duration_seconds": {
+          "type": "number",
+          "minimum": 0
+        },
+        "exit_code": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "command": {
+          "type": "string"
+        },
+        "timeout_seconds": {
+          "type": "number",
+          "minimum": 0
+        },
+        "notes": {
+          "type": "string"
+        }
       }
     },
     "metrics": {
@@ -107,15 +216,52 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["name", "value", "unit", "kind"],
+        "required": [
+          "name",
+          "value",
+          "unit",
+          "kind"
+        ],
         "properties": {
-          "name": { "type": "string", "minLength": 1 },
-          "value": { "type": "number" },
-          "unit": { "type": "string" },
-          "kind": { "type": "string", "enum": ["measured", "derived"] },
-          "aggregation": { "type": "string" },
-          "better": { "type": "string", "enum": ["lower", "higher", "target", "informational"] },
-          "method": { "type": "string" }
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "value": {
+            "type": "number"
+          },
+          "unit": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "measured",
+              "derived"
+            ]
+          },
+          "aggregation": {
+            "type": "string"
+          },
+          "better": {
+            "type": "string",
+            "enum": [
+              "lower",
+              "higher",
+              "target",
+              "informational"
+            ]
+          },
+          "method": {
+            "type": "string"
+          },
+          "samples": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "minItems": 1
+          }
         }
       }
     },
@@ -124,34 +270,245 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["name", "uri"],
+        "required": [
+          "name",
+          "uri"
+        ],
         "properties": {
-          "name": { "type": "string" },
-          "uri": { "type": "string" },
-          "media_type": { "type": "string" },
-          "sha256": { "type": "string" },
-          "size_bytes": { "type": "integer", "minimum": 0 }
+          "name": {
+            "type": "string"
+          },
+          "uri": {
+            "type": "string"
+          },
+          "media_type": {
+            "type": "string"
+          },
+          "sha256": {
+            "type": "string"
+          },
+          "size_bytes": {
+            "type": "integer",
+            "minimum": 0
+          }
         }
       }
     },
     "validation": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["schema", "execution", "correctness", "reproducibility", "comparability"],
+      "required": [
+        "schema",
+        "execution",
+        "correctness",
+        "reproducibility",
+        "comparability"
+      ],
       "properties": {
-        "schema": { "$ref": "#/$defs/validationState" },
-        "execution": { "$ref": "#/$defs/validationState" },
-        "correctness": { "$ref": "#/$defs/validationState" },
-        "reproducibility": { "$ref": "#/$defs/validationState" },
-        "comparability": { "$ref": "#/$defs/validationState" },
-        "details": { "type": "string" }
+        "schema": {
+          "$ref": "#/$defs/validationState"
+        },
+        "execution": {
+          "$ref": "#/$defs/validationState"
+        },
+        "correctness": {
+          "$ref": "#/$defs/validationState"
+        },
+        "reproducibility": {
+          "$ref": "#/$defs/validationState"
+        },
+        "comparability": {
+          "$ref": "#/$defs/validationState"
+        },
+        "details": {
+          "type": "string"
+        }
+      }
+    },
+    "acceptance": {
+      "type": "object",
+      "description": "Verdict on the benchmark's predeclared acceptance criteria. 'not_evaluated' means no criteria were declared.",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "criteria",
+        "criteria_total",
+        "criteria_passed"
+      ],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "passed",
+            "failed",
+            "not_evaluated"
+          ]
+        },
+        "criteria": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "criterion_id",
+              "metric",
+              "comparator",
+              "threshold",
+              "state"
+            ],
+            "properties": {
+              "criterion_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "metric": {
+                "type": "string",
+                "minLength": 1
+              },
+              "comparator": {
+                "type": "string",
+                "enum": [
+                  "<=",
+                  "<",
+                  ">=",
+                  ">"
+                ]
+              },
+              "threshold": {
+                "type": "number"
+              },
+              "unit": {
+                "type": "string"
+              },
+              "rationale": {
+                "type": "string"
+              },
+              "value": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "passed": {
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              },
+              "state": {
+                "type": "string",
+                "enum": [
+                  "passed",
+                  "failed",
+                  "not_measured"
+                ]
+              }
+            }
+          }
+        },
+        "criteria_total": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "criteria_passed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "reference": {
+          "type": "object"
+        },
+        "method": {
+          "type": "string"
+        }
+      }
+    },
+    "score": {
+      "type": "object",
+      "description": "Deterministic score: criteria pass ratio plus the declared primary metric.",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "value",
+        "status"
+      ],
+      "properties": {
+        "kind": {
+          "type": "string"
+        },
+        "value": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "status": {
+          "type": "string"
+        },
+        "criteria_total": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "criteria_passed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "primary_metric": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "value": {
+              "type": "number"
+            },
+            "unit": {
+              "type": "string"
+            },
+            "better": {
+              "type": "string"
+            }
+          }
+        },
+        "method": {
+          "type": "string"
+        }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "description": "Content hashes that make two runs comparable or not.",
+      "properties": {
+        "spec_sha256": {
+          "type": "string"
+        },
+        "configuration_sha256": {
+          "type": "string"
+        },
+        "criteria_sha256": {
+          "type": "string"
+        },
+        "repetitions": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        }
       }
     }
   },
   "$defs": {
     "validationState": {
       "type": "string",
-      "enum": ["not_checked", "passed", "failed", "not_applicable", "inconclusive"]
+      "enum": [
+        "not_checked",
+        "passed",
+        "failed",
+        "not_applicable",
+        "inconclusive"
+      ]
     }
   }
 }
