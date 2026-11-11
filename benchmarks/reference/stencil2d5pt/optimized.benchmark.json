@@ -1,0 +1,151 @@
+{
+  "benchmark": {
+    "benchmark_id": "tensorbench.reference.stencil2d5pt",
+    "version": "1.0.0"
+  },
+  "implementation": {
+    "project": "TensorBench reference stencil2d5pt (row-slice zip)"
+  },
+  "workload": {
+    "workload_id": "stencil2d5pt-fv",
+    "version": "1.0.0",
+    "command": [
+      "python",
+      "benchmarks/reference/stencil2d5pt/stencil2d5pt.py",
+      "--impl",
+      "optimized",
+      "--n",
+      "96",
+      "--steps",
+      "400",
+      "--out",
+      "runs/stencil2d5pt/metrics-optimized.json"
+    ],
+    "cwd": ".",
+    "precision": "float64",
+    "primary_metric": "throughput_mlups",
+    "configuration": {
+      "n": 96,
+      "steps": 400,
+      "alpha": 1.0,
+      "length": 1.0,
+      "amplitude": 1.0,
+      "scheme": "FTCS five-point, periodic halos",
+      "diffusion_number": 0.1
+    },
+    "output": {
+      "metrics_file": "runs/stencil2d5pt/metrics-optimized.json"
+    }
+  },
+  "metrics": [
+    {
+      "name": "max_rel_error",
+      "unit": "relative",
+      "kind": "derived",
+      "aggregation": "max",
+      "better": "lower",
+      "method": "max |u_num - u_exact| / amplitude at t = steps*dt against the closed-form solution"
+    },
+    {
+      "name": "l2_rel_error",
+      "unit": "relative",
+      "kind": "derived",
+      "aggregation": "max",
+      "better": "lower",
+      "method": "||u_num - u_exact||_2 / ||u_exact||_2 over the interior"
+    },
+    {
+      "name": "conservation_drift",
+      "unit": "absolute",
+      "kind": "derived",
+      "aggregation": "max",
+      "better": "lower",
+      "method": "|mean(u_T) - mean(u_0)|; the periodic Laplacian conserves the mean exactly in exact arithmetic"
+    },
+    {
+      "name": "throughput_mlups",
+      "unit": "MLUPS",
+      "kind": "measured",
+      "aggregation": "median",
+      "better": "higher",
+      "method": "n*n*steps / wall time of the final sweep, time.perf_counter inside the workload"
+    },
+    {
+      "name": "step_seconds",
+      "unit": "seconds",
+      "kind": "measured",
+      "aggregation": "median",
+      "better": "lower",
+      "method": "wall time of the final sweep"
+    },
+    {
+      "name": "field_sum",
+      "unit": "absolute",
+      "kind": "derived",
+      "aggregation": "median",
+      "better": "informational",
+      "method": "sum of the final field, used for cross-implementation agreement"
+    },
+    {
+      "name": "diffusion_number",
+      "unit": "dimensionless",
+      "kind": "derived",
+      "aggregation": "median",
+      "better": "informational",
+      "method": "r = alpha*dt/h^2, held at 0.1 for this workload"
+    },
+    {
+      "name": "total_time",
+      "unit": "seconds",
+      "kind": "derived",
+      "aggregation": "median",
+      "better": "informational",
+      "method": "steps*dt, the physical time reached by the run"
+    }
+  ],
+  "acceptance": {
+    "criteria": [
+      {
+        "criterion_id": "correctness-vs-analytic",
+        "metric": "max_rel_error",
+        "comparator": "<=",
+        "threshold": 0.003,
+        "unit": "relative",
+        "rationale": "FTCS truncation is O(dt)+O(h^2). With h=1/96, dt=0.1*h^2/alpha the a-priori bound is about 1e-3 relative amplitude; 3e-3 gives a 3x margin. Fixed before the first run."
+      },
+      {
+        "criterion_id": "l2-vs-analytic",
+        "metric": "l2_rel_error",
+        "comparator": "<=",
+        "threshold": 0.003,
+        "unit": "relative",
+        "rationale": "Same truncation argument in the L2 norm; the L2 error cannot exceed the max-norm error by more than the domain area factor."
+      },
+      {
+        "criterion_id": "mean-conservation",
+        "metric": "conservation_drift",
+        "comparator": "<=",
+        "threshold": 1e-09,
+        "unit": "absolute",
+        "rationale": "A periodic five-point Laplacian annihilates constants, so the discrete mean is conserved up to float64 round-off; 1e-9 is ~1e7 ulp of the field mean."
+      }
+    ],
+    "reference": {
+      "kind": "analytic",
+      "source": "u(x,y,t)=A*exp(-2*alpha*k^2*t)*sin(kx)*sin(ky), k=2*pi/L, exact solution of u_t=alpha*(u_xx+u_yy) on the periodic square"
+    },
+    "policy": "criteria are declared in this file and hashed into provenance.criteria_sha256; a run cannot pass by relaxing them"
+  },
+  "protocol": {
+    "warmup": 1,
+    "repetitions": 7
+  },
+  "comparison": {
+    "min_relative_improvement": 0.1,
+    "regression_tolerance": 0.02,
+    "hypothesis": "The row-slice zip kernel is >=10% faster in throughput than the index-arithmetic kernel at identical numerical results"
+  },
+  "execution": {
+    "timeout_seconds": 900
+  }
+}
