@@ -106,13 +106,19 @@ def evaluate_work_package(bundle: Any) -> dict[str, Any]:
         item for item in changed_files
         if isinstance(item, dict) and item.get("path") and _is_code_path(str(item["path"]))
     ]
+    code_required = any(
+        isinstance(item, dict) and item.get("requires_code", False) for item in criteria
+    )
     if code_files:
         record("candidate.code_delta", "passed",
                f"{len(code_files)} non-documentation changed file(s) are recorded.")
-    else:
+    elif code_required:
         record("candidate.code_delta", "failed",
                "No code/configuration changes are recorded; candidate appears documentation-only or empty.",
                severity="high")
+    else:
+        record("candidate.code_delta", "not_applicable",
+               "No acceptance criterion requires implementation code.")
 
     for criterion in criteria:
         if not isinstance(criterion, dict) or not criterion.get("criterion_id"):
