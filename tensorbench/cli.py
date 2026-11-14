@@ -309,7 +309,7 @@ def main() -> int:
             result = {"review": reviewed, "normalized_document": document}
             rendered = json.dumps(result, indent=2, ensure_ascii=False)
             if args.output:
-                Path(args.output).write_text(rendered + "\\n", encoding="utf-8")
+                Path(args.output).write_text(rendered + "\n", encoding="utf-8")
             print(rendered)
             return 0 if document is not None else 1
         except (OSError, json.JSONDecodeError, PdfFieldProposalError) as exc:
