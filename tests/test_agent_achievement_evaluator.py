@@ -23,8 +23,8 @@ def _bundle():
             "artifact_refs": ["artifact://test-log"],
         }],
         "artifacts": [
-            {"artifact_ref": "artifact://diff", "kind": "diff", "sha256": "a" * 64},
-            {"artifact_ref": "artifact://test-log", "kind": "test_log", "sha256": "b" * 64},
+            {"artifact_ref": "artifact://diff", "kind": "diff", "sha256": "a" * 64, "source_revision": revision},
+            {"artifact_ref": "artifact://test-log", "kind": "test_log", "sha256": "b" * 64, "source_revision": revision},
         ],
     }
 
@@ -77,3 +77,12 @@ def test_agent_evaluator_allows_non_code_work_package_when_declared():
     assert report["overall_status"] == "passed"
     code_check = next(c for c in report["checks"] if c["check_id"] == "candidate.code_delta")
     assert code_check["state"] == "not_applicable"
+
+
+def test_agent_evaluator_rejects_artifacts_from_a_different_revision():
+    bundle = _bundle()
+    bundle["artifacts"][0]["source_revision"] = "c" * 40
+    report = evaluate_work_package(bundle)
+    assert report["overall_status"] == "inconclusive"
+    assert any("not pinned to candidate revision" in finding["summary"]
+               for finding in report["findings"])
