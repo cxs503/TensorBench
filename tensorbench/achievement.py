@@ -53,6 +53,7 @@ def evaluate_work_package(bundle: Any) -> dict[str, Any]:
         raise AchievementInputError("candidate_revision must not be empty")
 
     artifact_map: dict[str, dict[str, Any]] = {}
+    artifact_revision_mismatch: set[str] = set()
     for artifact in artifacts:
         if not isinstance(artifact, dict) or not artifact.get("artifact_ref"):
             raise AchievementInputError("each artifact requires artifact_ref")
@@ -63,6 +64,8 @@ def evaluate_work_package(bundle: Any) -> dict[str, Any]:
         if not re.fullmatch(r"[a-fA-F0-9]{64}", digest):
             raise AchievementInputError(f"artifact {ref} requires a valid SHA-256")
         artifact_map[ref] = artifact
+        if artifact.get("source_revision") != revision:
+            artifact_revision_mismatch.add(ref)
 
     test_map: dict[str, dict[str, Any]] = {}
     for test in tests:
@@ -127,6 +130,7 @@ def evaluate_work_package(bundle: Any) -> dict[str, Any]:
         required = bool(criterion.get("required", True))
         refs = criterion.get("evidence_refs") or []
         missing_refs = [ref for ref in refs if ref not in artifact_map]
+        stale_refs = [ref for ref in refs if ref in artifact_revision_mismatch]
         if not refs:
             record(f"criterion.{cid}.evidence", "inconclusive",
                    f"Criterion {cid} has no linked evidence artifact.", required=required)
@@ -134,6 +138,10 @@ def evaluate_work_package(bundle: Any) -> dict[str, Any]:
             record(f"criterion.{cid}.evidence", "inconclusive",
                    f"Criterion {cid} references missing artifacts: {missing_refs}.",
                    required=required, refs=[ref for ref in refs if ref in artifact_map])
+        elif stale_refs:
+            record(f"criterion.{cid}.evidence", "inconclusive",
+                   f"Criterion {cid} references artifacts not pinned to candidate revision {revision}: {stale_refs}.",
+                   required=required, refs=refs)
         else:
             record(f"criterion.{cid}.evidence", "passed",
                    f"Criterion {cid} resolves to {len(refs)} artifact(s).", required=required, refs=refs)
