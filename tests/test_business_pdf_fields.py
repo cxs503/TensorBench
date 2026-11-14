@@ -70,7 +70,6 @@ def test_pdf_field_review_accepts_only_explicitly_approved_values_and_preserves_
     )
     assert reviewed["status"] == "needs_review"
     assert reviewed["approved_fields"]["invoice_number"]["value"] == "INV-2026-001"
-    document = approved_pdf_fields_to_document(reviewed, document_type="invoice", doc_id="inv-1") if False else None
     # Partial review is deliberately not eligible for reconciliation normalization.
     assert "document" not in reviewed
 
