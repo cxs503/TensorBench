@@ -118,3 +118,15 @@ def test_pdf_field_review_withholds_conflicting_accepted_values():
         pass
     else:
         raise AssertionError("conflicted reviewed fields must not enter reconciliation")
+
+
+def test_pdf_field_review_detects_tampered_proposal_after_extraction():
+    proposals = propose_pdf_fields(_extraction())
+    proposals["proposals"][0]["normalized_candidate"] = "FORGED-VALUE"
+    decisions = [{"proposal_id": item["proposal_id"], "decision": "accept"} for item in proposals["proposals"]]
+    try:
+        review_pdf_field_proposals(proposals, decisions, reviewer="reviewer-1")
+    except PdfFieldProposalError as exc:
+        assert "fingerprint" in str(exc)
+    else:
+        raise AssertionError("tampered proposal must not be accepted")
