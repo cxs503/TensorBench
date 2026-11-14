@@ -125,29 +125,42 @@ def run_isolated_tests(
             )
         exit_code = completed.returncode
         if cidfile_path.exists():
-            cidfile_path.unlink()
+            try:
+                cidfile_path.unlink()
+            except OSError:
+                cleanup_status = "cidfile_cleanup_failed"
     except subprocess.TimeoutExpired:
         timed_out, exit_code = True, None
         container_id = cidfile_path.read_text(encoding="ascii", errors="ignore").strip() if cidfile_path.exists() else ""
         if _CONTAINER_ID_RE.fullmatch(container_id):
-            kill_result = subprocess.run(
-                [executable, "kill", container_id], stdin=subprocess.DEVNULL,
-                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
-                check=False, timeout=10, env=runner_env,
-            )
-            remove_result = subprocess.run(
-                [executable, "rm", "-f", container_id], stdin=subprocess.DEVNULL,
-                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
-                check=False, timeout=10, env=runner_env,
-            )
+            try:
+                kill_result = subprocess.run(
+                    [executable, "kill", container_id], stdin=subprocess.DEVNULL,
+                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+                    check=False, timeout=10, env=runner_env,
+                )
+                kill_code = kill_result.returncode
+            except (OSError, subprocess.TimeoutExpired):
+                kill_code = None
+            try:
+                remove_result = subprocess.run(
+                    [executable, "rm", "-f", container_id], stdin=subprocess.DEVNULL,
+                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+                    check=False, timeout=10, env=runner_env,
+                )
+                remove_code = remove_result.returncode
+            except (OSError, subprocess.TimeoutExpired):
+                remove_code = None
             cleanup_status = (
-                "removed" if kill_result.returncode == 0 or remove_result.returncode == 0
-                else "cleanup_failed"
+                "removed" if kill_code == 0 or remove_code == 0 else "cleanup_failed"
             )
         else:
             cleanup_status = "container_id_unavailable"
         if cidfile_path.exists():
-            cidfile_path.unlink()
+            try:
+                cidfile_path.unlink()
+            except OSError:
+                cleanup_status = "cleanup_failed"
 
     stdout_hash, stderr_hash = _sha256_file(stdout_path), _sha256_file(stderr_path)
     stdout_text = stdout_path.read_text(encoding="utf-8", errors="replace")
