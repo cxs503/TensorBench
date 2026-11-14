@@ -6,6 +6,7 @@ from pathlib import Path
 import pytest
 
 from tensorbench import isolated_runner
+from tensorbench.cli import build_parser
 
 
 SHA = "a" * 40
@@ -89,3 +90,12 @@ def test_timeout_is_recorded(tmp_path, monkeypatch):
     )
     assert report["status"] == "timed_out"
     assert report["timed_out"] is True
+
+
+def test_reverify_cli_keeps_subcommand_and_command_argv_separate():
+    args = build_parser().parse_args([
+        "reverify-tests", "--checkout", "/tmp/repo", "--revision", SHA,
+        "--image", IMAGE, "--log-dir", "/tmp/logs", "--", "python", "-m", "pytest", "-q",
+    ])
+    assert args.command == "reverify-tests"
+    assert args.test_argv == ["python", "-m", "pytest", "-q"]
