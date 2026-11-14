@@ -23,11 +23,12 @@ tensorbench reverify-tests \
   --checkout ./worktrees/TensorLBM \
   --revision <full-commit-sha> \
   --image registry.example/tensorbench-runner@sha256:<64-hex-digest> \
+  --log-dir ./evidence/mission-123-test-logs \
   -- python -m pytest -q
 ```
 
 The JSON report includes command, exact revision, image digest reference, exit status,
-time bounds, resource limits, stdout/stderr hashes and bounded log excerpts.
+time bounds, resource limits, stdout/stderr hashes and bounded log excerpts. Full logs are retained in the required `--log-dir`; the report records their paths, byte counts and SHA-256 digests.
 
 ## Security and interpretation
 
