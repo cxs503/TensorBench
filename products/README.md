@@ -39,3 +39,7 @@ Do not create a new database or duplicate TensorData/TensorKnowledge registries.
 ## Non-negotiable release gate
 
 A product is not MVP-complete because it has a UI, LLM-generated report, passing unit tests, or merged PRs. It must ingest a real supported input, execute deterministic checks, preserve evidence references, produce a machine-readable result, and pass a blind evaluation set. AI-generated interpretations must be visibly separated from deterministic checks and human decisions.
+
+## Implementation status and acceptance
+
+The current implementation state is tracked in [STATUS.json](STATUS.json). Product release gates and evidence requirements are defined in [FOUR_PRODUCT_ACCEPTANCE_MATRIX.md](../docs/FOUR_PRODUCT_ACCEPTANCE_MATRIX.md). These are deliberately separate from the aspirational PRDs: a partially implemented product is not a real-world-verified product.
