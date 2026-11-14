@@ -7,6 +7,7 @@ import sys
 from pathlib import Path
 
 from .achievement import AchievementInputError, evaluate_file
+from .mission_evidence import evaluate_mission_snapshot
 from .business_evidence import BusinessEvidenceError, reconcile_file
 from .business_pdf_fields import (
     PdfFieldProposalError,
@@ -43,6 +44,12 @@ def build_parser() -> argparse.ArgumentParser:
     )
     achievement_parser.add_argument("--input", required=True, help="Work-package evidence JSON")
     achievement_parser.add_argument("--output", help="Optional evaluation-report JSON path")
+
+    mission_parser = subparsers.add_parser(
+        "evaluate-mission-snapshot", help="normalize read-only TensorPlatform/GitHub snapshots and evaluate evidence"
+    )
+    mission_parser.add_argument("--input", required=True, help="JSON snapshot with mission, pull_request and checks")
+    mission_parser.add_argument("--output", help="Optional bundle + evaluation report JSON path")
 
     business_parser = subparsers.add_parser(
         "reconcile-business", help="reconcile normalized contract/PO/delivery/invoice records"
@@ -264,6 +271,19 @@ def main() -> int:
             print(rendered)
             return 0 if result["overall_status"] == "passed" else 1
         except (OSError, json.JSONDecodeError, AchievementInputError) as exc:
+            print(f"tensorbench: error: {exc}", file=sys.stderr)
+            return 2
+
+    if args.command == "evaluate-mission-snapshot":
+        try:
+            snapshot = json.loads(Path(args.input).read_text(encoding="utf-8"))
+            result = evaluate_mission_snapshot(snapshot)
+            rendered = json.dumps(result, indent=2, ensure_ascii=False)
+            if args.output:
+                Path(args.output).write_text(rendered + "\\n", encoding="utf-8")
+            print(rendered)
+            return 0 if result["report"]["overall_status"] == "passed" else 1
+        except (OSError, json.JSONDecodeError, ValueError) as exc:
             print(f"tensorbench: error: {exc}", file=sys.stderr)
             return 2
 
