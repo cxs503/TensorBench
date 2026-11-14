@@ -90,3 +90,46 @@ def test_refuses_ambiguous_pr_association(monkeypatch):
         assert "found 2" in str(exc)
     else:
         raise AssertionError("ambiguous PR association must be rejected")
+
+
+def test_collects_and_verifies_frozen_acceptance_contract(monkeypatch):
+    import hashlib
+    import json
+
+    criteria = [{"criterion_id": "C001", "metric": "relative_error",
+                 "target": "<0.03", "tolerance": "0.001"}]
+    digest = hashlib.sha256(json.dumps(
+        criteria, sort_keys=True, ensure_ascii=False, separators=(",", ":"),
+        allow_nan=False,
+    ).encode("utf-8")).hexdigest()
+
+    def fake_get(url, token, **kwargs):
+        if url.endswith("/tensor/missions/42"):
+            return {
+                "id": 42, "repo": "TensorLBM", "goal": "Verify a numerical feature",
+                "status": "succeeded", "acceptance_criteria": criteria,
+                "acceptance_criteria_sha256": digest,
+                "acceptance_criteria_frozen_at": "2026-11-14T06:00:00Z",
+                "acceptance_criteria_freeze_source": "mission_created",
+                "acceptance_criteria_version": 1,
+                "result": {"evidence": {"head_commit": SHA}},
+            }
+        if "/commits/" in url and url.endswith("/pulls?per_page=100&page=1"):
+            return [{"number": 17, "head": {"sha": SHA}, "base": {"sha": "b" * 40}}]
+        if url.endswith("/pulls/17/files?per_page=100&page=1"):
+            return [{"filename": "src/solver.py", "status": "modified"}]
+        if "/check-runs?" in url:
+            return {"check_runs": [], "total_count": 0}
+        if url.endswith("/status"):
+            return {"sha": SHA, "statuses": []}
+        raise AssertionError(url)
+
+    monkeypatch.setattr(live_mission, "_get_json", fake_get)
+    snapshot = live_mission.collect_mission_snapshot(
+        platform_api_base="https://platform.example/api", mission_id=42
+    )
+    contract = snapshot["acceptance_contract"]
+    assert contract["criteria"] == criteria
+    assert contract["sha256"] == digest
+    assert contract["integrity_status"] == "verified"
+    assert contract["status"] == "declared"
