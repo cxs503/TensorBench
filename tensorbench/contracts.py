@@ -42,6 +42,8 @@ def _semantic_errors(kind: str, payload: dict[str, Any]) -> list[str]:
     if kind == "report":
         checks = payload.get("checks", [])
         findings = payload.get("findings", [])
+        checks = [c for c in checks if isinstance(c, dict)]
+        findings = [f for f in findings if isinstance(f, dict)]
         failed_required = [
             c.get("check_id", "<unknown>")
             for c in checks
@@ -89,6 +91,8 @@ def _semantic_errors(kind: str, payload: dict[str, Any]) -> list[str]:
             errors.append("assets with unknown or quarantined rights cannot be A4_adopted")
     elif kind == "evidence":
         provenance = payload.get("provenance", {})
+        if not isinstance(provenance, dict):
+            provenance = {}
         if payload.get("source_type") == "url" and not provenance.get("source_version"):
             errors.append("URL evidence requires provenance.source_version or a captured snapshot")
     return errors
