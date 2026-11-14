@@ -1,6 +1,6 @@
 # Physics Dataset Validator — Product Requirements
 
-**Product ID:** `physics-dataset-validator` · **Status:** foundation / not implemented · **Initial users:** TensorData, TensorPhysics, TensorLBM.
+**Product ID:** `physics-dataset-validator` · **Status:** partially implemented; real-world workflow not yet verified · **Initial users:** TensorData, TensorPhysics, TensorLBM.
 
 ## Problem and outcome
 
