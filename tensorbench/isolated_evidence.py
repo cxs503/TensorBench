@@ -54,6 +54,12 @@ def attach_isolated_run(
         raise AchievementInputError(f"test_id already exists: {test_id}")
 
     report_file = Path(report_path).resolve(strict=True)
+    try:
+        disk_report = json.loads(report_file.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise AchievementInputError(f"cannot read isolated report file: {exc}") from exc
+    if disk_report != report:
+        raise AchievementInputError("isolated report object does not match the report file")
     report_hash = _file_sha256(report_file)
     run_ref = f"tensorbench://isolated-run/{revision}/{test_id}/report"
     new_artifacts = [{
