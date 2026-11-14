@@ -23,6 +23,14 @@ A passing unit-test suite never upgrades a product to real_world_verified. Missi
 | Agent Achievement Evaluator | Partially implemented: commit-pinned evidence package checks and explicit publish path exist; automatic mission/CI collection and isolated execution remain open. | No | Collect one real mission, linked PR, commit and CI evidence read-only; retain human grading. |
 | Business Evidence Engine | Partially implemented: PDF page evidence, limited field proposals and normalized reconciliation exist; OCR, tables and approved-field handoff remain open. | No | Complete a permissioned multi-document PDF → review → normalization → reconciliation run and measure accuracy. |
 
+## Machine-checkable acceptance
+
+The six-deliverable framework that makes the record below machine-checkable — scenario
+specification, frozen criteria, evidence requirements, independent review receipt (six checks),
+`products/STATUS.json` v2 schema and the failure/regression record format — is
+[SCENARIO_ACCEPTANCE_FRAMEWORK.md](SCENARIO_ACCEPTANCE_FRAMEWORK.md). It extends this baseline;
+it does not replace the status vocabulary or the release gates below.
+
 ## Mandatory acceptance record per product
 
 Every acceptance run must retain:

@@ -8,6 +8,7 @@
     "not_implemented": "No executable implementation is verified; only documents or plans exist."
   },
   "release_rule": "code_implemented=true MUST NOT be read as scenario_validated. Unit tests do not validate a scenario. Missing or unsupported evidence is inconclusive, never pass.",
+  "acceptance_framework": "docs/SCENARIO_ACCEPTANCE_FRAMEWORK.md",
   "mission_baseline_reconciliation": {
     "asserted_by_mission": {
       "AE": false,
@@ -30,6 +31,14 @@
       "repository": "cxs503/TensorBench",
       "code_implemented": true,
       "scenario_validated": false,
+      "acceptance_evidence": {
+        "scenario_id": null,
+        "validation_report_ref": null,
+        "review_receipt_ref": null,
+        "criteria_sha256": null,
+        "reviewed_commit": null,
+        "verdict": null
+      },
       "implemented_evidence": [
         "schemas/evidence_bundle.json (v1.0.0) mission evidence contract",
         "tensorbench/evidence_bundle.py: normalization, explicit missing fields, per-deliverable SHA-256, self-digest",
@@ -53,6 +62,14 @@
       "repository": "cxs503/TensorBench",
       "code_implemented": true,
       "scenario_validated": false,
+      "acceptance_evidence": {
+        "scenario_id": null,
+        "validation_report_ref": null,
+        "review_receipt_ref": null,
+        "criteria_sha256": null,
+        "reviewed_commit": null,
+        "verdict": null
+      },
       "implemented_evidence": [
         "tensorbench/pdf_evidence.py bounded PDF ingestion with page fingerprints",
         "tensorbench/business_pdf_fields.py rule-based unverified field proposals",
@@ -76,6 +93,14 @@
       "repository": "cxs503/TensorKnowledge",
       "code_implemented": false,
       "scenario_validated": false,
+      "acceptance_evidence": {
+        "scenario_id": null,
+        "validation_report_ref": null,
+        "review_receipt_ref": null,
+        "criteria_sha256": null,
+        "reviewed_commit": null,
+        "verdict": null
+      },
       "implemented_evidence": [],
       "not_implemented_or_unverified": [
         "No ResearchAudit implementation is verified inside this repository (products/research-audit/PRD.md only)",
@@ -92,6 +117,14 @@
       "repository": "cxs503/TensorData",
       "code_implemented": false,
       "scenario_validated": false,
+      "acceptance_evidence": {
+        "scenario_id": null,
+        "validation_report_ref": null,
+        "review_receipt_ref": null,
+        "criteria_sha256": null,
+        "reviewed_commit": null,
+        "verdict": null
+      },
       "implemented_evidence": [],
       "external_partial_state": "TensorData quality engine is half-true: structural/numeric CSV checks exist upstream, conservation-law and field-format validation do not.",
       "not_implemented_or_unverified": [
