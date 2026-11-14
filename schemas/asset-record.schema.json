@@ -1,0 +1,116 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Tensor Ecosystem Asset Record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "asset_id",
+    "asset_type",
+    "title",
+    "owner_project",
+    "maturity",
+    "provenance",
+    "rights_status"
+  ],
+  "properties": {
+    "asset_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "asset_type": {
+      "type": "string",
+      "minLength": 1
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "owner_project": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source_revision": {
+      "type": "string"
+    },
+    "work_package_id": {
+      "type": "string"
+    },
+    "producing_run_id": {
+      "type": "string"
+    },
+    "input_fingerprints": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "output_fingerprints": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "validation_report_refs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "rights_status": {
+      "enum": [
+        "cleared",
+        "restricted",
+        "quarantined",
+        "unknown"
+      ]
+    },
+    "maturity": {
+      "enum": [
+        "A0_idea",
+        "A1_implemented",
+        "A2_verified",
+        "A3_reusable",
+        "A4_adopted"
+      ]
+    },
+    "dependencies": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "reuse_events": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "maturity": {
+            "enum": [
+              "A2_verified",
+              "A3_reusable",
+              "A4_adopted"
+            ]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "validation_report_refs": {
+            "minItems": 1
+          }
+        }
+      }
+    }
+  ]
+}
