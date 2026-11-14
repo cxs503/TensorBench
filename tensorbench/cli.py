@@ -73,6 +73,7 @@ def build_parser() -> argparse.ArgumentParser:
     reverify_parser.add_argument("--cpus", default="2")
     reverify_parser.add_argument("--pids-limit", type=int, default=128)
     reverify_parser.add_argument("--output", help="Optional execution report JSON path")
+    reverify_parser.add_argument("--log-dir", required=True, help="New or empty directory to retain full stdout/stderr logs")
     reverify_parser.add_argument("test_argv", nargs=argparse.REMAINDER, help="Command argv after --")
 
     business_parser = subparsers.add_parser(
@@ -321,6 +322,7 @@ def main() -> int:
                 expected_revision=args.revision,
                 image=args.image,
                 command=command,
+                log_dir=args.log_dir,
                 engine=args.engine,
                 timeout_seconds=args.timeout,
                 memory_limit=args.memory,
