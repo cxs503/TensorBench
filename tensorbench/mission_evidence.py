@@ -210,6 +210,7 @@ def build_mission_evidence_bundle(snapshot: Mapping[str, Any]) -> dict[str, Any]
                     and mission["result"].get("acceptance_criteria") is not None)
                 else "not_declared"
             ),
+            "collector_metadata": root.get("collection_metadata") or {},
         },
     }
     return bundle
