@@ -5,6 +5,7 @@ variables and are never written into the evidence bundle.
 """
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 from typing import Any
@@ -127,10 +128,50 @@ def collect_mission_snapshot(
         ],
     }
 
-    criteria = (
-        result.get("acceptance_criteria")
-        or summary.get("acceptance_criteria")
-        or mission.get("acceptance_criteria")
+    # The mission-row snapshot is authoritative, including an explicit empty
+    # list. Never fall back to Agent-authored result/summary criteria when the
+    # authoritative field exists: that would let completion rewrite the contract.
+    if "acceptance_criteria" in mission:
+        criteria = mission.get("acceptance_criteria")
+        if not isinstance(criteria, list):
+            raise AchievementInputError("Mission acceptance_criteria must be an array")
+        criteria_payload_source = "mission_snapshot"
+        criteria_freeze_source = str(mission.get("acceptance_criteria_freeze_source") or "legacy_unfrozen")
+    else:
+        legacy_criteria = evidence.get("acceptance_criteria")
+        if legacy_criteria is None:
+            legacy_criteria = result.get("acceptance_criteria")
+        if legacy_criteria is None:
+            legacy_criteria = summary.get("acceptance_criteria")
+        criteria = legacy_criteria
+        if criteria is not None and not isinstance(criteria, list):
+            raise AchievementInputError("legacy Mission acceptance_criteria must be an array")
+        criteria_payload_source = "legacy_completion_evidence" if criteria is not None else "not_declared"
+        criteria_freeze_source = "legacy_unfrozen"
+
+    observed_criteria_sha256 = None
+    expected_criteria_sha256 = mission.get("acceptance_criteria_sha256")
+    if criteria is not None:
+        try:
+            canonical_bytes = json.dumps(
+                criteria, sort_keys=True, ensure_ascii=False, separators=(",", ":"),
+                allow_nan=False,
+            ).encode("utf-8")
+            observed_criteria_sha256 = hashlib.sha256(canonical_bytes).hexdigest()
+        except (TypeError, ValueError) as exc:
+            raise AchievementInputError(f"Mission acceptance_criteria is not canonical JSON: {exc}") from exc
+
+    if criteria_freeze_source in {"mission_created", "legacy_start"} and expected_criteria_sha256:
+        criteria_integrity = (
+            "verified" if observed_criteria_sha256 == str(expected_criteria_sha256).strip()
+            else "mismatch"
+        )
+    else:
+        criteria_integrity = "inconclusive"
+
+    criteria_status = str(
+        mission.get("acceptance_criteria_status")
+        or ("not_declared" if not criteria else "legacy_unverified")
     )
     snapshot: dict[str, Any] = {
         "mission": mission,
@@ -142,9 +183,15 @@ def collect_mission_snapshot(
             "github_repository": repo,
             "associated_commit_sha": head_sha,
             "pull_request_number": number,
-            "acceptance_criteria_source": "mission_result" if criteria else "not_declared",
+            "acceptance_criteria_source": criteria_freeze_source if criteria_payload_source == "mission_snapshot" else criteria_payload_source,
+            "acceptance_criteria_payload_source": criteria_payload_source,
+            "acceptance_criteria_sha256": expected_criteria_sha256,
+            "acceptance_criteria_observed_sha256": observed_criteria_sha256,
+            "acceptance_criteria_integrity": criteria_integrity,
+            "acceptance_criteria_status": criteria_status,
+            "acceptance_criteria_frozen_at": mission.get("acceptance_criteria_frozen_at"),
         },
     }
-    if criteria:
+    if criteria is not None:
         snapshot["acceptance_criteria"] = criteria
     return snapshot
