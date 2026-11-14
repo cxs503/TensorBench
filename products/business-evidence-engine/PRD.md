@@ -41,3 +41,27 @@ Automated payment execution, legal advice, fraud accusation, ERP replacement, or
 ## First vertical slice
 
 A local, single-tenant batch review of a permissioned sample bundle. Do not build a complete ERP integration, billing system or multi-tenant SaaS control plane before validating repeated customer demand.
+
+
+## Implementation status (verified against repository source, 2026-11-14)
+
+**Overall: partially implemented; no real-world document-bundle pilot completed.**
+
+Implemented in the current codebase:
+- Bounded PDF ingestion with page-level evidence references and content fingerprints (`tensorbench/pdf_evidence.py`).
+- Rule-based proposals for a limited set of labelled fields, retaining page/evidence provenance and marking candidates unverified (`tensorbench/business_pdf_fields.py`).
+- Existing normalized-record reconciliation and deterministic discrepancy checks (`tensorbench/business_evidence.py`).
+- CLI and focused tests for PDF ingestion, field proposals and reconciliation.
+
+Not yet implemented or not yet demonstrated:
+- OCR for scanned PDFs/images.
+- Reliable table/line-item extraction with cell coordinates.
+- A reviewed-field handoff that automatically maps approved PDF proposals into normalized records and invokes reconciliation.
+- Complete contract → purchase order → delivery/acceptance → invoice workflow.
+- Permissioned, de-identified real document bundles with labelled extraction/matching accuracy.
+- Customer-grade tenant isolation, retention/deletion and security review.
+
+Release interpretation:
+- Extracted fields remain `proposed_unverified` until a human approves them.
+- No OCR/table capability or business discrepancy accuracy is implied by the current parser tests.
+- Do not ingest customer-confidential documents before privacy/security controls are verified.
