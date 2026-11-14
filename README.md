@@ -113,6 +113,19 @@ or run untrusted candidate code. Missing predeclared acceptance criteria, missin
 pending checks, and stale commit evidence remain inconclusive. It never assigns S/E grades.
 See [Agent Mission Evidence Collector](docs/AGENT_MISSION_EVIDENCE_COLLECTOR.md).
 
+For live read-only collection from TensorPlatform and GitHub:
+
+```bash
+export TENSORPLATFORM_API_BASE="https://your-platform.example/api"
+export TENSORPLATFORM_TOKEN="..."
+export GITHUB_TOKEN="..."
+tensorbench collect-mission --mission-id 123 --output mission-123.evidence.json
+```
+
+The live collector requires a Mission completion Commit SHA and exactly one GitHub PR
+associated with that SHA. It does not guess from branch names or recent repository activity.
+See [Live Mission Collection](docs/LIVE_MISSION_COLLECTION.md).
+
 ## Relationship to other Tensor projects
 
 TensorBench is a shared evaluation and evidence layer, not a replacement for TensorPlatform or domain projects.
