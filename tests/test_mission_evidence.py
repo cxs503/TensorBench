@@ -54,6 +54,8 @@ def test_snapshot_produces_revision_pinned_bundle_and_pass_report():
 def test_missing_predeclared_acceptance_criteria_is_inconclusive():
     snapshot = _snapshot()
     del snapshot["mission"]["acceptance_criteria"]
+    snapshot["mission"]["acceptance_criteria_sha256"] = None
+    snapshot["mission"]["acceptance_criteria_freeze_source"] = "legacy_unfrozen"
     result = evaluate_mission_snapshot(snapshot)
     assert result["report"]["overall_status"] == "inconclusive"
     assert result["report"]["summary"]["acceptance_criteria_source"] == "not_declared"
