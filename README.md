@@ -162,6 +162,7 @@ tensorbench reverify-tests \\
   --checkout ./worktrees/TensorLBM \\
   --revision <full-commit-sha> \\
   --image registry.example/tensorbench-runner@sha256:<64-hex-digest> \\
+  --log-dir ./evidence/mission-123-test-logs \\
   -- python -m pytest -q
 ```
 
