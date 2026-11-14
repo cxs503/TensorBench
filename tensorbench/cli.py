@@ -331,7 +331,7 @@ def main() -> int:
             )
             rendered = json.dumps(report, indent=2, ensure_ascii=False)
             if args.output:
-                Path(args.output).write_text(rendered + "\\n", encoding="utf-8")
+                Path(args.output).write_text(rendered + "\n", encoding="utf-8")
             print(rendered)
             return 0 if report["status"] == "passed" else 1
         except (OSError, ValueError, IsolatedRunError) as exc:
