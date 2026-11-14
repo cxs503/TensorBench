@@ -56,7 +56,7 @@ def propose_pdf_fields(extraction: Any) -> dict[str, Any]:
                 proposal_id = hashlib.sha256(json.dumps({
                     "source_sha256": source["sha256"], "page_number": page_no,
                     "field": field_name, "start_offset": match.start(1),
-                    "end_offset": match.end(1), "value_sha256": hashlib.sha256(raw_value.encode("utf-8")).hexdigest(),
+                    "end_offset": match.end(1), "normalized_candidate": normalized, "currency_candidate": currency,\n                    "value_sha256": hashlib.sha256(raw_value.encode("utf-8")).hexdigest(),
                 }, sort_keys=True, separators=(",", ":")).encode("utf-8")).hexdigest()
                 proposals.append({
                     "proposal_id": proposal_id,
