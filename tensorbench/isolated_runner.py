@@ -78,7 +78,7 @@ def run_isolated_tests(
     if repo_arg.is_symlink():
         raise IsolatedRunError("checkout_path must not be a symlink")
     repo = repo_arg.resolve(strict=True)
-    if not repo.is_dir() or not (repo / ".git").exists():
+    if not repo.is_dir() or not (repo / ".git").is_dir():
         raise IsolatedRunError("checkout_path must be an existing Git working tree")
     actual_revision = _git_value(repo, "rev-parse", "HEAD")
     if actual_revision.lower() != expected_revision.lower():
@@ -105,7 +105,7 @@ def run_isolated_tests(
         f"--cpus={cpu_limit}", "--user=65532:65532",
         "--tmpfs=/tmp:rw,noexec,nosuid,nodev,size=512m",
         "--env=HOME=/tmp", "--env=TMPDIR=/tmp",
-        "--env=PYTHONDONTWRITEBYTECODE=1",
+        "--env=PYTHONDONTWRITEBYTECODE=1", "--env=PYTEST_ADDOPTS=-p no:cacheprovider",
         f"--volume={repo}:/workspace:ro", "--workdir=/workspace",
         image, *command,
     ]
