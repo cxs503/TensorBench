@@ -13,6 +13,7 @@ from .contracts import ContractValidationError, validate_file
 from .pdf_evidence import PdfEvidenceError, extract_pdf_file
 from .publish import (
     PlatformClient,
+    build_achievement_evaluation_payload,
     build_capability_delta,
     build_evaluation_payload,
     default_artifact_refs,
@@ -52,6 +53,21 @@ def build_parser() -> argparse.ArgumentParser:
     pdf_parser.add_argument("--output", help="Optional page-evidence JSON path")
     pdf_parser.add_argument("--max-bytes", type=int, default=50 * 1024 * 1024)
     pdf_parser.add_argument("--max-pages", type=int, default=1000)
+
+    achievement_publish = subparsers.add_parser(
+        "publish-achievement", help="prepare and optionally submit a human-reviewed agent achievement"
+    )
+    achievement_publish.add_argument("--report", required=True, help="Evaluator report JSON")
+    achievement_publish.add_argument("--mission-id", type=int, required=True)
+    achievement_publish.add_argument("--contributor", required=True)
+    achievement_publish.add_argument("--reviewer", required=True, help="Independent reviewer identity")
+    achievement_publish.add_argument("--grade", choices=("S1", "S2", "S3", "S4", "S5", "S-N"), required=True)
+    achievement_publish.add_argument("--e-level", choices=("E1", "E2", "E3", "E4"), required=True)
+    achievement_publish.add_argument("--repo")
+    achievement_publish.add_argument("--baseline-or-scope")
+    achievement_publish.add_argument("--evidence-chain", help="JSON file with theory/code/config/data/report for S2+")
+    achievement_publish.add_argument("--api-base")
+    achievement_publish.add_argument("--post", action="store_true", help="POST after explicit reviewer inputs (default: dry run)")
 
     run_parser = subparsers.add_parser("run", help="run one local benchmark spec")
     run_parser.add_argument("--spec", required=True, help="Path to benchmark specification JSON")
@@ -183,6 +199,38 @@ def _cmd_publish(args: argparse.Namespace) -> int:
     return 0
 
 
+
+def _cmd_publish_achievement(args: argparse.Namespace) -> int:
+    report_path = Path(args.report).resolve()
+    report = json.loads(report_path.read_text(encoding="utf-8"))
+    chain = json.loads(Path(args.evidence_chain).read_text(encoding="utf-8")) if args.evidence_chain else None
+    payload = build_achievement_evaluation_payload(
+        report,
+        mission_id=args.mission_id,
+        contributor=args.contributor,
+        reviewer=args.reviewer,
+        grade=args.grade,
+        e_level=args.e_level,
+        report_path=report_path,
+        repo=args.repo,
+        baseline_or_scope=args.baseline_or_scope,
+        evidence_chain=chain,
+    )
+    if not args.post:
+        print(json.dumps({"evaluation": payload, "mode": "dry_run"}, indent=2, ensure_ascii=False))
+        return 0
+    client = PlatformClient(args.api_base)
+    client.login()
+    posted = client.post_evaluation(payload)
+    print(json.dumps({"post": posted}, indent=2, ensure_ascii=False))
+    if posted["status"] != 200:
+        return 1
+    evaluation_id = (posted.get("data") or {}).get("evaluation_id")
+    if evaluation_id:
+        print(json.dumps({"verified": client.get_evaluation(str(evaluation_id))}, indent=2, ensure_ascii=False))
+    return 0
+
+
 def main() -> int:
     args = build_parser().parse_args()
     if args.command == "evaluate-work-package":
@@ -194,6 +242,13 @@ def main() -> int:
             print(rendered)
             return 0 if result["overall_status"] == "passed" else 1
         except (OSError, json.JSONDecodeError, AchievementInputError) as exc:
+            print(f"tensorbench: error: {exc}", file=sys.stderr)
+            return 2
+
+    if args.command == "publish-achievement":
+        try:
+            return _cmd_publish_achievement(args)
+        except (OSError, json.JSONDecodeError, ValueError, RuntimeError) as exc:
             print(f"tensorbench: error: {exc}", file=sys.stderr)
             return 2
 
