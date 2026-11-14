@@ -42,3 +42,27 @@ Automated paper acceptance, plagiarism verdicts, authorship detection, fabricate
 ## First vertical slice
 
 Audit one real TensorKnowledge research report plus its bibliography and available source papers. Start with citation coverage and claim-to-citation traceability before attempting equation reasoning. Record access rights; do not upload paywalled papers unless permitted.
+
+
+## Implementation status (verified against repository source, 2026-11-14)
+
+**Overall: partially implemented; semantic claim-support evaluation and a full reviewer workflow remain incomplete.**
+
+Implemented in the current TensorKnowledge/TensorBench work:
+- Markdown citation audit.
+- Structured Claim–Evidence provenance audit, including bidirectional references, source-root path containment, exact quote/offset matching and SHA-256 checks.
+- Relation/assessment consistency checks.
+- Conservative handling: structurally valid but independently unreviewed evidence is `inconclusive`, not verified support.
+- Focused regression tests, including detection of an orphan evidence record in a demo bundle.
+
+Not yet implemented or not yet demonstrated:
+- Reliable semantic entailment/contradiction classification between a claim and its cited passage.
+- A complete independent-review receipt workflow with reviewer identity/role, decision, timestamp and rationale.
+- Batch audit orchestration across a TensorKnowledge corpus with durable run summaries.
+- A labelled expert holdout set and per-class precision/recall.
+- A completed real report + bibliography + source-paper audit with reviewer sign-off.
+
+Release interpretation:
+- Citation/provenance integrity is not the same as semantic support or scientific truth.
+- Missing/unavailable source material and unreviewed evidence remain `inconclusive`.
+- The demo-bundle orphan-evidence finding is a real regression signal, not a reason to weaken the validator.
