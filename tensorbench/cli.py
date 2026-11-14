@@ -10,6 +10,7 @@ from .achievement import AchievementInputError, evaluate_file
 from .business_evidence import BusinessEvidenceError, reconcile_file
 from .compare import compare_results, load_result
 from .contracts import ContractValidationError, validate_file
+from .pdf_evidence import PdfEvidenceError, extract_pdf_file
 from .publish import (
     PlatformClient,
     build_capability_delta,
@@ -42,6 +43,15 @@ def build_parser() -> argparse.ArgumentParser:
     business_parser.add_argument("--input", required=True, help="Normalized document bundle JSON")
     business_parser.add_argument("--output", help="Optional validation-report JSON path")
     business_parser.add_argument("--tolerance", default="0.01", help="Decimal currency tolerance")
+
+    pdf_parser = subparsers.add_parser(
+        "extract-pdf", help="extract page-addressable PDF text evidence (no OCR)"
+    )
+    pdf_parser.add_argument("--input", required=True, help="Source PDF file")
+    pdf_parser.add_argument("--source-ref", required=True, help="Stable source-system reference")
+    pdf_parser.add_argument("--output", help="Optional page-evidence JSON path")
+    pdf_parser.add_argument("--max-bytes", type=int, default=50 * 1024 * 1024)
+    pdf_parser.add_argument("--max-pages", type=int, default=1000)
 
     run_parser = subparsers.add_parser("run", help="run one local benchmark spec")
     run_parser.add_argument("--spec", required=True, help="Path to benchmark specification JSON")
@@ -196,6 +206,21 @@ def main() -> int:
             print(rendered)
             return 0 if result["overall_status"] == "passed" else 1
         except (OSError, json.JSONDecodeError, BusinessEvidenceError) as exc:
+            print(f"tensorbench: error: {exc}", file=sys.stderr)
+            return 2
+
+    if args.command == "extract-pdf":
+        try:
+            result = extract_pdf_file(
+                args.input, source_ref=args.source_ref,
+                max_bytes=args.max_bytes, max_pages=args.max_pages,
+            )
+            rendered = json.dumps(result, indent=2, ensure_ascii=False)
+            if args.output:
+                Path(args.output).write_text(rendered + "\n", encoding="utf-8")
+            print(rendered)
+            return 0 if result["status"] == "complete" else 1
+        except (OSError, PdfEvidenceError) as exc:
             print(f"tensorbench: error: {exc}", file=sys.stderr)
             return 2
 
