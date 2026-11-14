@@ -63,3 +63,10 @@ def test_requires_explicit_criterion_mapping(tmp_path):
     bundle, report, report_path, _ = _fixture(tmp_path)
     with pytest.raises(AchievementInputError, match="unknown criterion"):
         attach_isolated_run(bundle, report, report_path=report_path, test_id="r", criterion_ids=["unknown"])
+
+
+def test_rejects_report_object_not_matching_report_file(tmp_path):
+    bundle, report, report_path, _ = _fixture(tmp_path)
+    report["status"] = "failed"
+    with pytest.raises(AchievementInputError, match="does not match"):
+        attach_isolated_run(bundle, report, report_path=report_path, test_id="r", criterion_ids=["C1"])
