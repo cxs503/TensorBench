@@ -6,10 +6,10 @@ import json
 import sys
 from pathlib import Path
 
+from .achievement import AchievementInputError, evaluate_file
+from .business_evidence import BusinessEvidenceError, reconcile_file
 from .compare import compare_results, load_result
 from .contracts import ContractValidationError, validate_file
-from .business_evidence import BusinessEvidenceError, reconcile_file
-from .achievement import AchievementInputError, evaluate_file
 from .publish import (
     PlatformClient,
     build_capability_delta,
