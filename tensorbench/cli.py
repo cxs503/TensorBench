@@ -10,6 +10,7 @@ from .achievement import AchievementInputError, evaluate_file
 from .mission_evidence import evaluate_mission_snapshot
 from .live_mission import collect_mission_snapshot
 from .isolated_runner import IsolatedRunError, run_isolated_tests
+from .isolated_evidence import attach_isolated_run_files
 from .business_evidence import BusinessEvidenceError, reconcile_file
 from .business_pdf_fields import (
     PdfFieldProposalError,
@@ -75,6 +76,15 @@ def build_parser() -> argparse.ArgumentParser:
     reverify_parser.add_argument("--output", help="Optional execution report JSON path")
     reverify_parser.add_argument("--log-dir", required=True, help="New or empty directory to retain full stdout/stderr logs")
     reverify_parser.add_argument("test_argv", nargs=argparse.REMAINDER, help="Command argv after --")
+
+    attach_parser = subparsers.add_parser(
+        "attach-isolated-run", help="verify and attach isolated execution logs to selected acceptance criteria"
+    )
+    attach_parser.add_argument("--bundle", required=True, help="Mission evidence bundle JSON")
+    attach_parser.add_argument("--report", required=True, help="Isolated execution report JSON")
+    attach_parser.add_argument("--test-id", required=True, help="Stable test evidence ID")
+    attach_parser.add_argument("--criterion-id", action="append", required=True, help="Acceptance criterion ID; repeat for multiple criteria")
+    attach_parser.add_argument("--output", required=True, help="Output evidence bundle JSON")
 
     business_parser = subparsers.add_parser(
         "reconcile-business", help="reconcile normalized contract/PO/delivery/invoice records"
@@ -335,6 +345,18 @@ def main() -> int:
             print(rendered)
             return 0 if report["status"] == "passed" else 1
         except (OSError, ValueError, IsolatedRunError) as exc:
+            print(f"tensorbench: error: {exc}", file=sys.stderr)
+            return 2
+
+    if args.command == "attach-isolated-run":
+        try:
+            result = attach_isolated_run_files(
+                args.bundle, args.report, test_id=args.test_id,
+                criterion_ids=args.criterion_id, output_path=args.output,
+            )
+            print(json.dumps({"output": args.output, "tests": len(result["tests"]), "artifacts": len(result["artifacts"])}, indent=2))
+            return 0
+        except (OSError, json.JSONDecodeError, ValueError) as exc:
             print(f"tensorbench: error: {exc}", file=sys.stderr)
             return 2
 
