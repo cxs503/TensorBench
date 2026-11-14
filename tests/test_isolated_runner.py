@@ -72,7 +72,7 @@ def test_rejects_revision_mismatch(tmp_path, monkeypatch):
     with pytest.raises(isolated_runner.IsolatedRunError, match="revision mismatch"):
         isolated_runner.run_isolated_tests(
             checkout_path=repo, expected_revision=SHA, image=IMAGE,
-            command=["pytest", "-q"],
+            command=["pytest", "-q"], log_dir=tmp_path / "logs",
         )
 
 
