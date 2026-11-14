@@ -9,6 +9,7 @@ from datetime import datetime, timezone
 from decimal import Decimal, InvalidOperation
 import hashlib
 import json
+import re
 from pathlib import Path
 from typing import Any
 
@@ -66,8 +67,15 @@ def reconcile_bundle(bundle: Any, *, tolerance: str = "0.01") -> dict[str, Any]:
     deliveries = [doc for doc in docs if doc["document_type"] == "delivery"]
 
     evidence_refs: list[str] = []
+    source_metadata_missing = []
     for doc in docs:
-        ref = doc.get("evidence_ref") or f"document:{doc['doc_id']}"
+        source_ref = doc.get("source_ref")
+        digest = str(doc.get("sha256") or "")
+        if not source_ref or not re.fullmatch(r"[a-fA-F0-9]{64}", digest):
+            source_metadata_missing.append(doc)
+        ref = doc.get("evidence_ref") or (
+            f"document:{doc['doc_id']}:sha256:{digest}" if digest else f"document:{doc['doc_id']}"
+        )
         evidence_refs.append(ref)
 
     checks: list[dict[str, Any]] = []
@@ -97,6 +105,15 @@ def reconcile_bundle(bundle: Any, *, tolerance: str = "0.01") -> dict[str, Any]:
                 "review_state": "unreviewed",
                 "limitations": ["Finding is a document discrepancy signal, not a fraud or legal conclusion."],
             })
+
+    if source_metadata_missing:
+        for doc in source_metadata_missing:
+            add("source.provenance", "inconclusive",
+                f"{doc['doc_id']} lacks a source_ref or valid SHA-256 content fingerprint.",
+                docs_involved=[doc])
+    else:
+        add("source.provenance", "passed",
+            "Every document has a source reference and a valid SHA-256 content fingerprint.")
 
     # 1. Document-level arithmetic.
     arithmetic_errors: list[tuple[dict[str, Any], str]] = []
@@ -184,13 +201,14 @@ def reconcile_bundle(bundle: Any, *, tolerance: str = "0.01") -> dict[str, Any]:
 
     # 3. Delivery quantity against invoice quantity.
     delivery_errors = []
+    delivery_unresolved = []
     for invoice in invoices:
         delivery_ref = invoice.get("delivery_ref")
         if not delivery_ref:
             continue
         delivery = by_id.get(str(delivery_ref))
         if delivery is None or delivery["document_type"] != "delivery":
-            unresolved.append((invoice, f"delivery reference {delivery_ref!r} cannot be resolved"))
+            delivery_unresolved.append((invoice, f"delivery reference {delivery_ref!r} cannot be resolved"))
             continue
         delivered = {
             str(item.get("sku")): _decimal(item.get("accepted_quantity", item.get("quantity")))
@@ -206,7 +224,10 @@ def reconcile_bundle(bundle: Any, *, tolerance: str = "0.01") -> dict[str, Any]:
     for invoice, delivery, message in delivery_errors:
         add("invoice.delivery_quantity", "failed", message, severity="high",
             docs_involved=[invoice, delivery])
-    if not delivery_errors:
+    for invoice, message in delivery_unresolved:
+        add("invoice.delivery_quantity", "inconclusive", message,
+            required=False, docs_involved=[invoice])
+    if not delivery_errors and not delivery_unresolved:
         add("invoice.delivery_quantity", "passed",
             "No invoice quantity exceeds a linked accepted-delivery quantity.", required=False)
 
