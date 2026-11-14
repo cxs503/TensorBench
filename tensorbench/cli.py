@@ -44,7 +44,16 @@ def build_parser() -> argparse.ArgumentParser:
     business_parser.add_argument("--output", help="Optional validation-report JSON path")
     business_parser.add_argument("--tolerance", default="0.01", help="Decimal currency tolerance")
 
-    pdf_parser = subparsers.add_parser(\n        "extract-pdf", help="extract page-addressable PDF text evidence (no OCR)"\n    )\n    pdf_parser.add_argument("--input", required=True, help="Source PDF file")\n    pdf_parser.add_argument("--source-ref", required=True, help="Stable source-system reference")\n    pdf_parser.add_argument("--output", help="Optional page-evidence JSON path")\n    pdf_parser.add_argument("--max-bytes", type=int, default=50 * 1024 * 1024)\n    pdf_parser.add_argument("--max-pages", type=int, default=1000)\n\n    run_parser = subparsers.add_parser("run", help="run one local benchmark spec")
+    pdf_parser = subparsers.add_parser(
+        "extract-pdf", help="extract page-addressable PDF text evidence (no OCR)"
+    )
+    pdf_parser.add_argument("--input", required=True, help="Source PDF file")
+    pdf_parser.add_argument("--source-ref", required=True, help="Stable source-system reference")
+    pdf_parser.add_argument("--output", help="Optional page-evidence JSON path")
+    pdf_parser.add_argument("--max-bytes", type=int, default=50 * 1024 * 1024)
+    pdf_parser.add_argument("--max-pages", type=int, default=1000)
+
+    run_parser = subparsers.add_parser("run", help="run one local benchmark spec")
     run_parser.add_argument("--spec", required=True, help="Path to benchmark specification JSON")
     run_parser.add_argument("--output", default="tensorbench-runs", help="Evidence output directory")
     run_parser.add_argument("--project", help="Implementation project name override")
@@ -100,7 +109,8 @@ def _cmd_compare(args: argparse.Namespace) -> int:
     )
     text = json.dumps(comparison, indent=2, ensure_ascii=False)
     if args.output:
-        Path(args.output).write_text(text + "\n", encoding="utf-8")
+        Path(args.output).write_text(text + "
+", encoding="utf-8")
     print(text)
     return 0
 
@@ -125,7 +135,8 @@ def _cmd_publish(args: argparse.Namespace) -> int:
     if comparison is not None:
         comparison_path = output / f"{result['run_id']}.comparison.json"
         comparison_path.write_text(
-            json.dumps(comparison, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
+            json.dumps(comparison, indent=2, ensure_ascii=False) + "
+", encoding="utf-8"
         )
 
     refs = default_artifact_refs(result_path, comparison_path)
@@ -154,7 +165,8 @@ def _cmd_publish(args: argparse.Namespace) -> int:
         )
 
     bundle_path = output / f"{result['run_id']}.publish.json"
-    bundle_path.write_text(json.dumps(bundle, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    bundle_path.write_text(json.dumps(bundle, indent=2, ensure_ascii=False) + "
+", encoding="utf-8")
     print(f"tensorbench: wrote {bundle_path}", file=sys.stderr)
 
     if not args.post:
@@ -181,7 +193,8 @@ def main() -> int:
             result = evaluate_file(args.input)
             rendered = json.dumps(result, indent=2, ensure_ascii=False)
             if args.output:
-                Path(args.output).write_text(rendered + "\n", encoding="utf-8")
+                Path(args.output).write_text(rendered + "
+", encoding="utf-8")
             print(rendered)
             return 0 if result["overall_status"] == "passed" else 1
         except (OSError, json.JSONDecodeError, AchievementInputError) as exc:
@@ -193,19 +206,37 @@ def main() -> int:
             result = reconcile_file(args.input, tolerance=args.tolerance)
             rendered = json.dumps(result, indent=2, ensure_ascii=False)
             if args.output:
-                Path(args.output).write_text(rendered + "\n", encoding="utf-8")
+                Path(args.output).write_text(rendered + "
+", encoding="utf-8")
             print(rendered)
             return 0 if result["overall_status"] == "passed" else 1
         except (OSError, json.JSONDecodeError, BusinessEvidenceError) as exc:
             print(f"tensorbench: error: {exc}", file=sys.stderr)
             return 2
 
-    if args.command == "extract-pdf":\n        try:\n            result = extract_pdf_file(\n                args.input, source_ref=args.source_ref,\n                max_bytes=args.max_bytes, max_pages=args.max_pages,\n            )\n            rendered = json.dumps(result, indent=2, ensure_ascii=False)\n            if args.output:\n                Path(args.output).write_text(rendered + "\\n", encoding="utf-8")\n            print(rendered)\n            return 0 if result["status"] == "complete" else 1\n        except (OSError, PdfEvidenceError) as exc:\n            print(f"tensorbench: error: {exc}", file=sys.stderr)\n            return 2\n\n    if args.command == "validate":
+    if args.command == "extract-pdf":
+        try:
+            result = extract_pdf_file(
+                args.input, source_ref=args.source_ref,
+                max_bytes=args.max_bytes, max_pages=args.max_pages,
+            )
+            rendered = json.dumps(result, indent=2, ensure_ascii=False)
+            if args.output:
+                Path(args.output).write_text(rendered + "\
+", encoding="utf-8")
+            print(rendered)
+            return 0 if result["status"] == "complete" else 1
+        except (OSError, PdfEvidenceError) as exc:
+            print(f"tensorbench: error: {exc}", file=sys.stderr)
+            return 2
+
+    if args.command == "validate":
         try:
             result = validate_file(args.kind, args.input)
             rendered = json.dumps(result, indent=2, ensure_ascii=False)
             if args.output:
-                Path(args.output).write_text(rendered + "\n", encoding="utf-8")
+                Path(args.output).write_text(rendered + "
+", encoding="utf-8")
             print(rendered)
             return 0 if result["status"] == "valid" else 1
         except (OSError, json.JSONDecodeError, ContractValidationError) as exc:
