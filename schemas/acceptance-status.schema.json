@@ -1,0 +1,181 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tensorbench.dev/schemas/acceptance-status.schema.json",
+  "title": "TensorBench four-product acceptance status (STATUS.json v2)",
+  "description": "Machine-readable acceptance status for the four product lines AE/RA/BE/PV. Validates products/STATUS.json v2.0.0 and binds the two independent state fields (code_implemented, scenario_validated) to the evidence that may justify them. Scenario_validated=true is only admissible with a recorded validation report and an independent review receipt; the cross-field rules live in tensorbench/contracts.py.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "as_of",
+    "purpose",
+    "field_definitions",
+    "release_rule",
+    "products"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "2.0.0"
+    },
+    "as_of": {
+      "type": "string",
+      "format": "date"
+    },
+    "purpose": {
+      "type": "string",
+      "minLength": 20
+    },
+    "field_definitions": {
+      "type": "object",
+      "required": [
+        "code_implemented",
+        "scenario_validated"
+      ],
+      "properties": {
+        "code_implemented": {
+          "type": "string"
+        },
+        "scenario_validated": {
+          "type": "string"
+        },
+        "not_implemented": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "release_rule": {
+      "type": "string",
+      "minLength": 20
+    },
+    "acceptance_framework": {
+      "type": "string",
+      "description": "Path to the scenario acceptance framework document this status file is produced under."
+    },
+    "mission_baseline_reconciliation": {
+      "type": "object",
+      "properties": {
+        "asserted_by_mission": {
+          "type": "object"
+        },
+        "reconciled": {
+          "type": "object"
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 20
+        }
+      },
+      "additionalProperties": true
+    },
+    "products": {
+      "type": "array",
+      "minItems": 4,
+      "items": {
+        "$ref": "#/$defs/product"
+      }
+    },
+    "evidence_index": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "product": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "name",
+        "repository",
+        "code_implemented",
+        "scenario_validated",
+        "next_gate"
+      ],
+      "properties": {
+        "id": {
+          "enum": ["AE", "RA", "BE", "PV"]
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "repository": {
+          "type": "string",
+          "pattern": "^[^/]+/[^/]+$"
+        },
+        "code_implemented": {
+          "type": "boolean"
+        },
+        "scenario_validated": {
+          "type": "boolean"
+        },
+        "implemented_evidence": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "not_implemented_or_unverified": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "acceptance_evidence": {
+          "$ref": "#/$defs/acceptanceEvidence",
+          "description": "Populated only when a scenario run exists. Null references mean no scenario run has been recorded, which forces scenario_validated=false."
+        },
+        "next_gate": {
+          "type": "string",
+          "minLength": 10
+        },
+        "external_partial_state": {
+          "type": "string"
+        },
+        "baseline_note": {
+          "type": "string"
+        }
+      }
+    },
+    "acceptanceEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "validation_report_ref",
+        "review_receipt_ref"
+      ],
+      "properties": {
+        "scenario_id": {
+          "type": ["string", "null"]
+        },
+        "validation_report_ref": {
+          "type": ["string", "null"],
+          "description": "Path or URI of the retained validation report emitted for the scenario run."
+        },
+        "review_receipt_ref": {
+          "type": ["string", "null"],
+          "description": "Path or URI of the independent review receipt (validation-report.schema.json#/$defs/reviewReceipt)."
+        },
+        "criteria_sha256": {
+          "oneOf": [
+            { "$ref": "#/$defs/sha256" },
+            { "type": "null" }
+          ]
+        },
+        "reviewed_commit": {
+          "type": ["string", "null"]
+        },
+        "verdict": {
+          "enum": ["pass", "fail", "changes_requested", "escalate", null]
+        }
+      }
+    }
+  }
+}

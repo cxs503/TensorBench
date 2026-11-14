@@ -1,0 +1,179 @@
+{
+  "baseline_commit": "adf6d025a1deb914bef7225911e1d89e26522a95",
+  "deliverable_grades": [
+    [
+      "1 scenario spec",
+      "P",
+      "R"
+    ],
+    [
+      "2 criteria freeze",
+      "P",
+      "R"
+    ],
+    [
+      "3 evidence reqs",
+      "R",
+      "R"
+    ],
+    [
+      "4 review receipt",
+      "P",
+      "R"
+    ],
+    [
+      "5 acceptance status",
+      "P",
+      "R"
+    ],
+    [
+      "6 failure/regression",
+      "G",
+      "C"
+    ]
+  ],
+  "bypass_attempts": 16,
+  "bypass_rejected": 16,
+  "bypass_rejection_rate": 1.0,
+  "control_case_accepted": true,
+  "honest_claim_accepted": true,
+  "status_file_valid": true,
+  "all_cases_as_expected": true,
+  "cases": [
+    {
+      "case": "control: unit report, no claim",
+      "kind": "report",
+      "errors": [],
+      "as_expected": true
+    },
+    {
+      "case": "claim without receipt",
+      "kind": "report",
+      "errors": [
+        "scenario acceptance requires review_receipt: an unreviewed run is not a validated scenario"
+      ],
+      "as_expected": true
+    },
+    {
+      "case": "claim without freeze",
+      "kind": "report",
+      "errors": [
+        "scenario acceptance requires criteria_freeze: criteria must be declared before the run"
+      ],
+      "as_expected": true
+    },
+    {
+      "case": "self review",
+      "kind": "report",
+      "errors": [
+        "review_receipt verdict cannot be pass: independence=self_review cannot authorise acceptance"
+      ],
+      "as_expected": true
+    },
+    {
+      "case": "author signs own gate",
+      "kind": "report",
+      "errors": [
+        "review_receipt verdict cannot be pass: an author cannot sign the acceptance gate"
+      ],
+      "as_expected": true
+    },
+    {
+      "case": "six-check skipped",
+      "kind": "report",
+      "errors": [
+        "review_receipt verdict cannot be pass: six_checks not passed: independent_rerun"
+      ],
+      "as_expected": true
+    },
+    {
+      "case": "rerun failed",
+      "kind": "report",
+      "errors": [
+        "review_receipt verdict cannot be pass: reviewer rerun exit_code is not 0"
+      ],
+      "as_expected": true
+    },
+    {
+      "case": "undeclared-unknown declared",
+      "kind": "report",
+      "errors": [
+        "review_receipt verdict cannot be pass: checks_not_run is not empty"
+      ],
+      "as_expected": true
+    },
+    {
+      "case": "failing verdict as pass",
+      "kind": "report",
+      "errors": [
+        "overall_status cannot be passed: review_receipt verdict is changes_requested"
+      ],
+      "as_expected": true
+    },
+    {
+      "case": "quarantined inputs",
+      "kind": "report",
+      "errors": [
+        "overall_status cannot be passed: scenario inputs are quarantined (rights unknown)"
+      ],
+      "as_expected": true
+    },
+    {
+      "case": "synthetic as scenario",
+      "kind": "report",
+      "errors": [
+        "overall_status cannot be passed: synthetic_labelled inputs are admissible for adversarial/regression runs only, never as scenario validation"
+      ],
+      "as_expected": true
+    },
+    {
+      "case": "freeze after run",
+      "kind": "report",
+      "errors": [
+        "criteria_freeze.frozen_at is later than report.created_at: criteria were not frozen before the run"
+      ],
+      "as_expected": true
+    },
+    {
+      "case": "post-run widening",
+      "kind": "report",
+      "errors": [
+        "criteria were amended after the run started (tolerance): the frozen criteria do not cover this run"
+      ],
+      "as_expected": true
+    },
+    {
+      "case": "unfingerprinted input",
+      "kind": "report",
+      "errors": [
+        "scenario/inputs/0: 'sha256' is a required property"
+      ],
+      "as_expected": true
+    },
+    {
+      "case": "status claim without evidence",
+      "kind": "status",
+      "errors": [
+        "AE: scenario_validated=true requires acceptance_evidence.review_receipt_ref",
+        "AE: scenario_validated=true requires acceptance_evidence.validation_report_ref"
+      ],
+      "as_expected": true
+    },
+    {
+      "case": "validated line without code",
+      "kind": "status",
+      "errors": [
+        "RA: scenario_validated=true requires code_implemented=true (a scenario cannot run code that does not exist)"
+      ],
+      "as_expected": true
+    },
+    {
+      "case": "pass verdict, claim off",
+      "kind": "status",
+      "errors": [
+        "BE: a passing acceptance verdict must set scenario_validated=true"
+      ],
+      "as_expected": true
+    }
+  ]
+}

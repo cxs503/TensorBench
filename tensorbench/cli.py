@@ -41,9 +41,11 @@ def build_parser() -> argparse.ArgumentParser:
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     validate_parser = subparsers.add_parser(
-        "validate", help="validate an evidence, report or asset contract JSON file"
+        "validate", help="validate an evidence, report, asset or status contract JSON file"
     )
-    validate_parser.add_argument("--kind", choices=("evidence", "report", "asset"), required=True)
+    validate_parser.add_argument(
+        "--kind", choices=("evidence", "report", "asset", "status"), required=True
+    )
     validate_parser.add_argument("--input", required=True, help="Contract JSON file")
     validate_parser.add_argument("--output", help="Optional validation-result JSON path")
 

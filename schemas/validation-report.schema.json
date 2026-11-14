@@ -1,6 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "TensorBench Validation Report",
+  "description": "Report emitted by any product line (AE/RA/BE/PV). A product-internal check report need not carry scenario/criteria-freeze/review-receipt blocks; a report that stands as a scenario_validated acceptance claim must. Runtime semantics in tensorbench/contracts.py enforce that binding.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -219,6 +220,317 @@
       "items": {
         "type": "string",
         "minLength": 1
+      }
+    },
+    "scenario": {
+      "$ref": "#/$defs/scenario",
+      "description": "Scenario specification. Present only when this report stands as a real-scenario acceptance claim; its presence obliges criteria_freeze and review_receipt (enforced at runtime)."
+    },
+    "criteria_freeze": {
+      "$ref": "#/$defs/criteriaFreeze"
+    },
+    "review_receipt": {
+      "$ref": "#/$defs/reviewReceipt"
+    }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "commitSha": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$|^[0-9a-f]{64}$"
+    },
+    "scenario": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "What real-world situation this run stands for: real inputs with fingerprints plus an explicit usage declaration. Unit-test inputs are not a scenario.",
+      "required": [
+        "scenario_id",
+        "usage_declaration",
+        "inputs",
+        "permission_basis"
+      ],
+      "properties": {
+        "scenario_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "usage_declaration": {
+          "type": "string",
+          "minLength": 20,
+          "description": "Which real workflow this run substitutes for, and what a passing verdict is therefore claimed to mean. Kept prose on purpose: it cannot be derived from output."
+        },
+        "inputs": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "input_id",
+              "kind",
+              "ref",
+              "sha256"
+            ],
+            "properties": {
+              "input_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "kind": {
+                "enum": [
+                  "document",
+                  "dataset",
+                  "code_revision",
+                  "mission",
+                  "run_output",
+                  "table",
+                  "url_snapshot"
+                ]
+              },
+              "ref": {
+                "type": "string",
+                "minLength": 1
+              },
+              "sha256": {
+                "$ref": "#/$defs/sha256"
+              },
+              "locator": {
+                "type": "string",
+                "description": "Page/line/JSONPath/cell/time-range locator inside the input."
+              },
+              "permission_ref": {
+                "type": "string",
+                "description": "Reference to the recorded permission/consent/licence basis for this specific input."
+              }
+            }
+          }
+        },
+        "permission_basis": {
+          "enum": [
+            "public",
+            "licensed",
+            "internal_consent",
+            "synthetic_labelled",
+            "quarantined"
+          ],
+          "description": "synthetic_labelled is admissible for adversarial/regression runs only and must never be presented as customer evidence; quarantined inputs cannot support a pass."
+        },
+        "environment": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "limits": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Where the verdict stops applying (scope of the scenario, data regime, version range)."
+        }
+      }
+    },
+    "criteriaFreeze": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Proof the acceptance criteria were declared before the run and not widened afterwards.",
+      "required": [
+        "criteria_ref",
+        "criteria_sha256",
+        "frozen_at",
+        "frozen_by"
+      ],
+      "properties": {
+        "criteria_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "criteria_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "frozen_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "frozen_by": {
+          "type": "string",
+          "minLength": 1
+        },
+        "spec_ref": {
+          "type": "string"
+        },
+        "amendments": {
+          "type": "array",
+          "description": "Post-freeze changes. Any amendment invalidates the freeze for runs created before amend_at.",
+          "items": {
+            "type": "object",
+            "required": ["field", "reason", "amend_at"],
+            "properties": {
+              "field": {
+                "type": "string"
+              },
+              "reason": {
+                "type": "string"
+              },
+              "amend_at": {
+                "type": "string",
+                "format": "date-time"
+              }
+            },
+            "additionalProperties": true
+          }
+        }
+      }
+    },
+    "reviewReceipt": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Independent review receipt. Reviewer identity, the six checks that must be performed by re-execution rather than by reading the author's summary, the PASS/FAIL verdict and the blocking conditions.",
+      "required": [
+        "reviewer",
+        "independence",
+        "reviewed_commit",
+        "six_checks",
+        "rerun",
+        "checks_not_run",
+        "blocking_conditions",
+        "verdict",
+        "signed_at"
+      ],
+      "properties": {
+        "receipt_id": {
+          "type": "string"
+        },
+        "reviewer": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["handle", "role"],
+          "properties": {
+            "handle": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Reviewing agent/mission or person identity."
+            },
+            "role": {
+              "enum": [
+                "independent_qa",
+                "domain_expert",
+                "product_owner",
+                "author"
+              ]
+            },
+            "affiliation": {
+              "type": "string"
+            },
+            "conflicts_declared": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "independence": {
+          "enum": [
+            "independent_party",
+            "same_owner",
+            "self_review"
+          ],
+          "description": "self_review and same_owner receipts are recorded but can never produce a passing scenario_validated claim."
+        },
+        "reviewed_commit": {
+          "$ref": "#/$defs/commitSha"
+        },
+        "six_checks": {
+          "type": "array",
+          "description": "The six independent checks (m20192 paradigm). All six must be passed for verdict=pass; a not_run check cannot be read as pass.",
+          "minItems": 6,
+          "maxItems": 6,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["check_id", "state", "evidence_ref"],
+            "properties": {
+              "check_id": {
+                "enum": [
+                  "artifact_identity",
+                  "criteria_frozen_before_run",
+                  "evidence_traceability",
+                  "independent_rerun",
+                  "failure_record",
+                  "regression_scope"
+                ]
+              },
+              "state": {
+                "enum": ["passed", "failed", "not_run"]
+              },
+              "evidence_ref": {
+                "type": "string",
+                "minLength": 1
+              },
+              "note": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "rerun": {
+          "type": "object",
+          "additionalProperties": false,
+          "description": "The reviewer's own execution, not the author's. Re-reading a log is not a rerun.",
+          "required": ["command", "exit_code", "environment"],
+          "properties": {
+            "command": {
+              "type": "string",
+              "minLength": 1
+            },
+            "exit_code": {
+              "type": "integer"
+            },
+            "environment": {
+              "type": "string",
+              "minLength": 1
+            },
+            "log_ref": {
+              "type": "string"
+            },
+            "log_sha256": {
+              "$ref": "#/$defs/sha256"
+            },
+            "started_at": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        },
+        "checks_performed": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "checks_not_run": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Explicitly unknown. Must be empty for a pass."
+        },
+        "blocking_conditions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Reasons the run must not be accepted. Non-empty implies verdict != pass."
+        },
+        "verdict": {
+          "enum": ["pass", "fail", "changes_requested", "escalate"]
+        },
+        "signed_at": {
+          "type": "string",
+          "format": "date-time"
+        }
       }
     }
   }
