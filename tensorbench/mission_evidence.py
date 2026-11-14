@@ -262,18 +262,21 @@ def build_mission_evidence_bundle(snapshot: Mapping[str, Any]) -> dict[str, Any]
 
 
 def evaluate_mission_snapshot(snapshot: Mapping[str, Any]) -> dict[str, Any]:
-    """Build and evaluate a snapshot; non-succeeded missions cannot pass."""
+    """Evaluate completed candidates; owner approval may still be pending."""
     bundle = build_mission_evidence_bundle(snapshot)
     report = evaluate_work_package(bundle)
     mission_status = str(bundle["mission"].get("status") or "").lower()
-    if mission_status != "succeeded":
+    if mission_status not in {"succeeded", "awaiting_acceptance"}:
         report["checks"].append({
             "check_id": "mission.status",
             "version": "0.1.0",
             "method": "deterministic_rule",
             "state": "inconclusive",
             "required": True,
-            "details": f"Mission status is {mission_status or 'missing'}, not succeeded.",
+            "details": (
+                f"Mission status is {mission_status or 'missing'}; expected a completed "
+                "candidate (awaiting_acceptance or succeeded)."
+            ),
         })
         report["overall_status"] = "failed" if report["overall_status"] == "failed" else "inconclusive"
     report["summary"]["mission_id"] = bundle["mission"]["mission_id"]
