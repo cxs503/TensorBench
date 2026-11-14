@@ -151,3 +151,20 @@ Do not add third-party benchmark suites, datasets, papers, model weights, or ref
 ## License
 
 The TensorBench software and project-authored documentation are licensed under Apache-2.0. See [LICENSE](LICENSE) and [LICENSE_SCOPE.md](LICENSE_SCOPE.md) for the scope and exclusions.
+
+### Independent test re-verification
+
+A reviewer can re-run a selected test command against an exact clean checkout in a
+pre-pulled OCI image pinned by digest:
+
+```bash
+tensorbench reverify-tests \\
+  --checkout ./worktrees/TensorLBM \\
+  --revision <full-commit-sha> \\
+  --image registry.example/tensorbench-runner@sha256:<64-hex-digest> \\
+  -- python -m pytest -q
+```
+
+The runner is network-disabled, mounts the checkout read-only, drops capabilities,
+and records execution metadata plus stdout/stderr hashes. Rootless Podman on a
+dedicated host is preferred. See [Independent Isolated Test Runner](docs/INDEPENDENT_ISOLATED_TEST_RUNNER.md).
