@@ -8,6 +8,7 @@ from pathlib import Path
 
 from .achievement import AchievementInputError, evaluate_file
 from .mission_evidence import evaluate_mission_snapshot
+from .live_mission import collect_mission_snapshot
 from .business_evidence import BusinessEvidenceError, reconcile_file
 from .business_pdf_fields import (
     PdfFieldProposalError,
@@ -50,6 +51,14 @@ def build_parser() -> argparse.ArgumentParser:
     )
     mission_parser.add_argument("--input", required=True, help="JSON snapshot with mission, pull_request and checks")
     mission_parser.add_argument("--output", help="Optional bundle + evaluation report JSON path")
+
+    collect_parser = subparsers.add_parser(
+        "collect-mission", help="fetch one TensorPlatform Mission and its exact-commit GitHub evidence"
+    )
+    collect_parser.add_argument("--mission-id", type=int, required=True)
+    collect_parser.add_argument("--platform-api-base", default=None, help="Defaults to TENSORPLATFORM_API_BASE")
+    collect_parser.add_argument("--github-owner", default="cxs503")
+    collect_parser.add_argument("--output", help="Optional raw snapshot + evaluation JSON path")
 
     business_parser = subparsers.add_parser(
         "reconcile-business", help="reconcile normalized contract/PO/delivery/invoice records"
@@ -280,7 +289,31 @@ def main() -> int:
             result = evaluate_mission_snapshot(snapshot)
             rendered = json.dumps(result, indent=2, ensure_ascii=False)
             if args.output:
-                Path(args.output).write_text(rendered + "\\n", encoding="utf-8")
+                Path(args.output).write_text(rendered + "\n", encoding="utf-8")
+            print(rendered)
+            return 0 if result["report"]["overall_status"] == "passed" else 1
+        except (OSError, json.JSONDecodeError, ValueError) as exc:
+            print(f"tensorbench: error: {exc}", file=sys.stderr)
+            return 2
+
+    if args.command == "collect-mission":
+        try:
+            import os
+            api_base = args.platform_api_base or os.environ.get("TENSORPLATFORM_API_BASE")
+            if not api_base:
+                raise AchievementInputError("set --platform-api-base or TENSORPLATFORM_API_BASE")
+            snapshot = collect_mission_snapshot(
+                platform_api_base=api_base,
+                mission_id=args.mission_id,
+                github_owner=args.github_owner,
+                platform_token=os.environ.get("TENSORPLATFORM_TOKEN"),
+                github_token=os.environ.get("GITHUB_TOKEN"),
+            )
+            result = evaluate_mission_snapshot(snapshot)
+            output = {"snapshot": snapshot, **result}
+            rendered = json.dumps(output, indent=2, ensure_ascii=False)
+            if args.output:
+                Path(args.output).write_text(rendered + "\n", encoding="utf-8")
             print(rendered)
             return 0 if result["report"]["overall_status"] == "passed" else 1
         except (OSError, json.JSONDecodeError, ValueError) as exc:
