@@ -63,32 +63,20 @@ def _semantic_errors(kind: str, payload: dict[str, Any]) -> list[str]:
                 "overall_status cannot be passed: required checks unresolved: "
                 + ", ".join(unresolved_required)
             )
-        evidence_ids = {
-            item.get("evidence_id")
-            for item in payload.get("evidence_items", [])
-            if isinstance(item, dict)
-        }
-        # Reports may reference evidence stored in an external immutable store.
-        # If evidence_items is supplied inline, however, every reference must resolve.
-        if "evidence_items" in payload:
+        if "evidence_refs" in payload:
+            known_refs = set(payload["evidence_refs"])
             for finding in findings:
                 for ref in finding.get("evidence_refs", []):
-                    if ref not in evidence_ids:
+                    if ref not in known_refs:
                         errors.append(
                             f"finding {finding.get('finding_id', '<unknown>')} "
-                            f"references missing evidence {ref!r}"
+                            f"references evidence {ref!r} absent from report.evidence_refs"
                         )
                 for ref in finding.get("counter_evidence_refs", []):
-                    if ref not in evidence_ids:
+                    if ref not in known_refs:
                         errors.append(
                             f"finding {finding.get('finding_id', '<unknown>')} "
-                            f"references missing counter-evidence {ref!r}"
-                        )
-            for item in payload.get("evidence_items", []):
-                if isinstance(item, dict) and item.get("sha256"):
-                    if len(item["sha256"]) != 64:
-                        errors.append(
-                            f"evidence {item.get('evidence_id', '<unknown>')} has invalid SHA-256 length"
+                            f"references counter-evidence {ref!r} absent from report.evidence_refs"
                         )
     elif kind == "asset":
         maturity = payload.get("maturity")
