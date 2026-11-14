@@ -123,3 +123,19 @@ def test_runtime_validator_rejects_adopted_asset_with_unknown_rights():
     }
     errors = validate_payload("asset", asset)
     assert any("cannot be A4_adopted" in error for error in errors)
+
+
+def test_runtime_validator_requires_findings_to_resolve_evidence_refs():
+    report = _valid_report()
+    report["evidence_refs"] = ["evidence://ev-1"]
+    report["findings"] = [{
+        "finding_id": "finding-1",
+        "check_id": "tests-executed",
+        "status": "confirmed",
+        "severity": "high",
+        "summary": "A verified issue",
+        "evidence_refs": ["evidence://missing"],
+        "review_state": "unreviewed",
+    }]
+    errors = validate_payload("report", report)
+    assert any("absent from report.evidence_refs" in error for error in errors)
