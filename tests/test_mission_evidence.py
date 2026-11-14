@@ -151,3 +151,4 @@ def test_awaiting_acceptance_is_eligible_for_independent_evaluation():
     result = evaluate_mission_snapshot(snapshot)
     assert not any(check["check_id"] == "mission.status" for check in result["report"]["checks"])
     assert result["report"]["summary"]["mission_status"] == "awaiting_acceptance"
+    assert result["report"]["summary"]["owner_acceptance_pending"] is True
