@@ -165,7 +165,7 @@ def main() -> int:
             result = validate_file(args.kind, args.input)
             rendered = json.dumps(result, indent=2, ensure_ascii=False)
             if args.output:
-                Path(args.output).write_text(rendered + "\\n", encoding="utf-8")
+                Path(args.output).write_text(rendered + "\n", encoding="utf-8")
             print(rendered)
             return 0 if result["status"] == "valid" else 1
         except (OSError, json.JSONDecodeError, ContractValidationError) as exc:
