@@ -117,8 +117,14 @@ def reconcile_bundle(bundle: Any, *, tolerance: str = "0.01") -> dict[str, Any]:
 
     # 1. Document-level arithmetic.
     arithmetic_errors: list[tuple[dict[str, Any], str]] = []
+    arithmetic_unresolved: list[tuple[dict[str, Any], str]] = []
     for doc in docs:
         lines = doc.get("line_items")
+        if doc["document_type"] in {"purchase_order", "invoice"}:
+            if lines is None or not lines:
+                arithmetic_unresolved.append((doc, "line_items are missing or empty"))
+            if _decimal(doc.get("total_amount")) is None:
+                arithmetic_unresolved.append((doc, "total_amount is missing or not numeric"))
         if lines is None:
             continue
         if not isinstance(lines, list):
@@ -150,7 +156,10 @@ def reconcile_bundle(bundle: Any, *, tolerance: str = "0.01") -> dict[str, Any]:
     for doc, message in arithmetic_errors:
         add("document.arithmetic", "failed", f"{doc['doc_id']}: {message}",
             severity="high", docs_involved=[doc])
-    if not arithmetic_errors:
+    for doc, message in arithmetic_unresolved:
+        add("document.arithmetic", "inconclusive", f"{doc['doc_id']}: {message}",
+            docs_involved=[doc])
+    if not arithmetic_errors and not arithmetic_unresolved:
         add("document.arithmetic", "passed", "All supplied line-item arithmetic and document totals reconcile.")
 
     # 2. Invoice identifiers and PO matching.
@@ -179,13 +188,23 @@ def reconcile_bundle(bundle: Any, *, tolerance: str = "0.01") -> dict[str, Any]:
             unresolved.append((invoice, f"referenced purchase order {po_ref!r} is absent from this bundle"))
             continue
         fields = ("supplier_id", "buyer_id", "currency")
+        missing_fields = [
+            field for field in fields
+            if not invoice.get(field) or not po.get(field)
+        ]
+        if missing_fields:
+            unresolved.append((invoice, f"required comparison fields missing: {', '.join(missing_fields)}"))
+            continue
         mismatches = [
             f"{field}: invoice={invoice.get(field)!r}, PO={po.get(field)!r}"
             for field in fields
-            if invoice.get(field) and po.get(field) and invoice.get(field) != po.get(field)
+            if invoice.get(field) != po.get(field)
         ]
         inv_total, po_total = _decimal(invoice.get("total_amount")), _decimal(po.get("total_amount"))
-        if inv_total is not None and po_total is not None and abs(inv_total - po_total) > tol:
+        if inv_total is None or po_total is None:
+            unresolved.append((invoice, "invoice or PO total_amount is missing/non-numeric"))
+            continue
+        if abs(inv_total - po_total) > tol:
             mismatches.append(f"total_amount: invoice={_money(inv_total)}, PO={_money(po_total)}")
         if mismatches:
             match_errors.append((invoice, po, "; ".join(mismatches)))
@@ -226,7 +245,7 @@ def reconcile_bundle(bundle: Any, *, tolerance: str = "0.01") -> dict[str, Any]:
             docs_involved=[invoice, delivery])
     for invoice, message in delivery_unresolved:
         add("invoice.delivery_quantity", "inconclusive", message,
-            required=False, docs_involved=[invoice])
+            required=True, docs_involved=[invoice])
     if not delivery_errors and not delivery_unresolved:
         add("invoice.delivery_quantity", "passed",
             "No invoice quantity exceeds a linked accepted-delivery quantity.", required=False)
