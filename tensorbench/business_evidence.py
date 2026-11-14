@@ -245,7 +245,7 @@ def reconcile_bundle(bundle: Any, *, tolerance: str = "0.01") -> dict[str, Any]:
                 add("supplier.bank_account_change", "failed",
                     f"Bank account on {doc['doc_id']} differs from the supplied vendor master; "
                     "verify through an independent trusted channel.",
-                    required=False, severity="high", docs_involved=[doc])
+                    required=True, severity="high", docs_involved=[doc])
     if not bank_warnings:
         add("supplier.bank_account_change", "passed",
             "No bank-account difference found against the supplied vendor master.", required=False)
