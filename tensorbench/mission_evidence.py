@@ -281,6 +281,7 @@ def evaluate_mission_snapshot(snapshot: Mapping[str, Any]) -> dict[str, Any]:
         report["overall_status"] = "failed" if report["overall_status"] == "failed" else "inconclusive"
     report["summary"]["mission_id"] = bundle["mission"]["mission_id"]
     report["summary"]["mission_status"] = mission_status or None
+    report["summary"]["owner_acceptance_pending"] = mission_status == "awaiting_acceptance"
     report["summary"]["pull_request_number"] = bundle["mission"]["pull_request_number"]
     criteria_status = bundle["collection"]["acceptance_criteria_source"]
     criteria_integrity = bundle["collection"]["acceptance_criteria_integrity"]
