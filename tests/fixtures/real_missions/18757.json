@@ -1,0 +1,154 @@
+{
+  "schema_version": "1.0.0",
+  "kind": "tensorbench.evidence_bundle",
+  "mission_id": 18757,
+  "collected_at": "2026-11-14T09:19:19Z",
+  "collector": {
+    "name": "tensorbench",
+    "version": "0.1.0",
+    "mode": "live_read_only"
+  },
+  "platform": {
+    "api_base": "http://127.0.0.1:8010/api/v1",
+    "mission_endpoint": "/tensor/missions/18757",
+    "payload_sha256": "2b9a7118da8f1fb6f0d182c34e7b5f43062cdc60e5e3cdd12da9a2757552f141"
+  },
+  "mission": {
+    "id": 18757,
+    "repo": "TensorFVM",
+    "status": "succeeded",
+    "claimed_by": "tp-glm51-3",
+    "created_at": "2026-11-13T16:20:04.312047+00:00",
+    "finished_at": "2026-11-13T16:36:37.955450+00:00",
+    "goal": "【锚点=CASE-LAX】【自找活·tp-merge-2（generalist 席）】（owner 2026-11-01：全席饱和；2026-11-02 控仓令：自驱开发照常，绝不动 TensorPlatform）\n你是研究开发 agent，本单=你的自主工时（model 钉扎 deepseek-v4-flash，只有本席能领）。\n1) 扫描（全只读）：/root/tp-agent/proposals/ 提案池；GET /api/v1/tensor/reports?limit=20 的\n   「局限/待办」节；guide_tracker 缺口（/root/tp-agent/guide* 状态 json）；各仓未合并 PR；\n   以及本席上一张 selfstart-* 单的产出（防自我重复）；各仓缺口账\n   （backlog_*/expand_audit_*/dev_report_* 文件——求解器仓选题优先锚，先读账再选题）；\n2) 选定 1 件最有价值、可单干、不与在飞/近 24h 终态单重复的实质增量——优先「验证欠账」类\n   （把已合并功能对文献/解析基准复核），其次功能补全、失效测试补齐；\n   ★总账锚点纪律（owner 2026-11-09 不重复/不随机令）：选题前必对功能点总账——\n   runuser -u postgres -- psql -d tensorplatform -c \"SELECT slug,title,acceptance,status FROM feature_ledger WHERE status IN('planned','in_progress') ORDER BY status,slug\"\n   ★总账锚点纪律（owner 2026-11-09 不重复/不随机令）：本单锚点已由派发器按总账指派——见 goal 首行【锚点=...】（已填真实 slug，与 CASE-LAX 一致；标题：算例池·Lax 激波管）。直接认领该锚做实质增量；开工先核对：SELECT slug,title,acceptance,status FROM feature_ledger WHERE slug='CASE-LAX'；done/verified 状态不得重做，若你核对时发现该锚已被他单完成，改做 finish summary 中说明的次优项并在 summary 给出建议新条目（slug+量化验收+所属域），不要自行改写 goal 首行锚点值。\n3) 直接开工做完：测试绿 + 平台报告发布 + git commit 落盘（goal 首行自声明 EDIT_WHITELIST，\n   按所选仓常规路径 docs/, src/, tests/, examples/, outputs/）；\n4) 若该活超出单干范围：改为 POST /api/v1/tensor/missions 派单（body 必须显式含\n   \"runner\":\"native\"——表默认 openhands=无人领死单），并在 summary 说明拆分逻辑；\n5) finish summary：干了什么/证据指针（commit+报告 id）/给下次自找活的建议线索。\n容量纪律：重计算任务先看 /proc/loadavg（本机 nproc=128），load15 已 ≥100 时只做轻量\n（文档/测试/分析）活，不起新的重算力进程。\n仓白名单：TensorLBM/TensorDEM/TensorFEM/TensorFVM/TensorBEM/TensorSPH/TensorDG/TensorCAD/ship-performance-platform/TensorPapers。归仓口诀（详见 /root/tp-agent/AGENT_BOOTSTRAP.md ECOSYSTEM-MAP）：求解器→对应 Tensor* 库（当前主战场）；船舶→ship-performance-platform（本地私有仓）；论文素材→TensorPapers。TensorPlatform 平台开发已恢复战役化（2026-11-06 清场重建，owner 亲批亲并）：经战役单可做共性机制，但零领域语义（域词条/域判据/域算例禁硬编码，域数据经 API/配置注入，详见 AGENT_BOOTSTRAP.md ECOSYSTEM-MAP v2）。禁碰 GitHub 推送与 main 分支。honest FAIL 不得覆盖。",
+    "goal_sha256": "e1fa351d8df6ce2512df5f4fd81c8b28d3f1528c2ebe36995e7ee7b7db2a1b6f",
+    "result_sha256": "fed10291ccdb87210d84fa8c3c53bcbc687bed3db080a7cd7561cffa8278934d"
+  },
+  "pull_request": {
+    "number": 636,
+    "state": "closed",
+    "merged": true,
+    "merged_at": "2026-11-13T21:22:32Z",
+    "merge_commit_sha": "0a075ce83977b2bedd7992b38c7ba0a7e9a8f385",
+    "head_ref": "agent/m18757",
+    "head_sha": "8dc2bb2890d818d61e7a6825bfea3c3c1033f1d9",
+    "base_ref": "main",
+    "changed_files": 8,
+    "additions": 1296,
+    "deletions": 0,
+    "html_url": "https://github.com/cxs503/TensorFVM/pull/636",
+    "resolution": "branch_head"
+  },
+  "commit": {
+    "sha": "8dc2bb2890d818d61e7a6825bfea3c3c1033f1d9",
+    "source": "pull_request.head",
+    "matches_mission_head": "inconclusive"
+  },
+  "deliverables": [
+    {
+      "path": "docs/audit-CASE-LAX/AUDIT.md",
+      "status": "added",
+      "additions": 138,
+      "deletions": 0,
+      "blob_sha": "af01048744ac808b3c6343e7cebf21a5917a61aa",
+      "sha256": "7e4909bc236b42620bbae1184af1dda5d9f7e8ee854635bfd4c7aaa5199c2e46",
+      "bytes": 9751,
+      "origin": "github_contents@8dc2bb2890d818d61e7a6825bfea3c3c1033f1d9"
+    },
+    {
+      "path": "docs/audit-CASE-LAX/artifact.json",
+      "status": "added",
+      "additions": 345,
+      "deletions": 0,
+      "blob_sha": "af08fed90ddb4512ba0a37528318b77385d07cf5",
+      "sha256": "aa36390b5dc597aabfbb729da3d5eb2b0590611bd63d93dd3e1d0507be03c0ff",
+      "bytes": 8576,
+      "origin": "github_contents@8dc2bb2890d818d61e7a6825bfea3c3c1033f1d9"
+    },
+    {
+      "path": "docs/audit-CASE-LAX/fig_lax_criterion_margins.png",
+      "status": "added",
+      "additions": 0,
+      "deletions": 0,
+      "blob_sha": "a5418ffa99e0c679cef96bfc25769f569c4a5a21",
+      "sha256": "b85b71e7f5c7be2521ab9fe3592bd65904bc112e6aacedda6d5b82067453d288",
+      "bytes": 64526,
+      "origin": "github_contents@8dc2bb2890d818d61e7a6825bfea3c3c1033f1d9"
+    },
+    {
+      "path": "docs/audit-CASE-LAX/fig_lax_negative_control_profiles.png",
+      "status": "added",
+      "additions": 0,
+      "deletions": 0,
+      "blob_sha": "e1f595fbe25064eeeebc8ec1b2cb84da0aa0ab8f",
+      "sha256": "0fab07eb168c37cc2ff25308dff5e77200c84cd352480f14827c5879357a496a",
+      "bytes": 186607,
+      "origin": "github_contents@8dc2bb2890d818d61e7a6825bfea3c3c1033f1d9"
+    },
+    {
+      "path": "scripts/audit_case_lax_evidence.py",
+      "status": "added",
+      "additions": 688,
+      "deletions": 0,
+      "blob_sha": "9e1fbd53ff8931b1fb0a55b426e4af2b947e065c",
+      "sha256": "9641dcd3607916a7e4da00547993a355e4a2ed9c793e8a79fdfae23240976436",
+      "bytes": 34581,
+      "origin": "github_contents@8dc2bb2890d818d61e7a6825bfea3c3c1033f1d9"
+    },
+    {
+      "path": "src/tensorfvm/compressible/lax.py",
+      "status": "modified",
+      "additions": 5,
+      "deletions": 0,
+      "blob_sha": "34014e8fd070358d6f5768a3307ccfbb31379c27",
+      "sha256": "3ca5c2074a40df56acc744d6caf3503d026a3623ba3622f75e889c06c56b8410",
+      "bytes": 25060,
+      "origin": "github_contents@8dc2bb2890d818d61e7a6825bfea3c3c1033f1d9"
+    },
+    {
+      "path": "src/tensorfvm/compressible/verification.py",
+      "status": "modified",
+      "additions": 6,
+      "deletions": 0,
+      "blob_sha": "de1dfdcececf0e2b6b1edfa2ec179cad836f1f0a",
+      "sha256": "1f809d4fc15a6de666135a8c91001251abfbb651eb02023aa0e328816d57183b",
+      "bytes": 38091,
+      "origin": "github_contents@8dc2bb2890d818d61e7a6825bfea3c3c1033f1d9"
+    },
+    {
+      "path": "tests/test_case_lax_audit.py",
+      "status": "added",
+      "additions": 114,
+      "deletions": 0,
+      "blob_sha": "2e8aae3a2f4f17af2a279b1c695e8b7a34a4684f",
+      "sha256": "baf688ef2f7e482549103da81268949866e78bd4b1a3a52e2fcde1672b06c795",
+      "bytes": 5101,
+      "origin": "github_contents@8dc2bb2890d818d61e7a6825bfea3c3c1033f1d9"
+    }
+  ],
+  "ci": {
+    "conclusion": "not_run",
+    "check_runs": [],
+    "statuses": [],
+    "total_count": 0
+  },
+  "source_fingerprints": {
+    "platform_mission": "2b9a7118da8f1fb6f0d182c34e7b5f43062cdc60e5e3cdd12da9a2757552f141",
+    "pull_request": "05b10c708939800e4024c8fa57aa68d17d7d184dd73be9f21e025b449f9a181e",
+    "pull_request_files": "23d6963c63bb5a0960d0bfa94c1d32668a9d112fc6ea25b601c0cd70b701850d",
+    "check_runs": "52eee86998cce2fbb2226087de4a5117684d00dfa740957b2c070f4d5fbbbf8b",
+    "commit_statuses": "dca9204d21f2418946717d515f3ea328562a062e4b8d4a79653e53176901b587"
+  },
+  "missing": [
+    "ci.check_runs",
+    "mission.result.evidence.head_commit"
+  ],
+  "integrity": {
+    "bundle_sha256": "e161621ebb0ae13bd070b80b39bf137b02eeec934ba1cd46d34def7e0b92af13",
+    "digest_scope": "canonical_json_of_bundle_excluding_integrity"
+  },
+  "fixture": {
+    "recorded_raw_path": "tests/fixtures/recorded/m18757.json",
+    "recorded_raw_sha256": "211f0fee3b1c43769cce182a62fbd57b84d9ed6a764901e5909c825ee8cc65c8"
+  }
+}

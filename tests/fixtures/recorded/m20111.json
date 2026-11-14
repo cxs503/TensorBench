@@ -1,0 +1,119 @@
+{
+  "platform_api_base": "http://127.0.0.1:8010/api/v1",
+  "mission_endpoint": "/tensor/missions/20111",
+  "github_repository": "cxs503/TensorCAD",
+  "pr_resolution": "not_found",
+  "mission": {
+    "id": 20111,
+    "goal": "【锚点=GAP-CAD-D2-GOLDEN-REGRESSION】【自找活·tp-doc-3（data 席）】（owner 2026-11-01：全席饱和；2026-11-02 控仓令：自驱开发照常，绝不动 TensorPlatform）\n你是研究开发 agent，本单=你的自主工时（model 钉扎 qwen3.6-plus，只有本席能领）。\n1) 扫描（全只读）：/root/tp-agent/proposals/ 提案池；GET /api/v1/tensor/reports?limit=20 的\n   「局限/待办」节；guide_tracker 缺口（/root/tp-agent/guide* 状态 json）；各仓未合并 PR；\n   以及本席上一张 selfstart-* 单的产出（防自我重复）；各仓缺口账\n   （backlog_*/expand_audit_*/dev_report_* 文件——求解器仓选题优先锚，先读账再选题）；\n2) 选定 1 件最有价值、可单干、不与在飞/近 24h 终态单重复的实质增量——优先「验证欠账」类\n   （把已合并功能对文献/解析基准复核），其次功能补全、失效测试补齐；\n   ★总账锚点纪律（owner 2026-11-09 不重复/不随机令）：选题前必对功能点总账——\n   runuser -u postgres -- psql -d tensorplatform -c \"SELECT slug,title,acceptance,status FROM feature_ledger WHERE status IN('planned','in_progress') ORDER BY status,slug\"\n   ★总账锚点纪律（owner 2026-11-09 不重复/不随机令）：本单锚点已由派发器按总账指派——见 goal 首行【锚点=...】（已填真实 slug，与 GAP-CAD-D2-GOLDEN-REGRESSION 一致；标题：几何金标回归套件+CI）。直接认领该锚做实质增量；开工先核对：SELECT slug,title,acceptance,status FROM feature_ledger WHERE slug='GAP-CAD-D2-GOLDEN-REGRESSION'；done/verified 状态不得重做，若你核对时发现该锚已被他单完成，改做 finish summary 中说明的次优项并在 summary 给出建议新条目（slug+量化验收+所属域），不要自行改写 goal 首行锚点值。\n3) 直接开工做完：测试绿 + 平台报告发布 + git commit 落盘（goal 首行自声明 EDIT_WHITELIST，\n   按所选仓常规路径 docs/, src/, tests/, examples/, outputs/）；\n4) 若该活超出单干范围：改为 POST /api/v1/tensor/missions 派单（body 必须显式含\n   \"runner\":\"native\"——表默认 openhands=无人领死单），并在 summary 说明拆分逻辑；\n5) finish summary：干了什么/证据指针（commit+报告 id）/给下次自找活的建议线索。\n容量纪律：重计算任务先看 /proc/loadavg（本机 nproc=128），load15 已 ≥100 时只做轻量\n（文档/测试/分析）活，不起新的重算力进程。\n仓白名单：TensorLBM/TensorDEM/TensorFEM/TensorFVM/TensorBEM/TensorSPH/TensorDG/TensorCAD/ship-performance-platform/TensorPapers。归仓口诀（详见 /root/tp-agent/AGENT_BOOTSTRAP.md ECOSYSTEM-MAP）：求解器→对应 Tensor* 库（当前主战场）；船舶→ship-performance-platform（本地私有仓）；论文素材→TensorPapers。TensorPlatform 平台开发已恢复战役化（2026-11-06 清场重建，owner 亲批亲并）：经战役单可做共性机制，但零领域语义（域词条/域判据/域算例禁硬编码，域数据经 API/配置注入，详见 AGENT_BOOTSTRAP.md ECOSYSTEM-MAP v2）。禁碰 GitHub 推送与 main 分支。honest FAIL 不得覆盖。",
+    "repo": "TensorCAD",
+    "base_ref": "main",
+    "co_repos": null,
+    "parent_mission_id": null,
+    "budget": {
+      "max_tokens": 3000000,
+      "max_tool_calls": 60,
+      "max_wall_seconds": 5400
+    },
+    "runner": "native",
+    "origin": "owner",
+    "model": "qwen3.6-plus",
+    "agent_session_id": null,
+    "worker_role": null,
+    "campaign_id": null,
+    "campaign_phase": null,
+    "status": "succeeded",
+    "claimed_by": "tp-qw36-2",
+    "session_id": null,
+    "result": {
+      "model": "qwen3.6-plus",
+      "checks": "python -m tensorcad.golden --check → PASS (4 cases, 15.60s); pytest tests/test_golden_regression.py → 38 passed; tools/golden/render_evidence.py → results.json + results.md + golden_errors.png 生成",
+      "accepted": true,
+      "evidence": {
+        "branch": null,
+        "checks": {},
+        "summary": {
+          "model": "qwen3.6-plus",
+          "checks": "python -m tensorcad.golden --check → PASS (4 cases, 15.60s); pytest tests/test_golden_regression.py → 38 passed; tools/golden/render_evidence.py → results.json + results.md + golden_errors.png 生成",
+          "headline": "GAP-CAD-D2-GOLDEN-REGRESSION 几何金标回归套件验证与证据刷新：4 金标案例（Wigley/Series60/球椭球/DTMB5415）全部通过，24 项解析断言 + 8 项不变量误差均 &lt;3%（最差 Series60 排水体积 −0.859% 在 1.83% 容差内）；38 项 pytest 测试绿；CI 工作流 + git",
+          "fail_stage": "",
+          "git_status": "",
+          "tool_calls": 53,
+          "compactions": 0,
+          "changed_files": [],
+          "on_disk_changes": [
+            "docs/golden/results.json",
+            "docs/golden/results.md"
+          ],
+          "agent_session_id": "67409069-eea1-4c23-b80b-1d528a896ff9"
+        },
+        "head_commit": null,
+        "finished_status": "succeeded",
+        "server_quality_audit": {
+          "gate_valid": false,
+          "key_present": false,
+          "gate_missing_warning": true
+        }
+      },
+      "headline": "GAP-CAD-D2-GOLDEN-REGRESSION 几何金标回归套件验证与证据刷新：4 金标案例（Wigley/Series60/球椭球/DTMB5415）全部通过，24 项解析断言 + 8 项不变量误差均 &lt;3%（最差 Series60 排水体积 −0.859% 在 1.83% 容差内）；38 项 pytest 测试绿；CI 工作流 + git",
+      "decided_by": "eco_admin",
+      "fail_stage": "",
+      "git_status": "",
+      "tool_calls": 53,
+      "compactions": 0,
+      "changed_files": [],
+      "decision_note": "[auto-approve] TP_AUTO_APPROVE_DEV_ACCEPTANCE: 交付验收自动批准（owner 2026-11-03 指令；仅 dev_acceptance）",
+      "on_disk_changes": [
+        "docs/golden/results.json",
+        "docs/golden/results.md"
+      ],
+      "agent_session_id": "67409069-eea1-4c23-b80b-1d528a896ff9"
+    },
+    "created_by": null,
+    "created_at": "2026-11-14T08:47:32.523186+00:00",
+    "heartbeat_at": "2026-11-14T08:57:20.568884+00:00",
+    "finished_at": "2026-11-14T08:57:31.415416+00:00",
+    "task_key": null,
+    "approval": {
+      "id": 13417,
+      "kind": "dev_acceptance",
+      "status": "approved",
+      "reason": "GAP-CAD-D2-GOLDEN-REGRESSION 几何金标回归套件验证与证据刷新：4 金标案例（Wigley/Series60/球椭球/DTMB5415）全部通过，24 项解析断言 + 8 项不变量误差均 &lt;3%（最差 Series60 排水体积 −0.859% 在 1.83% 容差内）；38 项 pytest 测试绿；CI 工作流 + git",
+      "evidence": {
+        "branch": null,
+        "checks": {},
+        "summary": {
+          "model": "qwen3.6-plus",
+          "checks": "python -m tensorcad.golden --check → PASS (4 cases, 15.60s); pytest tests/test_golden_regression.py → 38 passed; tools/golden/render_evidence.py → results.json + results.md + golden_errors.png 生成",
+          "headline": "GAP-CAD-D2-GOLDEN-REGRESSION 几何金标回归套件验证与证据刷新：4 金标案例（Wigley/Series60/球椭球/DTMB5415）全部通过，24 项解析断言 + 8 项不变量误差均 &lt;3%（最差 Series60 排水体积 −0.859% 在 1.83% 容差内）；38 项 pytest 测试绿；CI 工作流 + git",
+          "fail_stage": "",
+          "git_status": "",
+          "tool_calls": 53,
+          "compactions": 0,
+          "changed_files": [],
+          "on_disk_changes": [
+            "docs/golden/results.json",
+            "docs/golden/results.md"
+          ],
+          "agent_session_id": "67409069-eea1-4c23-b80b-1d528a896ff9"
+        },
+        "head_commit": null,
+        "finished_status": "succeeded",
+        "server_quality_audit": {
+          "gate_valid": false,
+          "key_present": false,
+          "gate_missing_warning": true
+        }
+      },
+      "decided_at": "2026-11-14T08:57:31.415416+00:00",
+      "decision_note": "[auto-approve] TP_AUTO_APPROVE_DEV_ACCEPTANCE: 交付验收自动批准（owner 2026-11-03 指令；仅 dev_acceptance）",
+      "created_at": "2026-11-14T08:57:28.892434+00:00"
+    }
+  },
+  "pull_request": null,
+  "pull_request_files": [],
+  "check_runs": null,
+  "commit_statuses": null,
+  "collected_at": "2026-11-14T09:19:58Z",
+  "deliverable_contents": {}
+}

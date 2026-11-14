@@ -1,0 +1,184 @@
+{
+  "schema_version": "1.0.0",
+  "kind": "tensorbench.evidence_bundle",
+  "mission_id": 18685,
+  "collected_at": "2026-11-14T09:19:30Z",
+  "collector": {
+    "name": "tensorbench",
+    "version": "0.1.0",
+    "mode": "live_read_only"
+  },
+  "platform": {
+    "api_base": "http://127.0.0.1:8010/api/v1",
+    "mission_endpoint": "/tensor/missions/18685",
+    "payload_sha256": "b216772119fab2e50bf434568bef9e122f99ebe6279c33610c2d3f2e3cb75f5e"
+  },
+  "mission": {
+    "id": 18685,
+    "repo": "TensorFVM",
+    "status": "succeeded",
+    "claimed_by": "tp-glm51-3",
+    "created_at": "2026-11-13T15:58:56.361270+00:00",
+    "finished_at": "2026-11-13T16:17:16.924856+00:00",
+    "goal": "【重开·TensorFVM#587·管到底第3轮】原 PR#587 已裁定关闭（owner 2026-11-05）。功能要点：matured mission deliverables；文件：docs/case-fvm-dambreak-stoker/REPORT.md (+152/-107)；docs/case-fvm-dambreak-stoker/artifacts/reproduction.json (+2348/-0)；docs/case-fvm-dambreak-stoker/crosscheck.png (+0/-0)；docs/case-fvm-dambreak-stoker/make_figure.py (+141/-0)；docs/case-fvm-dambreak-stoker/verify_reference.py (+279/-0)；src/tensorfvm/shallow_water/__init__.py (+14/-0)；src/tensorfvm/shallow_water/crosscheck.py (+323/-0)；src/tensorfvm/shallow_water/exact.py (+10/-1)；tests/test_shallow_water_analytic_crosscheck.py (+337/-0)。质量要求：从当前 main 切枝；功能+测试齐备；本地全套测试过；禁止空完成——完成标准 = 新 PR 合并进 main 且 mission 保持 awaiting_pr_merge 直到合并（pr-gate 记账）。交付纪律：小步单元——单 PR 改动 ≤10 文件、聚焦单一功能点；与其他开 PR 重叠的热文件路径（如 TensorFVM 核心模块）改动前先在报告里声明。",
+    "goal_sha256": "ad5d6d5ff491529963d7867d2b1ed1dc6f32ff7c17793f330ec46062b7b7f2b7",
+    "result_sha256": "4bdc9aabd46d67ef35c3909568741144577c9e1508ad94a0c1dcdf92d61595b5"
+  },
+  "pull_request": {
+    "number": 635,
+    "state": "closed",
+    "merged": true,
+    "merged_at": "2026-11-13T20:56:51Z",
+    "merge_commit_sha": "592c5f0c8c664af5b20b0a3f517d574764ca26c8",
+    "head_ref": "agent/m18685",
+    "head_sha": "b3f214c447103b2748c0e350e598591395906f80",
+    "base_ref": "main",
+    "changed_files": 11,
+    "additions": 19411,
+    "deletions": 1,
+    "html_url": "https://github.com/cxs503/TensorFVM/pull/635",
+    "resolution": "branch_head"
+  },
+  "commit": {
+    "sha": "b3f214c447103b2748c0e350e598591395906f80",
+    "source": "pull_request.head",
+    "matches_mission_head": "inconclusive"
+  },
+  "deliverables": [
+    {
+      "path": "docs/case-fvm-dambreak-stoker/REPORT-platform.md",
+      "status": "added",
+      "additions": 136,
+      "deletions": 0,
+      "blob_sha": "1e475cd3c642df4037da5fd7e35231b446de4f58",
+      "sha256": "f42acbf70ed0dcad83a38c123cc8613a0c6119831b69595fd397011f79e983e6",
+      "bytes": 11826,
+      "origin": "github_contents@b3f214c447103b2748c0e350e598591395906f80"
+    },
+    {
+      "path": "docs/case-fvm-dambreak-stoker/_build_platform_report.py",
+      "status": "added",
+      "additions": 117,
+      "deletions": 0,
+      "blob_sha": "febf3dfc13177b17cfd91c9e1c50f337ecc18ce6",
+      "sha256": "860dd42d48cc90bcb61c6efc1c41edeab71c716852604d19189655b04396975f",
+      "bytes": 7739,
+      "origin": "github_contents@b3f214c447103b2748c0e350e598591395906f80"
+    },
+    {
+      "path": "docs/case-fvm-dambreak-stoker/_publish_report.py",
+      "status": "added",
+      "additions": 76,
+      "deletions": 0,
+      "blob_sha": "4c80d8c1d6dc07759595e353fd0097062b4e207e",
+      "sha256": "c3fb10aec533cee7a6f3eeec21c520da8c60a5f47ee9944f3aff2e5d9af784c6",
+      "bytes": 2927,
+      "origin": "github_contents@b3f214c447103b2748c0e350e598591395906f80"
+    },
+    {
+      "path": "docs/case-fvm-dambreak-stoker/artifacts/reproduction.json",
+      "status": "added",
+      "additions": 17310,
+      "deletions": 0,
+      "blob_sha": "83b3ee5f9a0de777109905ca29f38de64a9bc910",
+      "sha256": "f1c391df43e4273e137c5069579a5bafc1797e0bc46e9bc761e27bd1bd4b102b",
+      "bytes": 316267,
+      "origin": "github_contents@b3f214c447103b2748c0e350e598591395906f80"
+    },
+    {
+      "path": "docs/case-fvm-dambreak-stoker/crosscheck.png",
+      "status": "added",
+      "additions": 0,
+      "deletions": 0,
+      "blob_sha": "ee7bdb803e146a3b138ad2227dbbf874bfbc1242",
+      "sha256": "aefbee0976fb3c9a05b7bc220196f6fe872852482d695048cc4caad69e7297b5",
+      "bytes": 213415,
+      "origin": "github_contents@b3f214c447103b2748c0e350e598591395906f80"
+    },
+    {
+      "path": "docs/case-fvm-dambreak-stoker/make_figure.py",
+      "status": "added",
+      "additions": 171,
+      "deletions": 0,
+      "blob_sha": "5eb354437804b1d4feba925c9acab92723948494",
+      "sha256": "4e9a6d4aefee194e9108548b078f91f04fddeb509f76a18ce25f5b50cf849538",
+      "bytes": 7715,
+      "origin": "github_contents@b3f214c447103b2748c0e350e598591395906f80"
+    },
+    {
+      "path": "docs/case-fvm-dambreak-stoker/verify_reference.py",
+      "status": "added",
+      "additions": 544,
+      "deletions": 0,
+      "blob_sha": "b168ddae280c82b745496163eadaf5b02d6e01fd",
+      "sha256": "e7580c98c36d7ce4b99fa9dbb6d5e02c63af94b23bb96b8d8e2d1d9c3bbad81b",
+      "bytes": 24739,
+      "origin": "github_contents@b3f214c447103b2748c0e350e598591395906f80"
+    },
+    {
+      "path": "src/tensorfvm/shallow_water/__init__.py",
+      "status": "modified",
+      "additions": 20,
+      "deletions": 0,
+      "blob_sha": "bef870a907cf070a99dffcaa4c4bad6e18df2c42",
+      "sha256": "45206b0963040e81bc61e779550a400b739a4411e74463445e819a452a4a5212",
+      "bytes": 2322,
+      "origin": "github_contents@b3f214c447103b2748c0e350e598591395906f80"
+    },
+    {
+      "path": "src/tensorfvm/shallow_water/crosscheck.py",
+      "status": "added",
+      "additions": 692,
+      "deletions": 0,
+      "blob_sha": "a575aa5a5723abca37037cde4c637c6b8bb760a7",
+      "sha256": "73a3406d3a9e134bdfb93cda8a4a0c76e2464ecfe41cf8ef586754aa76ff88ba",
+      "bytes": 32280,
+      "origin": "github_contents@b3f214c447103b2748c0e350e598591395906f80"
+    },
+    {
+      "path": "src/tensorfvm/shallow_water/exact.py",
+      "status": "modified",
+      "additions": 20,
+      "deletions": 1,
+      "blob_sha": "63fe934348c2f1fc6ccb937102777dcc3ff3bbc6",
+      "sha256": "2d723ae03f9f63e90061de0d3a3eb46e36563a1871efbaa43726500c1dc3be7b",
+      "bytes": 10793,
+      "origin": "github_contents@b3f214c447103b2748c0e350e598591395906f80"
+    },
+    {
+      "path": "tests/test_shallow_water_analytic_crosscheck.py",
+      "status": "added",
+      "additions": 325,
+      "deletions": 0,
+      "blob_sha": "f4d1203b419abb515487ef47b254cdfc72ed0ccf",
+      "sha256": "7edadcac14b0fb73c6873881514691fb4f08b442efc95eb9e9a5ce64a7fd74c1",
+      "bytes": 14570,
+      "origin": "github_contents@b3f214c447103b2748c0e350e598591395906f80"
+    }
+  ],
+  "ci": {
+    "conclusion": "not_run",
+    "check_runs": [],
+    "statuses": [],
+    "total_count": 0
+  },
+  "source_fingerprints": {
+    "platform_mission": "b216772119fab2e50bf434568bef9e122f99ebe6279c33610c2d3f2e3cb75f5e",
+    "pull_request": "c8b0ff027af4bfe56aecf4fea1fffde39d72aef092cee93cd02ddc1edc15f123",
+    "pull_request_files": "817b038d3120aaa6351071c6e4278db4aea93857ccf600eb3a555f40f9fc0728",
+    "check_runs": "52eee86998cce2fbb2226087de4a5117684d00dfa740957b2c070f4d5fbbbf8b",
+    "commit_statuses": "515ed05f9c301adb369c4f62a4e0e60417d1361dbd35b89c89c1f4b5dc9cf054"
+  },
+  "missing": [
+    "ci.check_runs",
+    "mission.result.evidence.head_commit"
+  ],
+  "integrity": {
+    "bundle_sha256": "e6fd3c251dfbfed4cac226cc265857a75c7c74236e3c81df54e218f658b3c1f7",
+    "digest_scope": "canonical_json_of_bundle_excluding_integrity"
+  },
+  "fixture": {
+    "recorded_raw_path": "tests/fixtures/recorded/m18685.json",
+    "recorded_raw_sha256": "1e791b0794112306f22ef4ce67b62992242048a5623d8c25297528aed3f55744"
+  }
+}

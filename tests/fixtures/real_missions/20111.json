@@ -1,0 +1,52 @@
+{
+  "schema_version": "1.0.0",
+  "kind": "tensorbench.evidence_bundle",
+  "mission_id": 20111,
+  "collected_at": "2026-11-14T09:19:58Z",
+  "collector": {
+    "name": "tensorbench",
+    "version": "0.1.0",
+    "mode": "live_read_only"
+  },
+  "platform": {
+    "api_base": "http://127.0.0.1:8010/api/v1",
+    "mission_endpoint": "/tensor/missions/20111",
+    "payload_sha256": "4daec029a8997876d2760d72310f45f7d2a5ae5df20e149a3f1b9cc14377257c"
+  },
+  "mission": {
+    "id": 20111,
+    "repo": "TensorCAD",
+    "status": "succeeded",
+    "claimed_by": "tp-qw36-2",
+    "created_at": "2026-11-14T08:47:32.523186+00:00",
+    "finished_at": "2026-11-14T08:57:31.415416+00:00",
+    "goal": "【锚点=GAP-CAD-D2-GOLDEN-REGRESSION】【自找活·tp-doc-3（data 席）】（owner 2026-11-01：全席饱和；2026-11-02 控仓令：自驱开发照常，绝不动 TensorPlatform）\n你是研究开发 agent，本单=你的自主工时（model 钉扎 qwen3.6-plus，只有本席能领）。\n1) 扫描（全只读）：/root/tp-agent/proposals/ 提案池；GET /api/v1/tensor/reports?limit=20 的\n   「局限/待办」节；guide_tracker 缺口（/root/tp-agent/guide* 状态 json）；各仓未合并 PR；\n   以及本席上一张 selfstart-* 单的产出（防自我重复）；各仓缺口账\n   （backlog_*/expand_audit_*/dev_report_* 文件——求解器仓选题优先锚，先读账再选题）；\n2) 选定 1 件最有价值、可单干、不与在飞/近 24h 终态单重复的实质增量——优先「验证欠账」类\n   （把已合并功能对文献/解析基准复核），其次功能补全、失效测试补齐；\n   ★总账锚点纪律（owner 2026-11-09 不重复/不随机令）：选题前必对功能点总账——\n   runuser -u postgres -- psql -d tensorplatform -c \"SELECT slug,title,acceptance,status FROM feature_ledger WHERE status IN('planned','in_progress') ORDER BY status,slug\"\n   ★总账锚点纪律（owner 2026-11-09 不重复/不随机令）：本单锚点已由派发器按总账指派——见 goal 首行【锚点=...】（已填真实 slug，与 GAP-CAD-D2-GOLDEN-REGRESSION 一致；标题：几何金标回归套件+CI）。直接认领该锚做实质增量；开工先核对：SELECT slug,title,acceptance,status FROM feature_ledger WHERE slug='GAP-CAD-D2-GOLDEN-REGRESSION'；done/verified 状态不得重做，若你核对时发现该锚已被他单完成，改做 finish summary 中说明的次优项并在 summary 给出建议新条目（slug+量化验收+所属域），不要自行改写 goal 首行锚点值。\n3) 直接开工做完：测试绿 + 平台报告发布 + git commit 落盘（goal 首行自声明 EDIT_WHITELIST，\n   按所选仓常规路径 docs/, src/, tests/, examples/, outputs/）；\n4) 若该活超出单干范围：改为 POST /api/v1/tensor/missions 派单（body 必须显式含\n   \"runner\":\"native\"——表默认 openhands=无人领死单），并在 summary 说明拆分逻辑；\n5) finish summary：干了什么/证据指针（commit+报告 id）/给下次自找活的建议线索。\n容量纪律：重计算任务先看 /proc/loadavg（本机 nproc=128），load15 已 ≥100 时只做轻量\n（文档/测试/分析）活，不起新的重算力进程。\n仓白名单：TensorLBM/TensorDEM/TensorFEM/TensorFVM/TensorBEM/TensorSPH/TensorDG/TensorCAD/ship-performance-platform/TensorPapers。归仓口诀（详见 /root/tp-agent/AGENT_BOOTSTRAP.md ECOSYSTEM-MAP）：求解器→对应 Tensor* 库（当前主战场）；船舶→ship-performance-platform（本地私有仓）；论文素材→TensorPapers。TensorPlatform 平台开发已恢复战役化（2026-11-06 清场重建，owner 亲批亲并）：经战役单可做共性机制，但零领域语义（域词条/域判据/域算例禁硬编码，域数据经 API/配置注入，详见 AGENT_BOOTSTRAP.md ECOSYSTEM-MAP v2）。禁碰 GitHub 推送与 main 分支。honest FAIL 不得覆盖。",
+    "goal_sha256": "5fdc8c4b136e59ff6eda0bfb6ba4d04718d14c4da3c839db19df1e0fd4d11512",
+    "result_sha256": "baddb8f934e30983e6b221085764151f5ca43a0fe9676863d4e524a38d26b9d1"
+  },
+  "pull_request": "missing",
+  "commit": "missing",
+  "deliverables": [],
+  "ci": "missing",
+  "source_fingerprints": {
+    "platform_mission": "4daec029a8997876d2760d72310f45f7d2a5ae5df20e149a3f1b9cc14377257c",
+    "pull_request": "missing",
+    "pull_request_files": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "check_runs": "missing",
+    "commit_statuses": "missing"
+  },
+  "missing": [
+    "ci.conclusion",
+    "commit.sha",
+    "deliverables",
+    "pull_request"
+  ],
+  "integrity": {
+    "bundle_sha256": "e347e918cb046fd2e9aa880cbe7994c870e30a6412dfef5fc3e7a3b28f65e9e5",
+    "digest_scope": "canonical_json_of_bundle_excluding_integrity"
+  },
+  "fixture": {
+    "recorded_raw_path": "tests/fixtures/recorded/m20111.json",
+    "recorded_raw_sha256": "8e5643eafb19713f5b54fd725dbcf2ca3cb189ec7dadfacd2928e8f3d90db577"
+  }
+}
