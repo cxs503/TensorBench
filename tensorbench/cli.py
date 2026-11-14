@@ -7,6 +7,7 @@ import sys
 from pathlib import Path
 
 from .compare import compare_results, load_result
+from .contracts import ContractValidationError, validate_file
 from .publish import (
     PlatformClient,
     build_capability_delta,
@@ -19,6 +20,13 @@ from .runner import run_benchmark
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="tensorbench")
     subparsers = parser.add_subparsers(dest="command", required=True)
+
+    validate_parser = subparsers.add_parser(
+        "validate", help="validate an evidence, report or asset contract JSON file"
+    )
+    validate_parser.add_argument("--kind", choices=("evidence", "report", "asset"), required=True)
+    validate_parser.add_argument("--input", required=True, help="Contract JSON file")
+    validate_parser.add_argument("--output", help="Optional validation-result JSON path")
 
     run_parser = subparsers.add_parser("run", help="run one local benchmark spec")
     run_parser.add_argument("--spec", required=True, help="Path to benchmark specification JSON")
@@ -152,6 +160,18 @@ def _cmd_publish(args: argparse.Namespace) -> int:
 
 def main() -> int:
     args = build_parser().parse_args()
+    if args.command == "validate":
+        try:
+            result = validate_file(args.kind, args.input)
+            rendered = json.dumps(result, indent=2, ensure_ascii=False)
+            if args.output:
+                Path(args.output).write_text(rendered + "\n", encoding="utf-8")
+            print(rendered)
+            return 0 if result["status"] == "valid" else 1
+        except (OSError, json.JSONDecodeError, ContractValidationError) as exc:
+            print(f"tensorbench: error: {exc}", file=sys.stderr)
+            return 2
+
     if args.command == "run":
         spec_path = Path(args.spec).resolve()
         try:
