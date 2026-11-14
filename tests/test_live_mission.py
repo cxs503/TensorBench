@@ -46,6 +46,7 @@ def test_collects_only_pr_pinned_to_mission_completion_commit(monkeypatch):
     assert snapshot["pull_request"]["head"]["sha"] == SHA
     assert snapshot["pull_request"]["files"][0]["filename"] == "src/solver.py"
     assert snapshot["checks"]["check_runs"][0]["head_sha"] == SHA
+    assert snapshot["collection_metadata"]["mode"] == "live_read_only"
     assert all("secret" not in url for url in calls)
 
 
