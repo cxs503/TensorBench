@@ -8,6 +8,7 @@ from pathlib import Path
 
 from .achievement import AchievementInputError, evaluate_file
 from .business_evidence import BusinessEvidenceError, reconcile_file
+from .business_pdf_fields import PdfFieldProposalError, propose_pdf_fields_file
 from .compare import compare_results, load_result
 from .contracts import ContractValidationError, validate_file
 from .pdf_evidence import PdfEvidenceError, extract_pdf_file
@@ -53,6 +54,12 @@ def build_parser() -> argparse.ArgumentParser:
     pdf_parser.add_argument("--output", help="Optional page-evidence JSON path")
     pdf_parser.add_argument("--max-bytes", type=int, default=50 * 1024 * 1024)
     pdf_parser.add_argument("--max-pages", type=int, default=1000)
+
+    field_parser = subparsers.add_parser(
+        "propose-pdf-fields", help="propose labeled business fields from page-addressable PDF text JSON"
+    )
+    field_parser.add_argument("--input", required=True, help="JSON output from tensorbench extract-pdf")
+    field_parser.add_argument("--output", help="Optional field-proposal JSON path")
 
     achievement_publish = subparsers.add_parser(
         "publish-achievement", help="prepare and optionally submit a human-reviewed agent achievement"
@@ -261,6 +268,18 @@ def main() -> int:
             print(rendered)
             return 0 if result["overall_status"] == "passed" else 1
         except (OSError, json.JSONDecodeError, BusinessEvidenceError) as exc:
+            print(f"tensorbench: error: {exc}", file=sys.stderr)
+            return 2
+
+    if args.command == "propose-pdf-fields":
+        try:
+            result = propose_pdf_fields_file(args.input)
+            rendered = json.dumps(result, indent=2, ensure_ascii=False)
+            if args.output:
+                Path(args.output).write_text(rendered + "\\n", encoding="utf-8")
+            print(rendered)
+            return 0 if result["status"] == "needs_review" else 1
+        except (OSError, PdfFieldProposalError) as exc:
             print(f"tensorbench: error: {exc}", file=sys.stderr)
             return 2
 
