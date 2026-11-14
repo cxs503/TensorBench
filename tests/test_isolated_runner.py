@@ -62,7 +62,7 @@ def test_rejects_unpinned_image(tmp_path, monkeypatch):
     with pytest.raises(isolated_runner.IsolatedRunError, match="pinned"):
         isolated_runner.run_isolated_tests(
             checkout_path=repo, expected_revision=SHA, image="python:3.11",
-            command=["pytest", "-q"],
+            command=["pytest", "-q"], log_dir=tmp_path / "logs",
         )
 
 
@@ -85,7 +85,7 @@ def test_timeout_is_recorded(tmp_path, monkeypatch):
     monkeypatch.setattr(isolated_runner.subprocess, "run", fake_run)
     report = isolated_runner.run_isolated_tests(
         checkout_path=repo, expected_revision=SHA, image=IMAGE,
-        command=["pytest", "-q"], timeout_seconds=1,
+        command=["pytest", "-q"], timeout_seconds=1, log_dir=tmp_path / "logs",
     )
     assert report["status"] == "timed_out"
     assert report["timed_out"] is True
