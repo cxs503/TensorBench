@@ -1,6 +1,6 @@
 # ResearchAudit — Product Requirements
 
-**Product ID:** `research-audit` · **Status:** foundation / not implemented · **Initial internal user:** TensorKnowledge.
+**Product ID:** `research-audit` · **Status:** partially implemented; real-world workflow not yet verified · **Initial internal user:** TensorKnowledge.
 
 ## Problem and outcome
 
