@@ -15,7 +15,7 @@ def _snapshot():
             "acceptance_criteria": [{
                 "criterion_id": "feature", "statement": "Feature works",
                 "required": True, "requires_code": True, "requires_test": True,
-                "evidence_refs": ["github://cxs503/TensorLBM/pull/9@" + sha],
+                "evidence_refs": ["github://TensorLBM/pull/9@" + sha],
                 "test_ids": ["check-run-1"],
             }],
         },
@@ -81,6 +81,15 @@ def test_missing_check_snapshot_does_not_create_test_evidence():
     snapshot["checks"] = {"check_runs": [], "statuses": []}
     result = evaluate_mission_snapshot(snapshot)
     assert result["report"]["overall_status"] == "inconclusive"
+
+
+def test_successful_build_check_is_not_mistaken_for_test_evidence():
+    snapshot = _snapshot()
+    snapshot["checks"]["check_runs"][0]["name"] = "build-and-lint"
+    result = evaluate_mission_snapshot(snapshot)
+    assert result["report"]["overall_status"] == "inconclusive"
+    assert result["bundle"]["tests"] == []
+
 
 
 def test_successful_build_check_is_not_mistaken_for_test_evidence():
