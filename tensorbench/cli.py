@@ -10,7 +10,7 @@ from .achievement import AchievementInputError, evaluate_file
 from .business_evidence import BusinessEvidenceError, reconcile_file
 from .compare import compare_results, load_result
 from .contracts import ContractValidationError, validate_file
-from .publish import (
+from .pdf_evidence import PdfEvidenceError, extract_pdf_file\nfrom .publish import (
     PlatformClient,
     build_capability_delta,
     build_evaluation_payload,
@@ -43,7 +43,7 @@ def build_parser() -> argparse.ArgumentParser:
     business_parser.add_argument("--output", help="Optional validation-report JSON path")
     business_parser.add_argument("--tolerance", default="0.01", help="Decimal currency tolerance")
 
-    run_parser = subparsers.add_parser("run", help="run one local benchmark spec")
+    pdf_parser = subparsers.add_parser(\n        "extract-pdf", help="extract page-addressable PDF text evidence (no OCR)"\n    )\n    pdf_parser.add_argument("--input", required=True, help="Source PDF file")\n    pdf_parser.add_argument("--source-ref", required=True, help="Stable source-system reference")\n    pdf_parser.add_argument("--output", help="Optional page-evidence JSON path")\n    pdf_parser.add_argument("--max-bytes", type=int, default=50 * 1024 * 1024)\n    pdf_parser.add_argument("--max-pages", type=int, default=1000)\n\n    run_parser = subparsers.add_parser("run", help="run one local benchmark spec")
     run_parser.add_argument("--spec", required=True, help="Path to benchmark specification JSON")
     run_parser.add_argument("--output", default="tensorbench-runs", help="Evidence output directory")
     run_parser.add_argument("--project", help="Implementation project name override")
@@ -199,7 +199,7 @@ def main() -> int:
             print(f"tensorbench: error: {exc}", file=sys.stderr)
             return 2
 
-    if args.command == "validate":
+    if args.command == "extract-pdf":\n        try:\n            result = extract_pdf_file(\n                args.input, source_ref=args.source_ref,\n                max_bytes=args.max_bytes, max_pages=args.max_pages,\n            )\n            rendered = json.dumps(result, indent=2, ensure_ascii=False)\n            if args.output:\n                Path(args.output).write_text(rendered + "\\n", encoding="utf-8")\n            print(rendered)\n            return 0 if result["status"] == "complete" else 1\n        except (OSError, PdfEvidenceError) as exc:\n            print(f"tensorbench: error: {exc}", file=sys.stderr)\n            return 2\n\n    if args.command == "validate":
         try:
             result = validate_file(args.kind, args.input)
             rendered = json.dumps(result, indent=2, ensure_ascii=False)
