@@ -58,3 +58,83 @@ def test_report_does_not_accept_implicit_pass_states() -> None:
     }
     assert validator.is_valid(report)
     assert not validator.is_valid({**report, "overall_status": "passed", "schema_version": "0.2"})
+
+from tensorbench.contracts import validate_payload
+
+
+def _valid_report():
+    return {
+        "schema_version": "0.1.0",
+        "product_id": "agent-achievement-evaluator",
+        "product_version": "0.1.0",
+        "run_id": "run-contract-001",
+        "created_at": "2026-11-14T00:00:00Z",
+        "input_refs": ["commit://abc123"],
+        "checks": [{
+            "check_id": "tests-executed",
+            "version": "0.1.0",
+            "method": "deterministic_rule",
+            "state": "passed",
+            "required": True,
+        }],
+        "findings": [],
+        "overall_status": "passed",
+        "provenance": {"input_fingerprints": {"commit": "abc123"}},
+    }
+
+
+def test_runtime_validator_accepts_valid_report():
+    assert validate_payload("report", _valid_report()) == []
+
+
+def test_runtime_validator_rejects_pass_with_inconclusive_required_check():
+    report = _valid_report()
+    report["checks"][0]["state"] = "inconclusive"
+    errors = validate_payload("report", report)
+    assert any("required checks unresolved" in error for error in errors)
+
+
+def test_runtime_validator_rejects_verified_asset_without_validation_evidence():
+    asset = {
+        "asset_id": "asset-001",
+        "asset_type": "benchmark",
+        "title": "Validated benchmark result",
+        "owner_project": "TensorBench",
+        "rights_status": "cleared",
+        "maturity": "A2_verified",
+        "provenance": {},
+    }
+    errors = validate_payload("asset", asset)
+    assert any("validation_report_ref" in error for error in errors)
+
+
+def test_runtime_validator_rejects_adopted_asset_with_unknown_rights():
+    asset = {
+        "asset_id": "asset-002",
+        "asset_type": "dataset",
+        "title": "Adopted dataset",
+        "owner_project": "TensorData",
+        "rights_status": "unknown",
+        "maturity": "A4_adopted",
+        "source_revision": "deadbeef",
+        "validation_report_refs": ["report://r1"],
+        "provenance": {},
+    }
+    errors = validate_payload("asset", asset)
+    assert any("cannot be A4_adopted" in error for error in errors)
+
+
+def test_runtime_validator_requires_findings_to_resolve_evidence_refs():
+    report = _valid_report()
+    report["evidence_refs"] = ["evidence://ev-1"]
+    report["findings"] = [{
+        "finding_id": "finding-1",
+        "check_id": "tests-executed",
+        "status": "confirmed",
+        "severity": "high",
+        "summary": "A verified issue",
+        "evidence_refs": ["evidence://missing"],
+        "review_state": "unreviewed",
+    }]
+    errors = validate_payload("report", report)
+    assert any("absent from report.evidence_refs" in error for error in errors)
