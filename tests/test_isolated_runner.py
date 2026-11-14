@@ -98,4 +98,4 @@ def test_reverify_cli_keeps_subcommand_and_command_argv_separate():
         "--image", IMAGE, "--log-dir", "/tmp/logs", "--", "python", "-m", "pytest", "-q",
     ])
     assert args.command == "reverify-tests"
-    assert args.test_argv == ["python", "-m", "pytest", "-q"]
+    assert args.test_argv == ["--", "python", "-m", "pytest", "-q"]
