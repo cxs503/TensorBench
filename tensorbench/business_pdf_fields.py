@@ -135,6 +135,8 @@ def review_pdf_field_proposals(proposal_bundle: Any, decisions: Any, *, reviewer
             "field": proposal.get("field"),
             "start_offset": locator.get("start_offset"),
             "end_offset": locator.get("end_offset"),
+            "normalized_candidate": proposal.get("normalized_candidate"),
+            "currency_candidate": proposal.get("currency_candidate"),
             "value_sha256": locator.get("value_sha256"),
         }
         expected_id = hashlib.sha256(json.dumps(identity, sort_keys=True, separators=(",", ":")).encode("utf-8")).hexdigest()
