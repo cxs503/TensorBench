@@ -77,3 +77,14 @@ def test_business_evidence_rejects_duplicate_document_ids():
         assert "duplicate doc_id" in str(exc)
     else:
         raise AssertionError("duplicate document ids must be rejected")
+
+
+def test_business_evidence_does_not_pass_when_required_comparison_data_is_missing():
+    bundle = _matched_bundle()
+    del bundle["documents"][1]["line_items"]
+    del bundle["documents"][1]["currency"]
+    report = reconcile_bundle(bundle)
+    assert report["overall_status"] == "inconclusive"
+    unresolved = [check for check in report["checks"] if check["state"] == "inconclusive"]
+    assert any(check["check_id"] == "document.arithmetic" for check in unresolved)
+    assert any(check["check_id"] == "invoice.purchase_order_match" for check in unresolved)
