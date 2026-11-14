@@ -42,6 +42,8 @@ def test_runs_pinned_revision_in_restricted_container(tmp_path, monkeypatch):
     assert "--network=none" in captured["argv"]
     assert "--read-only" in captured["argv"]
     assert "--cap-drop=ALL" in captured["argv"]
+    assert any(arg.startswith("--cidfile=") for arg in captured["argv"])
+    assert report["container_cleanup_status"] == "not_needed"
     assert any(str(repo) in arg and arg.endswith(":/workspace:ro") for arg in captured["argv"])
     assert report["stdout"]["sha256"]
     assert Path(report["stdout"]["path"]).is_file()
