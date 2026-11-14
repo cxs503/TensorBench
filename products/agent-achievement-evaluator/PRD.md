@@ -1,6 +1,6 @@
 # Agent Achievement Evaluator — Product Requirements
 
-**Product ID:** `agent-achievement-evaluator` · **Status:** foundation / not implemented · **Initial user:** TensorPlatform.
+**Product ID:** `agent-achievement-evaluator` · **Status:** partially implemented; real-world workflow not yet verified · **Initial user:** TensorPlatform.
 
 ## Problem and outcome
 
@@ -39,3 +39,26 @@ Autonomous legal/HR performance decisions, judging agent identity or intent, or 
 ## First vertical slice
 
 Evaluate 20–30 real, completed TensorPlatform missions across code, docs-only, test-only, and feature changes. Manually label ground truth before running evaluator. Use a read-only GitHub snapshot and disposable test environment; do not merge, close or modify PRs.
+
+
+## Implementation status (verified against repository source, 2026-11-14)
+
+**Overall: partially implemented; not yet verified in a real TensorPlatform mission workflow.**
+
+Implemented in the current codebase:
+- Work-package/acceptance evidence models and deterministic evidence validation in `tensorbench/achievement.py`.
+- Commit-pinned evidence and criterion/evidence association.
+- Test/change/artifact completeness checks and report generation.
+- Explicit publishing path to TensorPlatform; publishing is not automatic.
+- Unit and publish-path tests exist (`tests/test_agent_achievement_evaluator.py`, `tests/test_achievement_platform_publish.py`).
+
+Not yet implemented or not yet demonstrated:
+- Automatic read-only collection of a real mission, linked PRs, commits, GitHub check-runs and job logs from TensorPlatform/GitHub.
+- Disposable isolated execution of candidate code and independent test-quality assessment (mutation/vacuity/over-mocking checks).
+- Blind-labelled holdout corpus and measured false-acceptance/false-rejection rates.
+- A real mission evaluated end-to-end and independently reviewed.
+
+Release interpretation:
+- Passing current unit tests proves the implemented evidence-package checks, not that an agent delivered the promised feature.
+- Missing platform/GitHub evidence must remain `inconclusive`; no automatic maturity grade or agent-performance decision.
+- Human reviewer retains grade/decision authority until calibration and independent review gates are met.

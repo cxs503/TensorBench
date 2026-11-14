@@ -70,3 +70,32 @@ Example bundle:
 - Customer data must not be used until tenant isolation, encryption, retention and deletion controls are reviewed.
 
 The next adapter should attach PDF page/table-cell locators and verify that each normalized value can be traced back to the original document.
+
+
+## PDF field proposal → human review → normalized reconciliation input
+
+The PDF path is intentionally two-step. First extract page evidence and propose fields:
+
+```bash
+tensorbench extract-pdf --input invoice.pdf --source-ref "procurement://invoice/INV-001" --output invoice.pages.json
+tensorbench propose-pdf-fields --input invoice.pages.json --output invoice.proposals.json
+```
+
+Reviewers must decide every proposal explicitly. The decisions file is a JSON array:
+
+```json
+[
+  {"proposal_id": "<proposal_id from the proposal report>", "decision": "accept"},
+  {"proposal_id": "<another proposal_id>", "decision": "reject"}
+]
+```
+
+Then record the review and emit a normalized document only when all proposals have been decided and no accepted-field conflicts remain:
+
+```bash
+tensorbench review-pdf-fields --input invoice.proposals.json --decisions invoice.decisions.json --reviewer "reviewer-id" --document-type invoice --doc-id invoice-001 --output invoice.review.json
+```
+
+The output contains a review receipt and a reconciliation-compatible normalized document with source hashes and field-level evidence. If any proposal is pending or accepted values conflict, no normalized document is emitted. Add the normalized documents to a bundle and run the reconcile-business command; missing line items, PO links or other required data remain inconclusive rather than passing.
+
+This does not add OCR or infer line items. A reviewer decision is recorded provenance, not a guarantee that the document itself is truthful.

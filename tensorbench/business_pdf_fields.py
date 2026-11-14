@@ -53,7 +53,14 @@ def propose_pdf_fields(extraction: Any) -> dict[str, Any]:
                     normalized = raw_value.replace("年", "-").replace("月", "-").replace("日", "").replace("/", "-").replace(".", "-")
                 else:
                     normalized = raw_value
+                proposal_id = hashlib.sha256(json.dumps({
+                    "source_sha256": source["sha256"], "page_number": page_no,
+                    "field": field_name, "start_offset": match.start(1),
+                    "end_offset": match.end(1), "normalized_candidate": normalized, "currency_candidate": currency,
+                    "value_sha256": hashlib.sha256(raw_value.encode("utf-8")).hexdigest(),
+                }, sort_keys=True, separators=(",", ":")).encode("utf-8")).hexdigest()
                 proposals.append({
+                    "proposal_id": proposal_id,
                     "field": field_name,
                     "raw_value": raw_value,
                     "normalized_candidate": normalized,
@@ -96,3 +103,154 @@ def propose_pdf_fields_file(path: str | Path) -> dict[str, Any]:
     except (OSError, UnicodeError, json.JSONDecodeError) as exc:
         raise PdfFieldProposalError(f"cannot read PDF extraction JSON: {exc}") from exc
     return propose_pdf_fields(extraction)
+
+
+
+def review_pdf_field_proposals(proposal_bundle: Any, decisions: Any, *, reviewer: str) -> dict[str, Any]:
+    """Record explicit human decisions; never promote unreviewed candidates."""
+    if not isinstance(proposal_bundle, dict) or not isinstance(proposal_bundle.get("proposals"), list):
+        raise PdfFieldProposalError("proposal bundle must contain proposals[]")
+    source = proposal_bundle.get("source")
+    if not isinstance(source, dict) or not source.get("source_ref") or not re.fullmatch(r"[a-fA-F0-9]{64}", str(source.get("sha256", ""))):
+        raise PdfFieldProposalError("proposal bundle has invalid source provenance")
+    if not isinstance(reviewer, str) or not reviewer.strip():
+        raise PdfFieldProposalError("reviewer identity is required")
+    if not isinstance(decisions, list):
+        raise PdfFieldProposalError("decisions must be an array")
+
+    proposals = proposal_bundle["proposals"]
+    for proposal in proposals:
+        if not isinstance(proposal, dict):
+            raise PdfFieldProposalError("each proposal must be an object")
+        locator = proposal.get("locator")
+        if not isinstance(locator, dict):
+            raise PdfFieldProposalError("proposal locator is required")
+        if proposal.get("source_sha256") != source["sha256"] or proposal.get("source_ref") != source["source_ref"]:
+            raise PdfFieldProposalError("proposal source provenance does not match proposal bundle")
+        raw_value = proposal.get("raw_value")
+        if not isinstance(raw_value, str) or hashlib.sha256(raw_value.encode("utf-8")).hexdigest() != locator.get("value_sha256"):
+            raise PdfFieldProposalError("proposal value fingerprint mismatch")
+        identity = {
+            "source_sha256": source["sha256"],
+            "page_number": locator.get("page_number"),
+            "field": proposal.get("field"),
+            "start_offset": locator.get("start_offset"),
+            "end_offset": locator.get("end_offset"),
+            "normalized_candidate": proposal.get("normalized_candidate"),
+            "currency_candidate": proposal.get("currency_candidate"),
+            "value_sha256": locator.get("value_sha256"),
+        }
+        expected_id = hashlib.sha256(json.dumps(identity, sort_keys=True, separators=(",", ":")).encode("utf-8")).hexdigest()
+        if proposal.get("proposal_id") != expected_id:
+            raise PdfFieldProposalError("proposal identity fingerprint mismatch")
+    by_id = {item.get("proposal_id"): item for item in proposals if isinstance(item, dict) and item.get("proposal_id")}
+    if len(by_id) != len(proposals):
+        raise PdfFieldProposalError("every proposal must have a unique proposal_id")
+    seen: set[str] = set()
+    normalized_decisions: dict[str, str] = {}
+    for item in decisions:
+        if not isinstance(item, dict):
+            raise PdfFieldProposalError("each decision must be an object")
+        proposal_id, decision = item.get("proposal_id"), item.get("decision")
+        if proposal_id not in by_id:
+            raise PdfFieldProposalError(f"decision references unknown proposal_id: {proposal_id!r}")
+        if proposal_id in seen:
+            raise PdfFieldProposalError(f"duplicate decision for proposal_id: {proposal_id}")
+        if decision not in {"accept", "reject"}:
+            raise PdfFieldProposalError("decision must be accept or reject")
+        seen.add(proposal_id)
+        normalized_decisions[proposal_id] = decision
+
+    reviewed = json.loads(json.dumps(proposal_bundle, ensure_ascii=False))
+    accepted: list[dict[str, Any]] = []
+    rejected: list[str] = []
+    pending: list[str] = []
+    for proposal in reviewed["proposals"]:
+        decision = normalized_decisions.get(proposal["proposal_id"])
+        proposal["review_status"] = "accepted" if decision == "accept" else "rejected" if decision == "reject" else "proposed_unverified"
+        if decision == "accept":
+            accepted.append(proposal)
+        elif decision == "reject":
+            rejected.append(proposal["proposal_id"])
+        else:
+            pending.append(proposal["proposal_id"])
+
+    fields: dict[str, list[dict[str, Any]]] = {}
+    for proposal in accepted:
+        fields.setdefault(proposal["field"], []).append(proposal)
+    conflicts = []
+    approved_fields: dict[str, Any] = {}
+    for field_name, items in fields.items():
+        values = {(item.get("normalized_candidate"), item.get("currency_candidate")) for item in items}
+        if len(values) != 1:
+            conflicts.append(field_name)
+            continue
+        value, currency = next(iter(values))
+        approved_fields[field_name] = {
+            "value": value,
+            "currency": currency,
+            "evidence": [{
+                "proposal_id": item["proposal_id"],
+                "source_evidence_id": item.get("source_evidence_id"),
+                "source_ref": item["source_ref"],
+                "source_sha256": item["source_sha256"],
+                "locator": item["locator"],
+            } for item in items],
+        }
+
+    fingerprint = hashlib.sha256(json.dumps(proposal_bundle, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")).hexdigest()
+    return {
+        "schema_version": "1.0.0",
+        "product_id": "business-evidence-engine",
+        "status": "conflicted" if conflicts else "needs_review" if pending else "reviewed",
+        "proposal_bundle_sha256": fingerprint,
+        "source": source,
+        "review": {
+            "reviewer": reviewer.strip(),
+            "reviewed_at": datetime.now(timezone.utc).replace(microsecond=0).isoformat(),
+            "decisions": [{"proposal_id": key, "decision": value} for key, value in sorted(normalized_decisions.items())],
+            "pending_proposal_ids": pending,
+            "rejected_proposal_ids": rejected,
+            "conflicting_fields": sorted(conflicts),
+        },
+        "approved_fields": approved_fields,
+        "limitations": ["Accepted values reflect a recorded reviewer decision, not an independent guarantee of document truth.", "Conflicting accepted values are withheld from normalized output."],
+    }
+
+
+def approved_pdf_fields_to_document(reviewed: Any, *, document_type: str, doc_id: str) -> dict[str, Any]:
+    """Create a reconciliation input using accepted fields only, preserving provenance."""
+    if not isinstance(reviewed, dict) or reviewed.get("product_id") != "business-evidence-engine":
+        raise PdfFieldProposalError("reviewed proposal bundle is required")
+    if reviewed.get("status") != "reviewed":
+        raise PdfFieldProposalError("all proposals must be reviewed and conflicts resolved before normalization")
+    if document_type not in {"contract", "purchase_order", "delivery", "invoice", "payment"}:
+        raise PdfFieldProposalError("unsupported document_type")
+    if not isinstance(doc_id, str) or not doc_id.strip():
+        raise PdfFieldProposalError("doc_id is required")
+    source = reviewed.get("source") or {}
+    fields = reviewed.get("approved_fields") or {}
+    mapping = {
+        "invoice_number": "invoice_number",
+        "contract_number": "contract_number",
+        "purchase_order_number": "po_number",
+        "document_date": "document_date",
+        "total_amount": "total_amount",
+    }
+    document: dict[str, Any] = {
+        "doc_id": doc_id.strip(),
+        "document_type": document_type,
+        "source_ref": source.get("source_ref"),
+        "sha256": source.get("sha256"),
+        "field_evidence": {},
+    }
+    for proposal_field, target_field in mapping.items():
+        entry = fields.get(proposal_field)
+        if entry is None:
+            continue
+        document[target_field] = entry["value"]
+        document["field_evidence"][target_field] = entry["evidence"]
+        if proposal_field == "total_amount" and entry.get("currency"):
+            document["currency"] = entry["currency"]
+    document["evidence_ref"] = "pdf:" + str(source.get("sha256"))
+    return document

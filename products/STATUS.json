@@ -1,0 +1,102 @@
+{
+  "schema_version": "1.0.0",
+  "as_of": "2026-11-14",
+  "status_vocabulary": {
+    "implemented": "Code path exists and focused automated tests cover its declared behavior.",
+    "partially_implemented": "Some planned capabilities exist; material release requirements remain absent.",
+    "not_implemented": "No executable implementation has been verified.",
+    "real_world_verified": "A permissioned real-world workflow passed the declared acceptance set with recorded evidence and independent review."
+  },
+  "release_rule": "Unit-test success does not imply real_world_verified. Unsupported or missing evidence must be inconclusive, not pass.",
+  "products": [
+    {
+      "id": "research-audit",
+      "repository": "cxs503/TensorKnowledge",
+      "status": "partially_implemented",
+      "implemented": [
+        "Markdown citation audit",
+        "Claim-Evidence provenance and bidirectional link checks",
+        "Source-root path containment",
+        "Exact quote/offset and SHA-256 validation",
+        "Conservative inconclusive outcome for unreviewed evidence"
+      ],
+      "not_implemented_or_unverified": [
+        "Semantic claim-support/contradiction evaluation",
+        "Independent review receipt workflow",
+        "Corpus-scale batch audit",
+        "Expert-labelled holdout and per-class metrics",
+        "Real report audit with reviewer sign-off"
+      ],
+      "real_world_verified": false,
+      "next_gate": "Run one permissioned real report+bibliography+source bundle; capture independent reviewer receipt."
+    },
+    {
+      "id": "physics-dataset-validator",
+      "repository": "cxs503/TensorData",
+      "status": "partially_implemented",
+      "implemented": [
+        "CSV structural and numeric checks",
+        "Axis monotonicity",
+        "Supported unit metadata/conversion checks",
+        "Declared physical-range checks",
+        "Entity-level split leakage",
+        "Rights gate and report fingerprint"
+      ],
+      "not_implemented_or_unverified": [
+        "Conservation-law residuals",
+        "Initial/boundary condition compliance",
+        "Multimodal temporal/spatial alignment",
+        "NetCDF/HDF5/VTK field formats",
+        "TensorLBM ship-flow end-to-end validation"
+      ],
+      "real_world_verified": false,
+      "next_gate": "Implement one explicit conservation profile and validate a real TensorLBM flow export plus labelled corruptions."
+    },
+    {
+      "id": "agent-achievement-evaluator",
+      "repository": "cxs503/TensorBench",
+      "status": "partially_implemented",
+      "implemented": [
+        "Work-package and acceptance evidence models",
+        "Commit-pinned evidence validation",
+        "Criterion/evidence association",
+        "Test/change/artifact completeness checks",
+        "Report generation and explicit platform publish path"
+      ],
+      "not_implemented_or_unverified": [
+        "Automatic TensorPlatform mission and GitHub evidence collection",
+        "Isolated candidate-code execution",
+        "Test vacuity/mutation quality checks",
+        "Blind-labelled calibration corpus",
+        "Real mission evaluation with independent reviewer"
+      ],
+      "real_world_verified": false,
+      "next_gate": "Read-only mission snapshot adapter for one real mission, linked PR, commit and CI evidence; keep human grading."
+    },
+    {
+      "id": "business-evidence-engine",
+      "repository": "cxs503/TensorBench",
+      "status": "partially_implemented",
+      "implemented": [
+        "Bounded PDF ingestion and page-level fingerprints",
+        "Rule-based unverified field proposals",
+        "Normalized-record reconciliation and deterministic discrepancy checks",
+        "CLI and focused tests",
+        "Explicit accept/reject review receipt with reviewer identity and timestamp",
+        "Proposal identity fingerprints bind source, offsets, raw and normalized values",
+        "Conflict detection and provenance-preserving normalized document output",
+        "CLI review-pdf-fields workflow; only complete conflict-free reviews normalize"
+      ],
+      "not_implemented_or_unverified": [
+        "OCR",
+        "Reliable table/line-item cell extraction",
+        "Full contract-to-invoice workflow",
+        "Permissioned labelled real-document pilot",
+        "Customer-grade privacy/security verification",
+        "Automatic multi-document PDF bundle orchestration and reconciliation invocation"
+      ],
+      "real_world_verified": false,
+      "next_gate": "Run a permissioned multi-document bundle through PDF extraction, human review, normalization and reconciliation; measure field and match accuracy."
+    }
+  ]
+}
