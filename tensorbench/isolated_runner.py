@@ -87,6 +87,7 @@ def run_isolated_tests(
     dirty = _git_value(repo, "status", "--porcelain")
     if dirty:
         raise IsolatedRunError("checkout has uncommitted or untracked changes")
+    tree_sha = _git_value(repo, "rev-parse", "HEAD^{tree}")
 
     executable = shutil.which(engine)
     if not executable:
@@ -130,7 +131,7 @@ def run_isolated_tests(
             "started_at": started.isoformat(),
             "finished_at": datetime.now(UTC).isoformat(),
             "candidate_revision": actual_revision,
-            "checkout_sha256": _sha256_file(repo / ".git" / "HEAD") if (repo / ".git" / "HEAD").is_file() else None,
+            "git_tree_sha": tree_sha,
             "image": image,
             "engine": engine,
             "command": list(command),
