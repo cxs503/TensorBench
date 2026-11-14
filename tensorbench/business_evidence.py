@@ -130,7 +130,9 @@ def reconcile_bundle(bundle: Any, *, tolerance: str = "0.01") -> dict[str, Any]:
                 arithmetic_unresolved.append((doc, "line_items are missing or empty"))
             if _decimal(doc.get("total_amount")) is None:
                 arithmetic_unresolved.append((doc, "total_amount is missing or not numeric"))
-        if lines is None:
+        # Delivery rows carry accepted quantities, not necessarily financial
+        # unit prices/amounts. Arithmetic is applicable only to PO/invoice rows.
+        if doc["document_type"] not in {"purchase_order", "invoice"} or lines is None:
             continue
         if not isinstance(lines, list):
             arithmetic_errors.append((doc, "line_items must be an array"))
