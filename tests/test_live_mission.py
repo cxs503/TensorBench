@@ -98,8 +98,8 @@ def test_empty_authoritative_criteria_never_fall_back_to_agent_result(monkeypatc
             return {
                 "id": 42, "repo": "TensorLBM", "goal": "Implement feature",
                 "status": "succeeded", "acceptance_criteria": [],
-                "acceptance_criteria_sha256": "d751713988987e9331980363e24189ce"
-                    "c99c4b3d8f4b4f8d8c7a6e3b5f5f7f6a",
+                "acceptance_criteria_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5"
+                    "ed12ab4d8e11ba873c2f11161202b945",
                 "acceptance_criteria_freeze_source": "mission_created",
                 "acceptance_criteria_status": "not_declared",
                 "result": {"evidence": {"head_commit": SHA, "acceptance_criteria": [
