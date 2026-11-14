@@ -41,8 +41,8 @@ Every acceptance run must retain:
 1. **G0 — executable slice:** supported input → deterministic checks → machine-readable report.
 2. **G1 — evidence integrity:** immutable provenance, reproducible run and explicit inconclusive behavior.
 3. **G2 — real workflow:** at least one permissioned real input bundle and independently reviewable output.
-3. **G3 — calibrated pilot:** labelled holdout, per-defect precision/recall, false acceptance and false rejection.
-4. **G4 — operational readiness:** security/privacy, retention, access control, observability and documented support boundaries.
+4. **G3 — calibrated pilot:** labelled holdout, per-defect precision/recall, false acceptance and false rejection.
+5. **G4 — operational readiness:** security/privacy, retention, access control, observability and documented support boundaries.
 
 Do not claim MVP completion at G0 or G1. A product-facing pilot requires G2; wider release requires G3 and applicable G4 controls.
 
