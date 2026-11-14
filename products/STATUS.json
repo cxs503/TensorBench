@@ -81,18 +81,22 @@
         "Bounded PDF ingestion and page-level fingerprints",
         "Rule-based unverified field proposals",
         "Normalized-record reconciliation and deterministic discrepancy checks",
-        "CLI and focused tests"
+        "CLI and focused tests",
+        "Explicit accept/reject review receipt with reviewer identity and timestamp",
+        "Proposal identity fingerprints bind source, offsets, raw and normalized values",
+        "Conflict detection and provenance-preserving normalized document output",
+        "CLI review-pdf-fields workflow; only complete conflict-free reviews normalize"
       ],
       "not_implemented_or_unverified": [
         "OCR",
         "Reliable table/line-item cell extraction",
-        "Human-approved field proposal handoff to reconciliation",
         "Full contract-to-invoice workflow",
         "Permissioned labelled real-document pilot",
-        "Customer-grade privacy/security verification"
+        "Customer-grade privacy/security verification",
+        "Automatic multi-document PDF bundle orchestration and reconciliation invocation"
       ],
       "real_world_verified": false,
-      "next_gate": "Add explicit approve/reject transition for field proposals and feed only approved values into normalized reconciliation."
+      "next_gate": "Run a permissioned multi-document bundle through PDF extraction, human review, normalization and reconciliation; measure field and match accuracy."
     }
   ]
 }
