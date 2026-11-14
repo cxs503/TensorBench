@@ -77,6 +77,14 @@ Do not count A0/A1 assets as validated assets. A2 requires evidence; A3 requires
 - Redact secrets and unnecessary personal data from logs and reports.
 - Rights unknown = quarantined; no training, publication or redistribution until cleared.
 
-## 7. Interoperability
+## 7. Acceptance semantics for scenario claims
+
+Sections 1–6 define interchange. How a product turns a run into an acceptance claim —
+`scenario`/`criteria_freeze`/`review_receipt` report blocks, the six independent review checks, the
+`acceptance-status.schema.json` binding for `products/STATUS.json` and the failure/regression
+record format that points at the platform `negative_knowledge_ledger` — is specified in
+[SCENARIO_ACCEPTANCE_FRAMEWORK.md](SCENARIO_ACCEPTANCE_FRAMEWORK.md).
+
+## 8. Interoperability
 
 Products should export JSON conforming to the schemas in `schemas/`. API transport, authentication and asynchronous job lifecycle are deployment concerns and must be agreed with TensorPlatform before implementation. Do not couple products through private database tables or shared internal Python imports.
