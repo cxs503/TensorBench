@@ -8,7 +8,12 @@ from pathlib import Path
 
 from .achievement import AchievementInputError, evaluate_file
 from .business_evidence import BusinessEvidenceError, reconcile_file
-from .business_pdf_fields import (\n    PdfFieldProposalError, propose_pdf_fields_file, review_pdf_field_proposals,\n    approved_pdf_fields_to_document,\n)
+from .business_pdf_fields import (
+    PdfFieldProposalError,
+    propose_pdf_fields_file,
+    review_pdf_field_proposals,
+    approved_pdf_fields_to_document,
+)
 from .compare import compare_results, load_result
 from .contracts import ContractValidationError, validate_file
 from .pdf_evidence import PdfEvidenceError, extract_pdf_file
