@@ -8,7 +8,7 @@ from pathlib import Path
 
 from .achievement import AchievementInputError, evaluate_file
 from .business_evidence import BusinessEvidenceError, reconcile_file
-from .business_pdf_fields import PdfFieldProposalError, propose_pdf_fields_file
+from .business_pdf_fields import (\n    PdfFieldProposalError, propose_pdf_fields_file, review_pdf_field_proposals,\n    approved_pdf_fields_to_document,\n)
 from .compare import compare_results, load_result
 from .contracts import ContractValidationError, validate_file
 from .pdf_evidence import PdfEvidenceError, extract_pdf_file
@@ -59,7 +59,7 @@ def build_parser() -> argparse.ArgumentParser:
         "propose-pdf-fields", help="propose labeled business fields from page-addressable PDF text JSON"
     )
     field_parser.add_argument("--input", required=True, help="JSON output from tensorbench extract-pdf")
-    field_parser.add_argument("--output", help="Optional field-proposal JSON path")
+    field_parser.add_argument("--output", help="Optional field-proposal JSON path")\n\n    review_pdf_parser = subparsers.add_parser(\n        "review-pdf-fields", help="record reviewer decisions and emit reconciliation-ready approved fields"\n    )\n    review_pdf_parser.add_argument("--input", required=True, help="PDF field proposal JSON")\n    review_pdf_parser.add_argument("--decisions", required=True, help="JSON array of proposal_id/decision records")\n    review_pdf_parser.add_argument("--reviewer", required=True, help="Human reviewer identity")\n    review_pdf_parser.add_argument("--document-type", required=True, choices=("contract", "purchase_order", "delivery", "invoice", "payment"))\n    review_pdf_parser.add_argument("--doc-id", required=True, help="Stable document ID for reconciliation")\n    review_pdf_parser.add_argument("--output", help="Optional reviewed document JSON path")
 
     achievement_publish = subparsers.add_parser(
         "publish-achievement", help="prepare and optionally submit a human-reviewed agent achievement"
@@ -283,7 +283,7 @@ def main() -> int:
             print(f"tensorbench: error: {exc}", file=sys.stderr)
             return 2
 
-    if args.command == "extract-pdf":
+    if args.command == "review-pdf-fields":\n        try:\n            proposals = json.loads(Path(args.input).read_text(encoding="utf-8"))\n            decisions = json.loads(Path(args.decisions).read_text(encoding="utf-8"))\n            reviewed = review_pdf_field_proposals(proposals, decisions, reviewer=args.reviewer)\n            document = approved_pdf_fields_to_document(\n                reviewed, document_type=args.document_type, doc_id=args.doc_id\n            ) if reviewed["status"] == "reviewed" else None\n            result = {"review": reviewed, "normalized_document": document}\n            rendered = json.dumps(result, indent=2, ensure_ascii=False)\n            if args.output:\n                Path(args.output).write_text(rendered + "\\n", encoding="utf-8")\n            print(rendered)\n            return 0 if document is not None else 1\n        except (OSError, json.JSONDecodeError, PdfFieldProposalError) as exc:\n            print(f"tensorbench: error: {exc}", file=sys.stderr)\n            return 2\n\n    if args.command == "extract-pdf":
         try:
             result = extract_pdf_file(
                 args.input, source_ref=args.source_ref,
