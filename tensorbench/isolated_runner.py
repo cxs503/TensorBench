@@ -1,18 +1,14 @@
-"""Run reviewer-selected tests against a pinned checkout in a constrained OCI container.
+"""Constrained OCI execution for independent test re-verification.
 
-This is defense-in-depth, not a perfect sandbox. Prefer rootless Podman on a
-dedicated runner. Docker requires a trusted isolated host because its daemon
-may have host-level privileges.
+Defense-in-depth only. Prefer rootless Podman on a dedicated runner host.
 """
 from __future__ import annotations
 
 import hashlib
-import json
 import os
 import re
 import shutil
 import subprocess
-import tempfile
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Sequence
@@ -36,9 +32,13 @@ def _sha256_file(path: Path) -> str:
 
 def _git_value(repo: Path, *args: str) -> str:
     result = subprocess.run(
-        ["git", "-C", str(repo), *args],
-        check=False, capture_output=True, text=True, timeout=15,
-        env={"PATH": os.environ.get("PATH", "/usr/bin:/bin"), "GIT_CONFIG_NOSYSTEM": "1"},
+        ["git", "-C", str(repo), *args], check=False, capture_output=True,
+        text=True, timeout=15,
+        env={
+            "PATH": os.environ.get("PATH", "/usr/bin:/bin"),
+            "GIT_CONFIG_NOSYSTEM": "1",
+            "GIT_CONFIG_GLOBAL": os.devnull,
+        },
     )
     if result.returncode:
         raise IsolatedRunError(f"git {' '.join(args)} failed: {result.stderr[-1000:]}")
@@ -51,13 +51,14 @@ def run_isolated_tests(
     expected_revision: str,
     image: str,
     command: Sequence[str],
+    log_dir: str | Path,
     engine: str = "podman",
     timeout_seconds: int = 900,
     memory_limit: str = "2g",
     cpu_limit: str = "2",
     pids_limit: int = 128,
 ) -> dict:
-    """Execute an explicit argv in a no-network, read-only OCI container."""
+    """Run an explicit argv against an exact clean checkout and retain full logs."""
     if not _SHA_RE.fullmatch(expected_revision):
         raise IsolatedRunError("expected_revision must be a full Git SHA")
     if not _IMAGE_RE.fullmatch(image):
@@ -84,72 +85,73 @@ def run_isolated_tests(
         raise IsolatedRunError(
             f"checkout revision mismatch: expected {expected_revision}, got {actual_revision}"
         )
-    dirty = _git_value(repo, "status", "--porcelain")
-    if dirty:
+    if _git_value(repo, "status", "--porcelain"):
         raise IsolatedRunError("checkout has uncommitted or untracked changes")
     tree_sha = _git_value(repo, "rev-parse", "HEAD^{tree}")
 
     executable = shutil.which(engine)
     if not executable:
         raise IsolatedRunError(f"{engine} executable was not found")
-    with tempfile.TemporaryDirectory(prefix="tensorbench-isolated-") as tmp:
-        stdout_path = Path(tmp) / "stdout.log"
-        stderr_path = Path(tmp) / "stderr.log"
-        argv = [
-            executable, "run", "--rm", "--pull=never", "--network=none",
-            "--read-only", "--cap-drop=ALL", "--security-opt=no-new-privileges",
-            f"--pids-limit={pids_limit}", f"--memory={memory_limit}",
-            f"--cpus={cpu_limit}", "--user=65532:65532",
-            "--tmpfs=/tmp:rw,noexec,nosuid,nodev,size=512m",
-            "--env=HOME=/tmp", "--env=TMPDIR=/tmp",
-            "--env=PYTHONDONTWRITEBYTECODE=1",
-            f"--volume={repo}:/workspace:ro", "--workdir=/workspace",
-            image, *command,
-        ]
-        started = datetime.now(UTC)
-        timed_out = False
-        try:
-            with stdout_path.open("wb") as stdout, stderr_path.open("wb") as stderr:
-                completed = subprocess.run(
-                    argv, stdin=subprocess.DEVNULL, stdout=stdout, stderr=stderr,
-                    check=False, timeout=timeout_seconds,
-                    env={"PATH": os.environ.get("PATH", "/usr/bin:/bin")},
-                )
-            exit_code = completed.returncode
-        except subprocess.TimeoutExpired:
-            timed_out = True
-            exit_code = None
-        stdout_hash = _sha256_file(stdout_path)
-        stderr_hash = _sha256_file(stderr_path)
-        stdout_text = stdout_path.read_text(encoding="utf-8", errors="replace")
-        stderr_text = stderr_path.read_text(encoding="utf-8", errors="replace")
-        status = "timed_out" if timed_out else ("passed" if exit_code == 0 else "failed")
-        return {
-            "schema_version": "tensorbench.isolated-run.v1",
-            "status": status,
-            "method": "oci_container_no_network_read_only_checkout",
-            "started_at": started.isoformat(),
-            "finished_at": datetime.now(UTC).isoformat(),
-            "candidate_revision": actual_revision,
-            "git_tree_sha": tree_sha,
-            "image": image,
-            "engine": engine,
-            "command": list(command),
-            "exit_code": exit_code,
-            "timed_out": timed_out,
-            "timeout_seconds": timeout_seconds,
-            "limits": {
-                "network": "none", "rootfs": "read_only", "checkout": "read_only",
-                "memory": memory_limit, "cpus": cpu_limit, "pids": pids_limit,
-                "capabilities": "all_dropped", "user": "65532:65532",
-            },
-            "stdout": {"sha256": stdout_hash, "bytes": stdout_path.stat().st_size,
-                       "excerpt": stdout_text[-12000:]},
-            "stderr": {"sha256": stderr_hash, "bytes": stderr_path.stat().st_size,
-                       "excerpt": stderr_text[-12000:]},
-            "limitations": [
-                "Container isolation is defense-in-depth, not a formally verified sandbox.",
-                "Docker requires a trusted isolated host; rootless Podman is preferred.",
-                "A passing test command does not prove scientific or functional correctness.",
-            ],
-        }
+    logs = Path(log_dir)
+    if logs.exists() and (not logs.is_dir() or any(logs.iterdir())):
+        raise IsolatedRunError("log_dir must be a new or empty directory")
+    logs.mkdir(parents=True, exist_ok=True)
+    stdout_path, stderr_path = logs / "stdout.log", logs / "stderr.log"
+
+    argv = [
+        executable, "run", "--rm", "--pull=never", "--network=none",
+        "--read-only", "--cap-drop=ALL", "--security-opt=no-new-privileges",
+        f"--pids-limit={pids_limit}", f"--memory={memory_limit}",
+        f"--cpus={cpu_limit}", "--user=65532:65532",
+        "--tmpfs=/tmp:rw,noexec,nosuid,nodev,size=512m",
+        "--env=HOME=/tmp", "--env=TMPDIR=/tmp",
+        "--env=PYTHONDONTWRITEBYTECODE=1",
+        f"--volume={repo}:/workspace:ro", "--workdir=/workspace",
+        image, *command,
+    ]
+    started = datetime.now(UTC)
+    timed_out = False
+    try:
+        with stdout_path.open("wb") as stdout, stderr_path.open("wb") as stderr:
+            completed = subprocess.run(
+                argv, stdin=subprocess.DEVNULL, stdout=stdout, stderr=stderr,
+                check=False, timeout=timeout_seconds,
+                env={"PATH": os.environ.get("PATH", "/usr/bin:/bin")},
+            )
+        exit_code = completed.returncode
+    except subprocess.TimeoutExpired:
+        timed_out, exit_code = True, None
+
+    stdout_hash, stderr_hash = _sha256_file(stdout_path), _sha256_file(stderr_path)
+    stdout_text = stdout_path.read_text(encoding="utf-8", errors="replace")
+    stderr_text = stderr_path.read_text(encoding="utf-8", errors="replace")
+    status = "timed_out" if timed_out else ("passed" if exit_code == 0 else "failed")
+    return {
+        "schema_version": "tensorbench.isolated-run.v1",
+        "status": status,
+        "method": "oci_container_no_network_read_only_checkout",
+        "started_at": started.isoformat(),
+        "finished_at": datetime.now(UTC).isoformat(),
+        "candidate_revision": actual_revision,
+        "git_tree_sha": tree_sha,
+        "image": image,
+        "engine": engine,
+        "command": list(command),
+        "exit_code": exit_code,
+        "timed_out": timed_out,
+        "timeout_seconds": timeout_seconds,
+        "limits": {
+            "network": "none", "rootfs": "read_only", "checkout": "read_only",
+            "memory": memory_limit, "cpus": cpu_limit, "pids": pids_limit,
+            "capabilities": "all_dropped", "user": "65532:65532",
+        },
+        "stdout": {"path": str(stdout_path), "sha256": stdout_hash,
+                   "bytes": stdout_path.stat().st_size, "excerpt": stdout_text[-12000:]},
+        "stderr": {"path": str(stderr_path), "sha256": stderr_hash,
+                   "bytes": stderr_path.stat().st_size, "excerpt": stderr_text[-12000:]},
+        "limitations": [
+            "Container isolation is defense-in-depth, not a formally verified sandbox.",
+            "Docker requires a trusted isolated host; rootless Podman is preferred.",
+            "A passing test command does not prove scientific or functional correctness.",
+        ],
+    }
