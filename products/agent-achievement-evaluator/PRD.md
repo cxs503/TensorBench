@@ -1,6 +1,6 @@
 # Agent Achievement Evaluator — Product Requirements
 
-**Product ID:** `agent-achievement-evaluator` · **Status:** foundation / not implemented · **Initial user:** TensorPlatform.
+**Product ID:** `agent-achievement-evaluator` · **Status:** partially implemented; real-world workflow not yet verified · **Initial user:** TensorPlatform.
 
 ## Problem and outcome
 
