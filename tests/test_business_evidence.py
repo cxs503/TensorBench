@@ -26,7 +26,7 @@ def _matched_bundle():
     )
     return {
         "documents": [po, invoice],
-        "vendor_master": {"bank_accounts": {"supplier-1": "CN123"}},
+        "vendor_master": {"bank_accounts": {"supplier-1": "CN123", "supplier-2": "CN123"}},
     }
 
 
