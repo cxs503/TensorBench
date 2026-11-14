@@ -163,12 +163,60 @@ def build_mission_evidence_bundle(snapshot: Mapping[str, Any]) -> dict[str, Any]
                 "target_url": item.get("target_url"),
             })
 
-    supplied_criteria = root.get("acceptance_criteria")
-    if supplied_criteria is None:
+    collection_metadata = root.get("collection_metadata") or {}
+    if not isinstance(collection_metadata, Mapping):
+        raise AchievementInputError("collection_metadata must be an object")
+
+    # The mission row is authoritative even when its criteria list is empty.
+    # Never replace an explicit empty contract with agent-authored result data.
+    if "acceptance_criteria" in mission:
         supplied_criteria = mission.get("acceptance_criteria")
-    if supplied_criteria is None and isinstance(mission.get("result"), Mapping):
-        supplied_criteria = mission["result"].get("acceptance_criteria")
+        criteria_payload_source = "mission_snapshot"
+    elif "acceptance_criteria" in root:
+        supplied_criteria = root.get("acceptance_criteria")
+        criteria_payload_source = str(collection_metadata.get("acceptance_criteria_payload_source") or "snapshot_supplied")
+    else:
+        legacy_result = mission.get("result")
+        legacy_evidence = legacy_result.get("evidence") if isinstance(legacy_result, Mapping) else None
+        supplied_criteria = (
+            legacy_evidence.get("acceptance_criteria")
+            if isinstance(legacy_evidence, Mapping) else None
+        )
+        if supplied_criteria is None and isinstance(legacy_result, Mapping):
+            supplied_criteria = legacy_result.get("acceptance_criteria")
+        criteria_payload_source = "legacy_completion_evidence" if supplied_criteria is not None else "not_declared"
+
+    if supplied_criteria is not None and not isinstance(supplied_criteria, list):
+        raise AchievementInputError("acceptance_criteria must be an array")
     if supplied_criteria is None:
+        supplied_criteria = []
+
+    freeze_source = str(
+        mission.get("acceptance_criteria_freeze_source")
+        or collection_metadata.get("acceptance_criteria_source")
+        or "legacy_unfrozen"
+    )
+    expected_criteria_sha256 = (
+        mission.get("acceptance_criteria_sha256")
+        or collection_metadata.get("acceptance_criteria_sha256")
+    )
+    observed_criteria_sha256 = _sha256(supplied_criteria)
+    if freeze_source in {"mission_created", "legacy_start"} and expected_criteria_sha256:
+        criteria_integrity = (
+            "verified" if observed_criteria_sha256 == str(expected_criteria_sha256).strip()
+            else "mismatch"
+        )
+    else:
+        criteria_integrity = "inconclusive"
+
+    if supplied_criteria:
+        criteria_status = (
+            "declared" if freeze_source == "mission_created" and criteria_integrity == "verified"
+            else "legacy_frozen_at_start" if freeze_source == "legacy_start" and criteria_integrity == "verified"
+            else "legacy_unverified"
+        )
+    else:
+        criteria_status = "not_declared"
         # Deliberately not evaluable: mission goal text is not an acceptance test.
         supplied_criteria = [{
             "criterion_id": "mission-goal-not-formalized",
@@ -179,8 +227,6 @@ def build_mission_evidence_bundle(snapshot: Mapping[str, Any]) -> dict[str, Any]
             "evidence_refs": [pr_ref],
             "test_ids": [],
         }]
-    if not isinstance(supplied_criteria, list) or not supplied_criteria:
-        raise AchievementInputError("acceptance_criteria must be a non-empty array when supplied")
 
     bundle = {
         "work_package_id": f"tensorplatform-mission-{mission_id}",
@@ -203,37 +249,63 @@ def build_mission_evidence_bundle(snapshot: Mapping[str, Any]) -> dict[str, Any]
             "mission_sha256": _sha256(mission),
             "pull_request_sha256": _sha256(pr),
             "checks_sha256": _sha256(checks_payload),
-            "acceptance_criteria_source": (
-                "supplied" if root.get("acceptance_criteria") is not None
-                or mission.get("acceptance_criteria") is not None
-                or (isinstance(mission.get("result"), Mapping)
-                    and mission["result"].get("acceptance_criteria") is not None)
-                else "not_declared"
-            ),
-            "collector_metadata": root.get("collection_metadata") or {},
+            "acceptance_criteria_source": criteria_status,
+            "acceptance_criteria_payload_source": criteria_payload_source,
+            "acceptance_criteria_freeze_source": freeze_source,
+            "acceptance_criteria_sha256": expected_criteria_sha256,
+            "acceptance_criteria_observed_sha256": observed_criteria_sha256,
+            "acceptance_criteria_integrity": criteria_integrity,
+            "collector_metadata": collection_metadata,
         },
     }
     return bundle
 
 
 def evaluate_mission_snapshot(snapshot: Mapping[str, Any]) -> dict[str, Any]:
-    """Build and evaluate a snapshot; non-succeeded missions cannot pass."""
+    """Evaluate completed candidates; owner approval may still be pending."""
     bundle = build_mission_evidence_bundle(snapshot)
     report = evaluate_work_package(bundle)
     mission_status = str(bundle["mission"].get("status") or "").lower()
-    if mission_status != "succeeded":
+    if mission_status not in {"succeeded", "awaiting_acceptance"}:
         report["checks"].append({
             "check_id": "mission.status",
             "version": "0.1.0",
             "method": "deterministic_rule",
             "state": "inconclusive",
             "required": True,
-            "details": f"Mission status is {mission_status or 'missing'}, not succeeded.",
+            "details": (
+                f"Mission status is {mission_status or 'missing'}; expected a completed "
+                "candidate (awaiting_acceptance or succeeded)."
+            ),
         })
         report["overall_status"] = "failed" if report["overall_status"] == "failed" else "inconclusive"
     report["summary"]["mission_id"] = bundle["mission"]["mission_id"]
     report["summary"]["mission_status"] = mission_status or None
+    report["summary"]["owner_acceptance_pending"] = mission_status == "awaiting_acceptance"
     report["summary"]["pull_request_number"] = bundle["mission"]["pull_request_number"]
-    report["summary"]["acceptance_criteria_source"] = bundle["collection"]["acceptance_criteria_source"]
+    criteria_status = bundle["collection"]["acceptance_criteria_source"]
+    criteria_integrity = bundle["collection"]["acceptance_criteria_integrity"]
+    if criteria_integrity == "mismatch":
+        criteria_state = "failed"
+        report["overall_status"] = "failed"
+    elif criteria_status != "declared" or criteria_integrity != "verified":
+        criteria_state = "inconclusive"
+        if report["overall_status"] != "failed":
+            report["overall_status"] = "inconclusive"
+    else:
+        criteria_state = "passed"
+    report["checks"].append({
+        "check_id": "mission.acceptance_criteria_integrity",
+        "version": "1.0.0",
+        "method": "deterministic_rule",
+        "state": criteria_state,
+        "required": True,
+        "details": (
+            f"criteria status={criteria_status}; integrity={criteria_integrity}; "
+            f"freeze_source={bundle['collection']['acceptance_criteria_freeze_source']}"
+        ),
+    })
+    report["summary"]["acceptance_criteria_source"] = criteria_status
+    report["summary"]["acceptance_criteria_integrity"] = criteria_integrity
     report["provenance"]["collection"] = bundle["collection"]
     return {"bundle": bundle, "report": report}

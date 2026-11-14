@@ -90,3 +90,36 @@ def test_refuses_ambiguous_pr_association(monkeypatch):
         assert "found 2" in str(exc)
     else:
         raise AssertionError("ambiguous PR association must be rejected")
+
+
+def test_empty_authoritative_criteria_never_fall_back_to_agent_result(monkeypatch):
+    def fake_get(url, token, **kwargs):
+        if url.endswith("/tensor/missions/42"):
+            return {
+                "id": 42, "repo": "TensorLBM", "goal": "Implement feature",
+                "status": "succeeded", "acceptance_criteria": [],
+                "acceptance_criteria_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5"
+                    "ed12ab4d8e11ba873c2f11161202b945",
+                "acceptance_criteria_freeze_source": "mission_created",
+                "acceptance_criteria_status": "not_declared",
+                "result": {"evidence": {"head_commit": SHA, "acceptance_criteria": [
+                    {"criterion_id": "agent-invented", "metric": "accuracy", "target": 1, "tolerance": 0}
+                ]}},
+            }
+        if "/commits/" in url and url.endswith("/pulls?per_page=100&page=1"):
+            return [{"number": 17, "head": {"sha": SHA}, "base": {"sha": "b" * 40}}]
+        if url.endswith("/pulls/17/files?per_page=100&page=1"):
+            return []
+        if "/check-runs?" in url:
+            return {"check_runs": []}
+        if url.endswith("/status"):
+            return {"sha": SHA, "statuses": []}
+        raise AssertionError(url)
+
+    monkeypatch.setattr(live_mission, "_get_json", fake_get)
+    snapshot = live_mission.collect_mission_snapshot(
+        platform_api_base="https://platform.example/api", mission_id=42
+    )
+    assert snapshot["acceptance_criteria"] == []
+    assert snapshot["collection_metadata"]["acceptance_criteria_source"] == "mission_created"
+    assert snapshot["collection_metadata"]["acceptance_criteria_status"] == "not_declared"
