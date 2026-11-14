@@ -81,3 +81,11 @@ def test_missing_check_snapshot_does_not_create_test_evidence():
     snapshot["checks"] = {"check_runs": [], "statuses": []}
     result = evaluate_mission_snapshot(snapshot)
     assert result["report"]["overall_status"] == "inconclusive"
+
+
+def test_successful_build_check_is_not_mistaken_for_test_evidence():
+    snapshot = _snapshot()
+    snapshot["checks"]["check_runs"][0]["name"] = "build-and-lint"
+    result = evaluate_mission_snapshot(snapshot)
+    assert result["report"]["overall_status"] == "inconclusive"
+    assert result["bundle"]["tests"] == []
