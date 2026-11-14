@@ -169,3 +169,14 @@ tensorbench reverify-tests \\
 The runner is network-disabled, mounts the checkout read-only, drops capabilities,
 and records execution metadata plus stdout/stderr hashes. Rootless Podman on a
 dedicated host is preferred. See [Independent Isolated Test Runner](docs/INDEPENDENT_ISOLATED_TEST_RUNNER.md).
+
+Attach the run only to criteria that it actually tests:
+
+```bash
+tensorbench attach-isolated-run \\
+  --bundle mission-123.evidence.json \\
+  --report mission-123-test-run.json \\
+  --test-id isolated-pytest-rerun \\
+  --criterion-id C-IMPLEMENTATION \\
+  --output mission-123.evidence.reverified.json
+```
