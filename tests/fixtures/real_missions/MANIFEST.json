@@ -1,0 +1,95 @@
+{
+  "description": "Real AE-01 evidence bundles collected read-only from TensorPlatform and GitHub.",
+  "schema": "schemas/evidence_bundle.json",
+  "generator": "scripts/collect_evidence_fixtures.py",
+  "missions": [
+    {
+      "mission_id": 19812,
+      "repo": "TensorCAD",
+      "collected_at": "2026-11-14T09:18:57Z",
+      "pull_request": 456,
+      "commit": "97bf6bbdbfc597981b71e68574c6e304567a9508",
+      "ci": "not_run",
+      "deliverables": 1,
+      "missing": [
+        "ci.check_runs",
+        "mission.result.evidence.head_commit"
+      ],
+      "bundle_sha256": "18f135842d0a0f593d1b708643dc02a7d4c9a4cc26ad3c9216596592690c91b0"
+    },
+    {
+      "mission_id": 19694,
+      "repo": "TensorCAD",
+      "collected_at": "2026-11-14T09:19:03Z",
+      "pull_request": 455,
+      "commit": "f8fb2dd1a481c3a202399af4aadd414c833797bd",
+      "ci": "not_run",
+      "deliverables": 13,
+      "missing": [
+        "ci.check_runs",
+        "deliverables[1](tensorcad-series60/hull.obj).sha256",
+        "mission.result.evidence.head_commit"
+      ],
+      "bundle_sha256": "1dda7fe399f58aae076f6be1c006d6e107cc86ecbafcf514070ac0a1603600cd"
+    },
+    {
+      "mission_id": 18757,
+      "repo": "TensorFVM",
+      "collected_at": "2026-11-14T09:19:19Z",
+      "pull_request": 636,
+      "commit": "8dc2bb2890d818d61e7a6825bfea3c3c1033f1d9",
+      "ci": "not_run",
+      "deliverables": 8,
+      "missing": [
+        "ci.check_runs",
+        "mission.result.evidence.head_commit"
+      ],
+      "bundle_sha256": "e161621ebb0ae13bd070b80b39bf137b02eeec934ba1cd46d34def7e0b92af13"
+    },
+    {
+      "mission_id": 18685,
+      "repo": "TensorFVM",
+      "collected_at": "2026-11-14T09:19:30Z",
+      "pull_request": 635,
+      "commit": "b3f214c447103b2748c0e350e598591395906f80",
+      "ci": "not_run",
+      "deliverables": 11,
+      "missing": [
+        "ci.check_runs",
+        "mission.result.evidence.head_commit"
+      ],
+      "bundle_sha256": "e6fd3c251dfbfed4cac226cc265857a75c7c74236e3c81df54e218f658b3c1f7"
+    },
+    {
+      "mission_id": 18524,
+      "repo": "TensorFVM",
+      "collected_at": "2026-11-14T09:19:45Z",
+      "pull_request": 634,
+      "commit": "2e6f3ac3a34e395eab69e4c20b5c08debbfb4924",
+      "ci": "not_run",
+      "deliverables": 9,
+      "missing": [
+        "ci.check_runs",
+        "mission.result.evidence.head_commit"
+      ],
+      "bundle_sha256": "4dfc133c91f6728e2dd60ecdf51d8f6a40802c1623ff0c081c491a614aa6d67b"
+    },
+    {
+      "mission_id": 20111,
+      "repo": "TensorCAD",
+      "collected_at": "2026-11-14T09:19:58Z",
+      "pull_request": null,
+      "commit": null,
+      "ci": null,
+      "deliverables": 0,
+      "missing": [
+        "ci.conclusion",
+        "commit.sha",
+        "deliverables",
+        "pull_request"
+      ],
+      "bundle_sha256": "e347e918cb046fd2e9aa880cbe7994c870e30a6412dfef5fc3e7a3b28f65e9e5"
+    }
+  ],
+  "errors": []
+}

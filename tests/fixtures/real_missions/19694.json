@@ -1,0 +1,205 @@
+{
+  "schema_version": "1.0.0",
+  "kind": "tensorbench.evidence_bundle",
+  "mission_id": 19694,
+  "collected_at": "2026-11-14T09:19:03Z",
+  "collector": {
+    "name": "tensorbench",
+    "version": "0.1.0",
+    "mode": "live_read_only"
+  },
+  "platform": {
+    "api_base": "http://127.0.0.1:8010/api/v1",
+    "mission_endpoint": "/tensor/missions/19694",
+    "payload_sha256": "cea227f6c6cd3a3b93cb8994f1ae25ed7501ed94ed2f6b292e85c83e641cb654"
+  },
+  "mission": {
+    "id": 19694,
+    "repo": "TensorCAD",
+    "status": "succeeded",
+    "claimed_by": "tp-mod-1",
+    "created_at": "2026-11-14T02:04:06.393571+00:00",
+    "finished_at": "2026-11-14T03:32:48.611064+00:00",
+    "goal": "【锚点=GAP-CAD-T2-PARAM-SERIES】【第2轮·调研结合】owner 2026-11-11 两轮法第 2 轮（任务榜接棒）：前轮 m19663 在本锚点 honest-FAIL（fail_stage=未标；failure_reason=未留）。失败是排序信号——本单先调研成熟方法，再结合推进，不重蹈前轮死法。\n① 调研·开源横向：读集群节点 ~/oss-cache 同类实现源码（`SELECT * FROM oss_inventory WHERE feature_slug ILIKE '%SERIES%'`），有现成方法直接学结构；\n② 调研·方法谱系：文献/教科书标准做法+标准算例（external_anchor 记出处）；\n③ 选型沉淀：方法选型+迁移方案落 oss_solutions（feature_slug='GAP-CAD-T2-PARAM-SERIES'）——第 2 轮成果进 TK 可复用；\n④ 结合实现：在本仓推进，验收判据（总账 GAP-CAD-T2-PARAM-SERIES）：【Series60 五档 Cb 生成+静水力对照公开值；gate-power 突变测试沿用 ≥80%；文档】\n部分达标也留真实数据（标 honest 部分分），跑不出=honest-FAIL 留 fail_stage+failure_reason。开工先查 negative_knowledge_ledger keywords='TensorCAD'（含前轮教训）+capability 同域条目（完成记 cited_kb）。验收三件套（maturity_gate 机器复核）。\n报告六段（论文级，判据数字零手抄，基准牵引——做没做对由基准数字裁判）：①问题设定+基准出处（ref 原文/数据源引用）②方法与实现（方程/格式出处+关键代码指针）③参数表（无量纲数完整）④对照表（逐项 ref vs got+误差，基准判据逐条打勾/打叉）⑤收敛性或参数敏感性（至少两分辨率/两参数点）⑥失败模式与工件（repro_cmd+工件路径）。虚报=gate 机器揭穿自动返修。计算>10min 走 cluster_queue 递交。",
+    "goal_sha256": "84235b652cc8864d2a02d40f42f301255e975f095568b9db673fca22daa48646",
+    "result_sha256": "8844106dfa0d3aa4e419682eeb9314b0c1e0b6cf7909be9272475e9f606ab585"
+  },
+  "pull_request": {
+    "number": 455,
+    "state": "closed",
+    "merged": true,
+    "merged_at": "2026-11-14T08:22:52Z",
+    "merge_commit_sha": "6e548208a4f103399556a399861e08e2dc9525c5",
+    "head_ref": "agent/m19694",
+    "head_sha": "f8fb2dd1a481c3a202399af4aadd414c833797bd",
+    "base_ref": "main",
+    "changed_files": 13,
+    "additions": 40948,
+    "deletions": 3,
+    "html_url": "https://github.com/cxs503/TensorCAD/pull/455",
+    "resolution": "branch_head"
+  },
+  "commit": {
+    "sha": "f8fb2dd1a481c3a202399af4aadd414c833797bd",
+    "source": "pull_request.head",
+    "matches_mission_head": "inconclusive"
+  },
+  "deliverables": [
+    {
+      "path": "docs/series60_family_round2.md",
+      "status": "added",
+      "additions": 187,
+      "deletions": 0,
+      "blob_sha": "75e12beacd1f368fc37875b2a3f26dadd58ee97d",
+      "sha256": "65b5c55feab37deda2e2f394fe6fac6e0641b4150afaa275bc4fc9985921b5ec",
+      "bytes": 13842,
+      "origin": "github_contents@f8fb2dd1a481c3a202399af4aadd414c833797bd"
+    },
+    {
+      "path": "tensorcad-series60/hull.obj",
+      "status": "added",
+      "additions": 38883,
+      "deletions": 0,
+      "blob_sha": "2773fcdd89e911f050903f02f62b408a2e2b4649",
+      "sha256": "missing",
+      "bytes": 1066514,
+      "origin": "unavailable"
+    },
+    {
+      "path": "tensorcad-series60/metadata.json",
+      "status": "added",
+      "additions": 307,
+      "deletions": 0,
+      "blob_sha": "545df60f3deefd189a60eb8a08a9ce87a27401f6",
+      "sha256": "709aaf7c0205c2af72d484eb638bd93a9bdaa63171a04619e0a14c4d1a328579",
+      "bytes": 8943,
+      "origin": "github_contents@f8fb2dd1a481c3a202399af4aadd414c833797bd"
+    },
+    {
+      "path": "tensorcad-series60/offsets.csv",
+      "status": "added",
+      "additions": 162,
+      "deletions": 0,
+      "blob_sha": "5a0a0c453ebb4ebacf652a1f8091cd9a4286d013",
+      "sha256": "bd6cbba7b017e5ef059a42e17db1956f3b824a6de962e5a1b42754741730fe92",
+      "bytes": 3519,
+      "origin": "github_contents@f8fb2dd1a481c3a202399af4aadd414c833797bd"
+    },
+    {
+      "path": "tensorcad/__init__.py",
+      "status": "modified",
+      "additions": 24,
+      "deletions": 0,
+      "blob_sha": "2dea1a61f738e52c4ca284c942c8125af87c7203",
+      "sha256": "935438ae45aa9fae35b4c0117fe4a59e4ff1aeaef46bdcc6ce0010acccc87931",
+      "bytes": 21005,
+      "origin": "github_contents@f8fb2dd1a481c3a202399af4aadd414c833797bd"
+    },
+    {
+      "path": "tensorcad/cli.py",
+      "status": "modified",
+      "additions": 7,
+      "deletions": 0,
+      "blob_sha": "63e96e267abbb0664a972a8b6a55279128529d2d",
+      "sha256": "e8c5b0f60392ad0ec61ba83ca72f95b10fa5d4dd810155da13b325356e7b8b36",
+      "bytes": 8416,
+      "origin": "github_contents@f8fb2dd1a481c3a202399af4aadd414c833797bd"
+    },
+    {
+      "path": "tensorcad/series60.py",
+      "status": "modified",
+      "additions": 3,
+      "deletions": 0,
+      "blob_sha": "ac416755a7c384072fbeed3f22a11b985e7ecd4d",
+      "sha256": "213fca45aded08f96811351d2dc025478f1c4f1a244a54e2f1f94850521671ae",
+      "bytes": 53056,
+      "origin": "github_contents@f8fb2dd1a481c3a202399af4aadd414c833797bd"
+    },
+    {
+      "path": "tensorcad/series60_cli.py",
+      "status": "added",
+      "additions": 464,
+      "deletions": 0,
+      "blob_sha": "fdc57704e23cdcb1452e0003714f620d8bb0aa54",
+      "sha256": "b1b0afea183d3190b1ef43a5bdc15666b6b1f979161fa48289032b6503cda829",
+      "bytes": 22256,
+      "origin": "github_contents@f8fb2dd1a481c3a202399af4aadd414c833797bd"
+    },
+    {
+      "path": "tests/test_series60_cli.py",
+      "status": "added",
+      "additions": 141,
+      "deletions": 0,
+      "blob_sha": "9e6e3bf74e765980baab86bda9a64ebf65c93fd1",
+      "sha256": "4629ab992bcda7a94d0bcb9675143ea19a59d48936c67c8295e6fcde2d17f570",
+      "bytes": 6776,
+      "origin": "github_contents@f8fb2dd1a481c3a202399af4aadd414c833797bd"
+    },
+    {
+      "path": "tools/hull_gate_power/mutate.py",
+      "status": "modified",
+      "additions": 55,
+      "deletions": 2,
+      "blob_sha": "295bace1b48e72cc65da9892a5d21d9950798759",
+      "sha256": "78f89c2a44be2a286c39e2c72eb32baa8f63f9233e9151cac7573a154b3d0738",
+      "bytes": 19128,
+      "origin": "github_contents@f8fb2dd1a481c3a202399af4aadd414c833797bd"
+    },
+    {
+      "path": "tools/series60_family/audit.py",
+      "status": "modified",
+      "additions": 5,
+      "deletions": 1,
+      "blob_sha": "46c34a25746577e8328eb6821d1df773dd7a23b3",
+      "sha256": "bb21b3261c11cf165b8a0dd84322d6c69fd0da8226088d0ca9dc1800bd605bab",
+      "bytes": 42311,
+      "origin": "github_contents@f8fb2dd1a481c3a202399af4aadd414c833797bd"
+    },
+    {
+      "path": "tools/series60_family/round2_evidence.py",
+      "status": "added",
+      "additions": 354,
+      "deletions": 0,
+      "blob_sha": "8ab11ea75328a9b5cfc6607ee63f98b2cd821eef",
+      "sha256": "cb17de46912626dd5a5bd83b75d4ed1e643a34c7704f625e09c7ed0faf4441ea",
+      "bytes": 17489,
+      "origin": "github_contents@f8fb2dd1a481c3a202399af4aadd414c833797bd"
+    },
+    {
+      "path": "tools/series60_family/round2_page.py",
+      "status": "added",
+      "additions": 356,
+      "deletions": 0,
+      "blob_sha": "948304bd7dd45444cc50395fb772e99b19a045b2",
+      "sha256": "554e6dd59db1e5fbbea74916502e57fb2a66807a618ae52f0cef557e20cf98a7",
+      "bytes": 18235,
+      "origin": "github_contents@f8fb2dd1a481c3a202399af4aadd414c833797bd"
+    }
+  ],
+  "ci": {
+    "conclusion": "not_run",
+    "check_runs": [],
+    "statuses": [],
+    "total_count": 0
+  },
+  "source_fingerprints": {
+    "platform_mission": "cea227f6c6cd3a3b93cb8994f1ae25ed7501ed94ed2f6b292e85c83e641cb654",
+    "pull_request": "b5f72323097ef624615115a448f4067f6b07ea5f979d0812d076e51f007658da",
+    "pull_request_files": "89718eb1ee74b6a1179490d91853f90024b3dc0e01f02e934bc142efd5bb023f",
+    "check_runs": "52eee86998cce2fbb2226087de4a5117684d00dfa740957b2c070f4d5fbbbf8b",
+    "commit_statuses": "92ab1a61feded7b54a7335040dab599447348d1ca22bdc20a275cb69d35714b0"
+  },
+  "missing": [
+    "ci.check_runs",
+    "deliverables[1](tensorcad-series60/hull.obj).sha256",
+    "mission.result.evidence.head_commit"
+  ],
+  "integrity": {
+    "bundle_sha256": "1dda7fe399f58aae076f6be1c006d6e107cc86ecbafcf514070ac0a1603600cd",
+    "digest_scope": "canonical_json_of_bundle_excluding_integrity"
+  },
+  "fixture": {
+    "recorded_raw_path": "tests/fixtures/recorded/m19694.json",
+    "recorded_raw_sha256": "18c7cfd50edb08fe62e0a2b6ab1050b9af4bc6f7ef77ef7b41a1a23225740fdd"
+  }
+}

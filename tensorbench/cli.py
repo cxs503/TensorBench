@@ -9,6 +9,11 @@ from pathlib import Path
 from .achievement import AchievementInputError, evaluate_file
 from .mission_evidence import evaluate_mission_snapshot
 from .live_mission import collect_mission_snapshot
+from .collect import (
+    CollectorError,
+    collect_missions,
+    parse_mission_ids,
+)
 from .isolated_runner import IsolatedRunError, run_isolated_tests
 from .isolated_evidence import attach_isolated_run_files
 from .business_evidence import BusinessEvidenceError, reconcile_file
@@ -61,6 +66,24 @@ def build_parser() -> argparse.ArgumentParser:
     collect_parser.add_argument("--platform-api-base", default=None, help="Defaults to TENSORPLATFORM_API_BASE")
     collect_parser.add_argument("--github-owner", default="cxs503")
     collect_parser.add_argument("--output", help="Optional raw snapshot + evaluation JSON path")
+
+    evidence_parser = subparsers.add_parser(
+        "collect", help="collect AE-01 evidence bundles for one or more TensorPlatform Missions"
+    )
+    evidence_parser.add_argument("--missions", required=True, help="Comma-separated Mission ids, e.g. m20111,m20112")
+    evidence_parser.add_argument("--out-dir", default="evidence", help="Bundle output directory (default: evidence)")
+    evidence_parser.add_argument(
+        "--platform-api-base", default=None,
+        help="TensorPlatform base URL; defaults to TENSORPLATFORM_API_BASE then http://127.0.0.1:8010",
+    )
+    evidence_parser.add_argument("--github-owner", default="cxs503")
+    evidence_parser.add_argument("--creds-file", default="/root/.eco_admin_creds.json")
+    evidence_parser.add_argument("--github-credentials", default="/root/.git-credentials")
+    evidence_parser.add_argument("--max-deliverables", type=int, default=25)
+    evidence_parser.add_argument(
+        "--no-contents", action="store_true",
+        help="Skip deliverable content download; per-file SHA-256 is then recorded as missing",
+    )
 
     reverify_parser = subparsers.add_parser(
         "reverify-tests", help="rerun reviewer-selected tests in a constrained OCI container"
@@ -359,6 +382,27 @@ def main() -> int:
         except (OSError, json.JSONDecodeError, ValueError) as exc:
             print(f"tensorbench: error: {exc}", file=sys.stderr)
             return 2
+
+    if args.command == "collect":
+        try:
+            summary = collect_missions(
+                parse_mission_ids(args.missions),
+                out_dir=args.out_dir,
+                platform_api_base=args.platform_api_base,
+                github_owner=args.github_owner,
+                creds_file=args.creds_file,
+                github_credentials=args.github_credentials,
+                max_deliverables=args.max_deliverables,
+                fetch_contents=not args.no_contents,
+            )
+        except (CollectorError, OSError, ValueError) as exc:
+            print(f"tensorbench: error: {exc}", file=sys.stderr)
+            return 2
+        for item in summary["missions"]:
+            if item["status"] == "error":
+                print(f"tensorbench: mission m{item['mission_id']}: {item['error']}", file=sys.stderr)
+        print(json.dumps(summary, indent=2, ensure_ascii=False))
+        return 2 if summary["failed"] else 0
 
     if args.command == "collect-mission":
         try:
