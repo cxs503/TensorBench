@@ -27,7 +27,12 @@ def _decimal(value: Any) -> Decimal | None:
 
 
 def _money(value: Decimal) -> str:
-    return format(value.quantize(Decimal("0.01")), "f")
+    try:
+        return format(value.quantize(Decimal("0.01")), "f")
+    except InvalidOperation:
+        # Keep diagnostics available for unusually large values that exceed the
+        # active Decimal context precision; validation itself still uses Decimal.
+        return format(value, "f")
 
 
 def _fingerprint(value: Any) -> str:
@@ -229,15 +234,42 @@ def reconcile_bundle(bundle: Any, *, tolerance: str = "0.01") -> dict[str, Any]:
         if delivery is None or delivery["document_type"] != "delivery":
             delivery_unresolved.append((invoice, f"delivery reference {delivery_ref!r} cannot be resolved"))
             continue
-        delivered = {
-            str(item.get("sku")): _decimal(item.get("accepted_quantity", item.get("quantity")))
-            for item in delivery.get("line_items", [])
-        }
-        for item in invoice.get("line_items", []):
-            sku = str(item.get("sku"))
+        delivery_lines = delivery.get("line_items")
+        invoice_lines = invoice.get("line_items")
+        if not isinstance(delivery_lines, list) or not delivery_lines or not isinstance(invoice_lines, list) or not invoice_lines:
+            delivery_unresolved.append((invoice, "linked invoice or delivery has missing/invalid line_items"))
+            continue
+        delivered: dict[str, Decimal] = {}
+        duplicate_skus: set[str] = set()
+        malformed_delivery = False
+        for line in delivery_lines:
+            if not isinstance(line, dict) or not line.get("sku"):
+                malformed_delivery = True
+                break
+            sku = str(line["sku"])
+            accepted_qty = _decimal(line.get("accepted_quantity", line.get("quantity")))
+            if accepted_qty is None:
+                malformed_delivery = True
+                break
+            if sku in delivered:
+                duplicate_skus.add(sku)
+            delivered[sku] = delivered.get(sku, Decimal("0")) + accepted_qty
+        if malformed_delivery or duplicate_skus:
+            delivery_unresolved.append((invoice,
+                "linked delivery has malformed lines or duplicate SKU rows; normalize before comparison"))
+            continue
+        for item in invoice_lines:
+            if not isinstance(item, dict) or not item.get("sku"):
+                delivery_unresolved.append((invoice, "invoice contains a malformed line item without SKU"))
+                continue
+            sku = str(item["sku"])
             qty = _decimal(item.get("quantity"))
             accepted = delivered.get(sku)
-            if qty is not None and accepted is not None and qty > accepted + tol:
+            if qty is None:
+                delivery_unresolved.append((invoice, f"invoice SKU {sku} has missing/non-numeric quantity"))
+            elif accepted is None:
+                delivery_unresolved.append((invoice, f"invoice SKU {sku} is absent from linked accepted delivery"))
+            elif qty > accepted + tol:
                 delivery_errors.append((invoice, delivery,
                     f"invoice SKU {sku} quantity {qty} exceeds accepted delivery quantity {accepted}"))
     for invoice, delivery, message in delivery_errors:
