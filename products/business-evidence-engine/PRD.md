@@ -51,17 +51,17 @@ Implemented in the current codebase:
 - Bounded PDF ingestion with page-level evidence references and content fingerprints (`tensorbench/pdf_evidence.py`).
 - Rule-based proposals for a limited set of labelled fields, retaining page/evidence provenance and marking candidates unverified (`tensorbench/business_pdf_fields.py`).
 - Existing normalized-record reconciliation and deterministic discrepancy checks (`tensorbench/business_evidence.py`).
-- CLI and focused tests for PDF ingestion, field proposals and reconciliation.
+- CLI workflow for explicit PDF field review, conflict detection and provenance-preserving normalized-document output; focused tests cover the review gate.
 
 Not yet implemented or not yet demonstrated:
 - OCR for scanned PDFs/images.
 - Reliable table/line-item extraction with cell coordinates.
-- A reviewed-field handoff that automatically maps approved PDF proposals into normalized records and invokes reconciliation.
+- Automated multi-document bundle orchestration that invokes reconciliation from reviewed PDF outputs.
 - Complete contract → purchase order → delivery/acceptance → invoice workflow.
 - Permissioned, de-identified real document bundles with labelled extraction/matching accuracy.
 - Customer-grade tenant isolation, retention/deletion and security review.
 
 Release interpretation:
-- Extracted fields remain `proposed_unverified` until a human approves them.
+- Extracted fields remain `proposed_unverified` until a human approves them. Only fully reviewed, conflict-free proposals can be emitted as normalized document fields.
 - No OCR/table capability or business discrepancy accuracy is implied by the current parser tests.
 - Do not ingest customer-confidential documents before privacy/security controls are verified.
