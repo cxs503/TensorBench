@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "TensorBench Evidence Item",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "evidence_id",
+    "source_type",
+    "source_ref",
+    "provenance"
+  ],
+  "properties": {
+    "evidence_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source_type": {
+      "enum": [
+        "file",
+        "dataset",
+        "code",
+        "run",
+        "url",
+        "database_record",
+        "image_region",
+        "table_cell",
+        "time_range"
+      ]
+    },
+    "source_ref": {
+      "type": "string",
+      "minLength": 1
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[a-fA-F0-9]{64}$"
+    },
+    "locator": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "provenance": {
+      "type": "object",
+      "required": [
+        "source_owner"
+      ],
+      "properties": {
+        "source_owner": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source_version": {
+          "type": "string"
+        },
+        "acquired_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "rights_ref": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    }
+  }
+}
