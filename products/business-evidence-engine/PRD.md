@@ -1,6 +1,6 @@
 # Business Evidence Engine — Product Requirements
 
-**Product ID:** `business-evidence-engine` · **Status:** foundation / not implemented · **First external segment:** engineering-company procurement and contract review.
+**Product ID:** `business-evidence-engine` · **Status:** partially implemented; real-world workflow not yet verified · **First external segment:** engineering-company procurement and contract review.
 
 ## Problem and outcome
 
