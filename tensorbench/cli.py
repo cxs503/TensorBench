@@ -67,7 +67,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
     reverify_parser.add_argument("--checkout", required=True, help="Clean local Git checkout")
     reverify_parser.add_argument("--revision", required=True, help="Expected full Git commit SHA")
-    reverify_parser.add_argument("--image", required=True, help="Pre-pulled OCI image pinned by @sha256 digest")
+    reverify_parser.add_argument("--image", required=True, help="Pre-pulled registry digest or local immutable sha256 image ID")
     reverify_parser.add_argument("--engine", choices=("podman", "docker"), default="podman")
     reverify_parser.add_argument("--timeout", type=int, default=900)
     reverify_parser.add_argument("--memory", default="2g")
