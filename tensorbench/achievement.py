@@ -49,14 +49,29 @@ def evaluate_work_package(bundle: Any) -> dict[str, Any]:
     if not all(isinstance(items, list) for items in (changed_files, tests, artifacts)):
         raise AchievementInputError("changed_files, tests and artifacts must be arrays")
     revision = str(bundle["candidate_revision"]).strip()
-    if not revision:
-        raise AchievementInputError("candidate_revision must not be empty")
+    if not re.fullmatch(r"(?:[a-fA-F0-9]{40}|[a-fA-F0-9]{64})", revision):
+        raise AchievementInputError("candidate_revision must be a 40- or 64-character Git SHA")
+    if not isinstance(bundle["work_package_id"], str) or not bundle["work_package_id"].strip():
+        raise AchievementInputError("work_package_id must be a non-empty string")
+    criterion_ids: set[str] = set()
+    for criterion in criteria:
+        if not isinstance(criterion, dict) or not criterion.get("criterion_id"):
+            raise AchievementInputError("each acceptance criterion requires criterion_id")
+        criterion_id = str(criterion["criterion_id"])
+        if criterion_id in criterion_ids:
+            raise AchievementInputError(f"duplicate criterion_id: {criterion_id}")
+        criterion_ids.add(criterion_id)
+    for changed_file in changed_files:
+        if not isinstance(changed_file, dict) or not isinstance(changed_file.get("path"), str) or not changed_file["path"].strip():
+            raise AchievementInputError("each changed_file requires a non-empty path")
 
     artifact_map: dict[str, dict[str, Any]] = {}
     artifact_revision_mismatch: set[str] = set()
     for artifact in artifacts:
         if not isinstance(artifact, dict) or not artifact.get("artifact_ref"):
             raise AchievementInputError("each artifact requires artifact_ref")
+        if not isinstance(artifact.get("kind"), str) or not artifact["kind"].strip():
+            raise AchievementInputError(f"artifact {artifact['artifact_ref']} requires a non-empty kind")
         ref = str(artifact["artifact_ref"])
         if ref in artifact_map:
             raise AchievementInputError(f"duplicate artifact_ref: {ref}")
@@ -124,8 +139,6 @@ def evaluate_work_package(bundle: Any) -> dict[str, Any]:
                "No acceptance criterion requires implementation code.")
 
     for criterion in criteria:
-        if not isinstance(criterion, dict) or not criterion.get("criterion_id"):
-            raise AchievementInputError("each acceptance criterion requires criterion_id")
         cid = str(criterion["criterion_id"])
         required = bool(criterion.get("required", True))
         refs = criterion.get("evidence_refs") or []
@@ -183,6 +196,12 @@ def evaluate_work_package(bundle: Any) -> dict[str, Any]:
                     record(f"criterion.{cid}.test.{test_id}", "inconclusive",
                            f"Test {test_id} lacks resolvable run-log/artifact evidence.",
                            required=required, refs=[ref for ref in test_refs if ref in artifact_map])
+                elif any(artifact_map[ref].get("kind") not in {
+                    "test_log", "workflow_log", "check_run", "test_report", "ci_run"
+                } for ref in test_refs):
+                    record(f"criterion.{cid}.test.{test_id}", "inconclusive",
+                           f"Test {test_id} references artifacts that are not identified as test/CI evidence.",
+                           required=required, refs=test_refs)
                 else:
                     record(f"criterion.{cid}.test.{test_id}", "passed",
                            f"Test {test_id} passed on the exact candidate revision.",
