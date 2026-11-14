@@ -43,6 +43,8 @@ def test_runs_pinned_revision_in_restricted_container(tmp_path, monkeypatch):
     assert "--cap-drop=ALL" in captured["argv"]
     assert any(str(repo) in arg and arg.endswith(":/workspace:ro") for arg in captured["argv"])
     assert report["stdout"]["sha256"]
+    assert Path(report["stdout"]["path"]).is_file()
+    assert Path(report["stderr"]["path"]).is_file()
 
 
 def test_rejects_mutated_checkout(tmp_path, monkeypatch):
