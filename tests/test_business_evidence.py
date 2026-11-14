@@ -88,3 +88,40 @@ def test_business_evidence_does_not_pass_when_required_comparison_data_is_missin
     unresolved = [check for check in report["checks"] if check["state"] == "inconclusive"]
     assert any(check["check_id"] == "document.arithmetic" for check in unresolved)
     assert any(check["check_id"] == "invoice.purchase_order_match" for check in unresolved)
+
+
+def test_business_evidence_marks_invoice_sku_missing_from_delivery_inconclusive():
+    bundle = _matched_bundle()
+    delivery = _doc(
+        "delivery-1", "delivery",
+        line_items=[{"sku": "B", "accepted_quantity": "2"}],
+    )
+    bundle["documents"].append(delivery)
+    bundle["documents"][1]["delivery_ref"] = "delivery-1"
+    report = reconcile_bundle(bundle)
+    assert report["overall_status"] == "inconclusive"
+    assert any(
+        check["check_id"] == "invoice.delivery_quantity"
+        and check["state"] == "inconclusive"
+        for check in report["checks"]
+    )
+
+
+def test_business_evidence_does_not_overwrite_duplicate_delivery_skus():
+    bundle = _matched_bundle()
+    delivery = _doc(
+        "delivery-1", "delivery",
+        line_items=[
+            {"sku": "A", "accepted_quantity": "1"},
+            {"sku": "A", "accepted_quantity": "1"},
+        ],
+    )
+    bundle["documents"].append(delivery)
+    bundle["documents"][1]["delivery_ref"] = "delivery-1"
+    report = reconcile_bundle(bundle)
+    assert report["overall_status"] == "inconclusive"
+    assert any(
+        check["check_id"] == "invoice.delivery_quantity"
+        and check["state"] == "inconclusive"
+        for check in report["checks"]
+    )
