@@ -109,7 +109,10 @@
           "validation_report_refs": {
             "minItems": 1
           }
-        }
+        },
+        "required": [
+          "validation_report_refs"
+        ]
       }
     }
   ]
