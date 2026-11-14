@@ -118,6 +118,28 @@ def review_pdf_field_proposals(proposal_bundle: Any, decisions: Any, *, reviewer
         raise PdfFieldProposalError("decisions must be an array")
 
     proposals = proposal_bundle["proposals"]
+    for proposal in proposals:
+        if not isinstance(proposal, dict):
+            raise PdfFieldProposalError("each proposal must be an object")
+        locator = proposal.get("locator")
+        if not isinstance(locator, dict):
+            raise PdfFieldProposalError("proposal locator is required")
+        if proposal.get("source_sha256") != source["sha256"] or proposal.get("source_ref") != source["source_ref"]:
+            raise PdfFieldProposalError("proposal source provenance does not match proposal bundle")
+        raw_value = proposal.get("raw_value")
+        if not isinstance(raw_value, str) or hashlib.sha256(raw_value.encode("utf-8")).hexdigest() != locator.get("value_sha256"):
+            raise PdfFieldProposalError("proposal value fingerprint mismatch")
+        identity = {
+            "source_sha256": source["sha256"],
+            "page_number": locator.get("page_number"),
+            "field": proposal.get("field"),
+            "start_offset": locator.get("start_offset"),
+            "end_offset": locator.get("end_offset"),
+            "value_sha256": locator.get("value_sha256"),
+        }
+        expected_id = hashlib.sha256(json.dumps(identity, sort_keys=True, separators=(",", ":")).encode("utf-8")).hexdigest()
+        if proposal.get("proposal_id") != expected_id:
+            raise PdfFieldProposalError("proposal identity fingerprint mismatch")
     by_id = {item.get("proposal_id"): item for item in proposals if isinstance(item, dict) and item.get("proposal_id")}
     if len(by_id) != len(proposals):
         raise PdfFieldProposalError("every proposal must have a unique proposal_id")
