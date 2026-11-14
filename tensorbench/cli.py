@@ -73,7 +73,7 @@ def build_parser() -> argparse.ArgumentParser:
     reverify_parser.add_argument("--cpus", default="2")
     reverify_parser.add_argument("--pids-limit", type=int, default=128)
     reverify_parser.add_argument("--output", help="Optional execution report JSON path")
-    reverify_parser.add_argument("command", nargs=argparse.REMAINDER, help="Command argv after --")
+    reverify_parser.add_argument("test_argv", nargs=argparse.REMAINDER, help="Command argv after --")
 
     business_parser = subparsers.add_parser(
         "reconcile-business", help="reconcile normalized contract/PO/delivery/invoice records"
@@ -313,7 +313,7 @@ def main() -> int:
 
     if args.command == "reverify-tests":
         try:
-            command = list(args.command)
+            command = list(args.test_argv)
             if command and command[0] == "--":
                 command = command[1:]
             report = run_isolated_tests(
