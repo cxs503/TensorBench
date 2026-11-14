@@ -24,6 +24,11 @@ def _mapping(value: Any, name: str) -> Mapping[str, Any]:
     return value
 
 
+def _looks_like_test_check(item: Mapping[str, Any]) -> bool:
+    label = " ".join(str(item.get(key) or "") for key in ("name", "context", "display_title", "workflow_name")).lower()
+    return any(token in label for token in ("test", "pytest", "unittest", "tox", "coverage", "nose"))
+
+
 def _status_to_test_state(value: Any) -> str:
     state = str(value or "").lower()
     if state in {"success", "successful", "passed"}:
@@ -126,14 +131,15 @@ def build_mission_evidence_bundle(snapshot: Mapping[str, Any]) -> dict[str, Any]
             "sha256": _sha256(item),
             "source_revision": check_sha or "0" * 40,
         })
-        tests.append({
-            "test_id": test_id,
-            "status": state,
-            "commit_sha": check_sha,
-            "artifact_refs": [ref],
-            "name": item.get("name") or item.get("display_title"),
-            "external_id": item.get("external_id"),
-        })
+        if _looks_like_test_check(item):
+            tests.append({
+                "test_id": test_id,
+                "status": state,
+                "commit_sha": check_sha,
+                "artifact_refs": [ref],
+                "name": item.get("name") or item.get("display_title"),
+                "external_id": item.get("external_id"),
+            })
 
     for index, raw in enumerate(statuses):
         item = _mapping(raw, "checks.statuses[]")
@@ -147,14 +153,15 @@ def build_mission_evidence_bundle(snapshot: Mapping[str, Any]) -> dict[str, Any]
             "sha256": _sha256(item),
             "source_revision": status_sha or "0" * 40,
         })
-        tests.append({
-            "test_id": test_id,
-            "status": state,
-            "commit_sha": status_sha,
-            "artifact_refs": [ref],
-            "name": item.get("context") or item.get("name"),
-            "target_url": item.get("target_url"),
-        })
+        if _looks_like_test_check(item):
+            tests.append({
+                "test_id": test_id,
+                "status": state,
+                "commit_sha": status_sha,
+                "artifact_refs": [ref],
+                "name": item.get("context") or item.get("name"),
+                "target_url": item.get("target_url"),
+            })
 
     supplied_criteria = root.get("acceptance_criteria")
     if supplied_criteria is None:
