@@ -1,0 +1,94 @@
+name: Isolated Runner Integration
+
+on:
+  pull_request:
+    paths:
+      - "tensorbench/isolated_runner.py"
+      - "tensorbench/cli.py"
+      - "tensorbench/isolated_evidence.py"
+      - "tests/test_isolated_runner.py"
+      - "tests/test_isolated_evidence.py"
+      - "tests/test_mission_evidence.py"
+      - "tests/test_live_mission.py"
+      - ".github/runner/**"
+      - ".github/workflows/isolated-runner-integration.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  isolated-runner:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install host CLI dependencies
+        run: python -m pip install --no-cache-dir pytest jsonschema
+      - name: Build minimal pinned runner image
+        run: docker build --pull -f .github/runner/Dockerfile -t tensorbench-reverify:ci .
+      - name: Run real isolated test execution and attach evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          REVISION="$(git rev-parse HEAD)"
+          IMAGE_ID="$(docker image inspect --format='{{.Id}}' tensorbench-reverify:ci)"
+          python -m tensorbench.cli reverify-tests \
+            --checkout "$GITHUB_WORKSPACE" \
+            --revision "$REVISION" \
+            --image "$IMAGE_ID" \
+            --engine docker \
+            --timeout 600 \
+            --log-dir artifacts/isolated-run \
+            --output artifacts/isolated-run/report.json \
+            -- python -m pytest -q tests/test_mission_evidence.py tests/test_live_mission.py
+
+          cat > artifacts/isolated-run/bundle.json <<JSON
+          {
+            "candidate_revision": "$REVISION",
+            "acceptance_criteria": [
+              {
+                "criterion_id": "C-OCI-1",
+                "statement": "Run the evidence evaluator and live collector tests in the pinned isolated container.",
+                "requires_code": false,
+                "requires_test": true,
+                "evidence_refs": [],
+                "test_ids": []
+              }
+            ],
+            "tests": [],
+            "artifacts": [],
+            "collection": {}
+          }
+          JSON
+
+          python -m tensorbench.cli attach-isolated-run \
+            --bundle artifacts/isolated-run/bundle.json \
+            --report artifacts/isolated-run/report.json \
+            --test-id isolated-evaluator-smoke \
+            --criterion-id C-OCI-1 \
+            --output artifacts/isolated-run/bundle.reverified.json
+
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          report = json.loads(Path("artifacts/isolated-run/report.json").read_text())
+          bundle = json.loads(Path("artifacts/isolated-run/bundle.reverified.json").read_text())
+          assert report["status"] == "passed"
+          assert report["limits"]["network"] == "none"
+          assert report["limits"]["checkout"] == "read_only"
+          assert bundle["tests"][0]["status"] == "passed"
+          assert len(bundle["artifacts"]) == 3
+          print("isolated runner evidence chain verified")
+          PY
+      - name: Upload isolated execution evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tensorbench-isolated-run-evidence
+          path: artifacts/isolated-run/
+          if-no-files-found: warn
+          retention-days: 7
