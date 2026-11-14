@@ -88,11 +88,43 @@ The first runner deliberately executes a declared argv command locally with `she
 
 ## Development status
 
-<mark>Foundation / specification stage</mark>
+**Partially implemented; real-world verification remains separate.**
 
-The repository currently establishes the project charter and initial contracts. It does not yet claim to provide a production benchmark runner, hosted result service, dashboard, or validated benchmark corpus.
+Executable components now include benchmark execution/result comparison, revision-pinned
+Agent Achievement evidence checks, explicit platform publishing, and read-only mission /
+GitHub snapshot normalization. The mission snapshot adapter does not yet perform live
+platform collection, execute candidate code, or establish functional correctness.
 
-Implementation should proceed in small, testable increments. Every capability must be backed by executable tests and real benchmark evidence; mock results must never be presented as measurements.
+Implementation should proceed in small, testable increments. Every capability must be
+backed by executable tests and real benchmark evidence; mock results must never be
+presented as measurements.
+
+### Agent mission evidence snapshot
+
+Given a permissioned TensorPlatform mission row, its explicitly linked GitHub PR snapshot,
+and commit-pinned CI checks, normalize and evaluate the evidence:
+
+```bash
+tensorbench evaluate-mission-snapshot --input mission-snapshot.json --output mission-evaluation.json
+```
+
+The command is read-only and offline: it does not call APIs, write to GitHub / TensorPlatform,
+or run untrusted candidate code. Missing predeclared acceptance criteria, missing CI,
+pending checks, and stale commit evidence remain inconclusive. It never assigns S/E grades.
+See [Agent Mission Evidence Collector](docs/AGENT_MISSION_EVIDENCE_COLLECTOR.md).
+
+For live read-only collection from TensorPlatform and GitHub:
+
+```bash
+export TENSORPLATFORM_API_BASE="https://your-platform.example/api"
+export TENSORPLATFORM_TOKEN="..."
+export GITHUB_TOKEN="..."
+tensorbench collect-mission --mission-id 123 --output mission-123.evidence.json
+```
+
+The live collector requires a Mission completion Commit SHA and exactly one GitHub PR
+associated with that SHA. It does not guess from branch names or recent repository activity.
+See [Live Mission Collection](docs/LIVE_MISSION_COLLECTION.md).
 
 ## Relationship to other Tensor projects
 
@@ -119,3 +151,32 @@ Do not add third-party benchmark suites, datasets, papers, model weights, or ref
 ## License
 
 The TensorBench software and project-authored documentation are licensed under Apache-2.0. See [LICENSE](LICENSE) and [LICENSE_SCOPE.md](LICENSE_SCOPE.md) for the scope and exclusions.
+
+### Independent test re-verification
+
+A reviewer can re-run a selected test command against an exact clean checkout in a
+pre-pulled OCI image pinned by digest:
+
+```bash
+tensorbench reverify-tests \\
+  --checkout ./worktrees/TensorLBM \\
+  --revision <full-commit-sha> \\
+  --image registry.example/tensorbench-runner@sha256:<64-hex-digest> \\
+  --log-dir ./evidence/mission-123-test-logs \\
+  -- python -m pytest -q
+```
+
+The runner is network-disabled, mounts the checkout read-only, drops capabilities,
+and records execution metadata plus stdout/stderr hashes. Rootless Podman on a
+dedicated host is preferred. See [Independent Isolated Test Runner](docs/INDEPENDENT_ISOLATED_TEST_RUNNER.md).
+
+Attach the run only to criteria that it actually tests:
+
+```bash
+tensorbench attach-isolated-run \\
+  --bundle mission-123.evidence.json \\
+  --report mission-123-test-run.json \\
+  --test-id isolated-pytest-rerun \\
+  --criterion-id C-IMPLEMENTATION \\
+  --output mission-123.evidence.reverified.json
+```

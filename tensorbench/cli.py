@@ -7,6 +7,10 @@ import sys
 from pathlib import Path
 
 from .achievement import AchievementInputError, evaluate_file
+from .mission_evidence import evaluate_mission_snapshot
+from .live_mission import collect_mission_snapshot
+from .isolated_runner import IsolatedRunError, run_isolated_tests
+from .isolated_evidence import attach_isolated_run_files
 from .business_evidence import BusinessEvidenceError, reconcile_file
 from .business_pdf_fields import (
     PdfFieldProposalError,
@@ -43,6 +47,44 @@ def build_parser() -> argparse.ArgumentParser:
     )
     achievement_parser.add_argument("--input", required=True, help="Work-package evidence JSON")
     achievement_parser.add_argument("--output", help="Optional evaluation-report JSON path")
+
+    mission_parser = subparsers.add_parser(
+        "evaluate-mission-snapshot", help="normalize read-only TensorPlatform/GitHub snapshots and evaluate evidence"
+    )
+    mission_parser.add_argument("--input", required=True, help="JSON snapshot with mission, pull_request and checks")
+    mission_parser.add_argument("--output", help="Optional bundle + evaluation report JSON path")
+
+    collect_parser = subparsers.add_parser(
+        "collect-mission", help="fetch one TensorPlatform Mission and its exact-commit GitHub evidence"
+    )
+    collect_parser.add_argument("--mission-id", type=int, required=True)
+    collect_parser.add_argument("--platform-api-base", default=None, help="Defaults to TENSORPLATFORM_API_BASE")
+    collect_parser.add_argument("--github-owner", default="cxs503")
+    collect_parser.add_argument("--output", help="Optional raw snapshot + evaluation JSON path")
+
+    reverify_parser = subparsers.add_parser(
+        "reverify-tests", help="rerun reviewer-selected tests in a constrained OCI container"
+    )
+    reverify_parser.add_argument("--checkout", required=True, help="Clean local Git checkout")
+    reverify_parser.add_argument("--revision", required=True, help="Expected full Git commit SHA")
+    reverify_parser.add_argument("--image", required=True, help="Pre-pulled OCI image pinned by @sha256 digest")
+    reverify_parser.add_argument("--engine", choices=("podman", "docker"), default="podman")
+    reverify_parser.add_argument("--timeout", type=int, default=900)
+    reverify_parser.add_argument("--memory", default="2g")
+    reverify_parser.add_argument("--cpus", default="2")
+    reverify_parser.add_argument("--pids-limit", type=int, default=128)
+    reverify_parser.add_argument("--output", help="Optional execution report JSON path")
+    reverify_parser.add_argument("--log-dir", required=True, help="New or empty directory to retain full stdout/stderr logs")
+    reverify_parser.add_argument("test_argv", nargs=argparse.REMAINDER, help="Command argv after --")
+
+    attach_parser = subparsers.add_parser(
+        "attach-isolated-run", help="verify and attach isolated execution logs to selected acceptance criteria"
+    )
+    attach_parser.add_argument("--bundle", required=True, help="Mission evidence bundle JSON")
+    attach_parser.add_argument("--report", required=True, help="Isolated execution report JSON")
+    attach_parser.add_argument("--test-id", required=True, help="Stable test evidence ID")
+    attach_parser.add_argument("--criterion-id", action="append", required=True, help="Acceptance criterion ID; repeat for multiple criteria")
+    attach_parser.add_argument("--output", required=True, help="Output evidence bundle JSON")
 
     business_parser = subparsers.add_parser(
         "reconcile-business", help="reconcile normalized contract/PO/delivery/invoice records"
@@ -264,6 +306,81 @@ def main() -> int:
             print(rendered)
             return 0 if result["overall_status"] == "passed" else 1
         except (OSError, json.JSONDecodeError, AchievementInputError) as exc:
+            print(f"tensorbench: error: {exc}", file=sys.stderr)
+            return 2
+
+    if args.command == "evaluate-mission-snapshot":
+        try:
+            snapshot = json.loads(Path(args.input).read_text(encoding="utf-8"))
+            result = evaluate_mission_snapshot(snapshot)
+            rendered = json.dumps(result, indent=2, ensure_ascii=False)
+            if args.output:
+                Path(args.output).write_text(rendered + "\n", encoding="utf-8")
+            print(rendered)
+            return 0 if result["report"]["overall_status"] == "passed" else 1
+        except (OSError, json.JSONDecodeError, ValueError) as exc:
+            print(f"tensorbench: error: {exc}", file=sys.stderr)
+            return 2
+
+    if args.command == "reverify-tests":
+        try:
+            command = list(args.test_argv)
+            if command and command[0] == "--":
+                command = command[1:]
+            report = run_isolated_tests(
+                checkout_path=args.checkout,
+                expected_revision=args.revision,
+                image=args.image,
+                command=command,
+                log_dir=args.log_dir,
+                engine=args.engine,
+                timeout_seconds=args.timeout,
+                memory_limit=args.memory,
+                cpu_limit=args.cpus,
+                pids_limit=args.pids_limit,
+            )
+            rendered = json.dumps(report, indent=2, ensure_ascii=False)
+            if args.output:
+                Path(args.output).write_text(rendered + "\n", encoding="utf-8")
+            print(rendered)
+            return 0 if report["status"] == "passed" else 1
+        except (OSError, ValueError, IsolatedRunError) as exc:
+            print(f"tensorbench: error: {exc}", file=sys.stderr)
+            return 2
+
+    if args.command == "attach-isolated-run":
+        try:
+            result = attach_isolated_run_files(
+                args.bundle, args.report, test_id=args.test_id,
+                criterion_ids=args.criterion_id, output_path=args.output,
+            )
+            print(json.dumps({"output": args.output, "tests": len(result["tests"]), "artifacts": len(result["artifacts"])}, indent=2))
+            return 0
+        except (OSError, json.JSONDecodeError, ValueError) as exc:
+            print(f"tensorbench: error: {exc}", file=sys.stderr)
+            return 2
+
+    if args.command == "collect-mission":
+        try:
+            import os
+            api_base = args.platform_api_base or os.environ.get("TENSORPLATFORM_API_BASE")
+            if not api_base:
+                raise AchievementInputError("set --platform-api-base or TENSORPLATFORM_API_BASE")
+            snapshot = collect_mission_snapshot(
+                platform_api_base=api_base,
+                mission_id=args.mission_id,
+                github_owner=args.github_owner,
+                platform_token=os.environ.get("TENSORPLATFORM_TOKEN"),
+                github_token=os.environ.get("GITHUB_TOKEN"),
+            )
+            result = evaluate_mission_snapshot(snapshot)
+            output = {"snapshot": snapshot, **result}
+            rendered = json.dumps(output, indent=2, ensure_ascii=False)
+            if args.output:
+                Path(args.output).write_text(rendered + "\n", encoding="utf-8")
+            print(rendered)
+            return 0 if result["report"]["overall_status"] == "passed" else 1
+        except (OSError, json.JSONDecodeError, ValueError) as exc:
             print(f"tensorbench: error: {exc}", file=sys.stderr)
             return 2
 
