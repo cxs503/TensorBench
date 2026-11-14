@@ -109,8 +109,7 @@ def _cmd_compare(args: argparse.Namespace) -> int:
     )
     text = json.dumps(comparison, indent=2, ensure_ascii=False)
     if args.output:
-        Path(args.output).write_text(text + "
-", encoding="utf-8")
+        Path(args.output).write_text(text + "\n", encoding="utf-8")
     print(text)
     return 0
 
@@ -135,8 +134,7 @@ def _cmd_publish(args: argparse.Namespace) -> int:
     if comparison is not None:
         comparison_path = output / f"{result['run_id']}.comparison.json"
         comparison_path.write_text(
-            json.dumps(comparison, indent=2, ensure_ascii=False) + "
-", encoding="utf-8"
+            json.dumps(comparison, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
         )
 
     refs = default_artifact_refs(result_path, comparison_path)
@@ -165,8 +163,7 @@ def _cmd_publish(args: argparse.Namespace) -> int:
         )
 
     bundle_path = output / f"{result['run_id']}.publish.json"
-    bundle_path.write_text(json.dumps(bundle, indent=2, ensure_ascii=False) + "
-", encoding="utf-8")
+    bundle_path.write_text(json.dumps(bundle, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     print(f"tensorbench: wrote {bundle_path}", file=sys.stderr)
 
     if not args.post:
@@ -193,8 +190,7 @@ def main() -> int:
             result = evaluate_file(args.input)
             rendered = json.dumps(result, indent=2, ensure_ascii=False)
             if args.output:
-                Path(args.output).write_text(rendered + "
-", encoding="utf-8")
+                Path(args.output).write_text(rendered + "\n", encoding="utf-8")
             print(rendered)
             return 0 if result["overall_status"] == "passed" else 1
         except (OSError, json.JSONDecodeError, AchievementInputError) as exc:
@@ -206,8 +202,7 @@ def main() -> int:
             result = reconcile_file(args.input, tolerance=args.tolerance)
             rendered = json.dumps(result, indent=2, ensure_ascii=False)
             if args.output:
-                Path(args.output).write_text(rendered + "
-", encoding="utf-8")
+                Path(args.output).write_text(rendered + "\n", encoding="utf-8")
             print(rendered)
             return 0 if result["overall_status"] == "passed" else 1
         except (OSError, json.JSONDecodeError, BusinessEvidenceError) as exc:
@@ -222,8 +217,7 @@ def main() -> int:
             )
             rendered = json.dumps(result, indent=2, ensure_ascii=False)
             if args.output:
-                Path(args.output).write_text(rendered + "\
-", encoding="utf-8")
+                Path(args.output).write_text(rendered + "\\n", encoding="utf-8")
             print(rendered)
             return 0 if result["status"] == "complete" else 1
         except (OSError, PdfEvidenceError) as exc:
@@ -235,8 +229,7 @@ def main() -> int:
             result = validate_file(args.kind, args.input)
             rendered = json.dumps(result, indent=2, ensure_ascii=False)
             if args.output:
-                Path(args.output).write_text(rendered + "
-", encoding="utf-8")
+                Path(args.output).write_text(rendered + "\n", encoding="utf-8")
             print(rendered)
             return 0 if result["status"] == "valid" else 1
         except (OSError, json.JSONDecodeError, ContractValidationError) as exc:
