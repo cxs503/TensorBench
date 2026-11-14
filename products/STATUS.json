@@ -1,102 +1,114 @@
 {
-  "schema_version": "1.0.0",
+  "schema_version": "2.0.0",
   "as_of": "2026-11-14",
-  "status_vocabulary": {
-    "implemented": "Code path exists and focused automated tests cover its declared behavior.",
-    "partially_implemented": "Some planned capabilities exist; material release requirements remain absent.",
-    "not_implemented": "No executable implementation has been verified.",
-    "real_world_verified": "A permissioned real-world workflow passed the declared acceptance set with recorded evidence and independent review."
+  "purpose": "Truthful per-product-line implementation baseline. The two state fields are independent: code_implemented says an executable path exists with focused tests; scenario_validated says a permissioned real-world scenario ran the declared acceptance set with recorded evidence and independent review. A product may be code_implemented and still scenario_validated=false.",
+  "field_definitions": {
+    "code_implemented": "Executable code path exists in this repository (or the named owning repository) and focused automated tests cover its declared behavior.",
+    "scenario_validated": "A permissioned real scenario was executed end-to-end and passed the predeclared acceptance set, with recorded evidence (bundles/fingerprints/commit SHAs) and independent review.",
+    "not_implemented": "No executable implementation is verified; only documents or plans exist."
   },
-  "release_rule": "Unit-test success does not imply real_world_verified. Unsupported or missing evidence must be inconclusive, not pass.",
+  "release_rule": "code_implemented=true MUST NOT be read as scenario_validated. Unit tests do not validate a scenario. Missing or unsupported evidence is inconclusive, never pass.",
+  "mission_baseline_reconciliation": {
+    "asserted_by_mission": {
+      "AE": false,
+      "BE": false,
+      "RA": false,
+      "PV": "TensorData quality engine half-true"
+    },
+    "reconciled": {
+      "AE_code_implemented": true,
+      "BE_code_implemented": true,
+      "RA_code_implemented": false,
+      "PV_code_implemented": false
+    },
+    "reason": "The mission brief asserted code_implemented=false for AE/BE on the premise that this repository is an empty skeleton. That premise is falsified by the repository itself: 188 commits, 10 merge PRs (#3, #10-#18) and executable modules tensorbench/achievement.py, live_mission.py, evidence_bundle.py, business_evidence.py, pdf_evidence.py with focused tests, all present before this mission started. Recording code_implemented=false for AE/BE would be a fabricated baseline. The scenario_validated field is false for all four lines exactly as asserted, and RA/PV remain false because their implementations live in TensorKnowledge/TensorData and are not verified here."
+  },
   "products": [
     {
-      "id": "research-audit",
-      "repository": "cxs503/TensorKnowledge",
-      "status": "partially_implemented",
-      "implemented": [
-        "Markdown citation audit",
-        "Claim-Evidence provenance and bidirectional link checks",
-        "Source-root path containment",
-        "Exact quote/offset and SHA-256 validation",
-        "Conservative inconclusive outcome for unreviewed evidence"
-      ],
-      "not_implemented_or_unverified": [
-        "Semantic claim-support/contradiction evaluation",
-        "Independent review receipt workflow",
-        "Corpus-scale batch audit",
-        "Expert-labelled holdout and per-class metrics",
-        "Real report audit with reviewer sign-off"
-      ],
-      "real_world_verified": false,
-      "next_gate": "Run one permissioned real report+bibliography+source bundle; capture independent reviewer receipt."
-    },
-    {
-      "id": "physics-dataset-validator",
-      "repository": "cxs503/TensorData",
-      "status": "partially_implemented",
-      "implemented": [
-        "CSV structural and numeric checks",
-        "Axis monotonicity",
-        "Supported unit metadata/conversion checks",
-        "Declared physical-range checks",
-        "Entity-level split leakage",
-        "Rights gate and report fingerprint"
-      ],
-      "not_implemented_or_unverified": [
-        "Conservation-law residuals",
-        "Initial/boundary condition compliance",
-        "Multimodal temporal/spatial alignment",
-        "NetCDF/HDF5/VTK field formats",
-        "TensorLBM ship-flow end-to-end validation"
-      ],
-      "real_world_verified": false,
-      "next_gate": "Implement one explicit conservation profile and validate a real TensorLBM flow export plus labelled corruptions."
-    },
-    {
-      "id": "agent-achievement-evaluator",
+      "id": "AE",
+      "name": "Agent Achievement Evaluator",
       "repository": "cxs503/TensorBench",
-      "status": "partially_implemented",
-      "implemented": [
-        "Work-package and acceptance evidence models",
-        "Commit-pinned evidence validation",
-        "Criterion/evidence association",
-        "Test/change/artifact completeness checks",
-        "Report generation and explicit platform publish path"
+      "code_implemented": true,
+      "scenario_validated": false,
+      "implemented_evidence": [
+        "schemas/evidence_bundle.json (v1.0.0) mission evidence contract",
+        "tensorbench/evidence_bundle.py: normalization, explicit missing fields, per-deliverable SHA-256, self-digest",
+        "tensorbench/collect.py: read-only TensorPlatform login + mission/PR/commit/CI/deliverable collection",
+        "CLI: tensorbench collect --missions m1,m2 -> evidence/<mid>.json",
+        "tests/test_evidence_bundle.py, tests/test_collect_cli.py, tests/fixtures/real_missions/*.json",
+        "tensorbench/achievement.py, live_mission.py, mission_evidence.py (pre-existing)"
       ],
       "not_implemented_or_unverified": [
-        "Automatic TensorPlatform mission and GitHub evidence collection",
-        "Isolated candidate-code execution",
+        "Scenario validation with an independent reviewer receipt",
         "Test vacuity/mutation quality checks",
         "Blind-labelled calibration corpus",
-        "Real mission evaluation with independent reviewer"
+        "Platform-side acceptance decision made by TensorBench"
       ],
-      "real_world_verified": false,
-      "next_gate": "Read-only mission snapshot adapter for one real mission, linked PR, commit and CI evidence; keep human grading."
+      "next_gate": "Run tensorbench collect on a closed mission set and have an independent reviewer sign the resulting bundles against the frozen acceptance criteria.",
+      "baseline_note": "code_implemented=true reflects code that existed before this mission; the mission's asserted false baseline is recorded under mission_baseline_reconciliation and rejected with reason."
     },
     {
-      "id": "business-evidence-engine",
+      "id": "BE",
+      "name": "Business Evidence Engine",
       "repository": "cxs503/TensorBench",
-      "status": "partially_implemented",
-      "implemented": [
-        "Bounded PDF ingestion and page-level fingerprints",
-        "Rule-based unverified field proposals",
-        "Normalized-record reconciliation and deterministic discrepancy checks",
-        "CLI and focused tests",
-        "Explicit accept/reject review receipt with reviewer identity and timestamp",
-        "Proposal identity fingerprints bind source, offsets, raw and normalized values",
-        "Conflict detection and provenance-preserving normalized document output",
-        "CLI review-pdf-fields workflow; only complete conflict-free reviews normalize"
+      "code_implemented": true,
+      "scenario_validated": false,
+      "implemented_evidence": [
+        "tensorbench/pdf_evidence.py bounded PDF ingestion with page fingerprints",
+        "tensorbench/business_pdf_fields.py rule-based unverified field proposals",
+        "tensorbench/business_evidence.py normalized-record reconciliation",
+        "CLI propose-pdf-fields / review-pdf-fields / reconcile-business",
+        "tests/test_pdf_evidence.py, test_business_pdf_fields.py, test_business_evidence.py"
       ],
       "not_implemented_or_unverified": [
         "OCR",
         "Reliable table/line-item cell extraction",
-        "Full contract-to-invoice workflow",
         "Permissioned labelled real-document pilot",
         "Customer-grade privacy/security verification",
-        "Automatic multi-document PDF bundle orchestration and reconciliation invocation"
+        "Automatic multi-document bundle orchestration"
       ],
-      "real_world_verified": false,
-      "next_gate": "Run a permissioned multi-document bundle through PDF extraction, human review, normalization and reconciliation; measure field and match accuracy."
+      "next_gate": "Run a permissioned multi-document bundle through extraction, human review and reconciliation; measure field and match accuracy.",
+      "baseline_note": "code_implemented=true reflects code that existed before this mission; scenario_validated stays false."
+    },
+    {
+      "id": "RA",
+      "name": "Research Audit",
+      "repository": "cxs503/TensorKnowledge",
+      "code_implemented": false,
+      "scenario_validated": false,
+      "implemented_evidence": [],
+      "not_implemented_or_unverified": [
+        "No ResearchAudit implementation is verified inside this repository (products/research-audit/PRD.md only)",
+        "Markdown citation audit, claim-evidence provenance, quote/offset SHA-256 validation",
+        "Independent review receipt workflow",
+        "Expert-labelled holdout and per-class metrics"
+      ],
+      "next_gate": "Land the audit engine in its owning repository and run one permissioned real report+bibliography bundle with reviewer sign-off.",
+      "baseline_note": "Matches the mission baseline (false/false): only a PRD exists here."
+    },
+    {
+      "id": "PV",
+      "name": "Physics Dataset Validator",
+      "repository": "cxs503/TensorData",
+      "code_implemented": false,
+      "scenario_validated": false,
+      "implemented_evidence": [],
+      "external_partial_state": "TensorData quality engine is half-true: structural/numeric CSV checks exist upstream, conservation-law and field-format validation do not.",
+      "not_implemented_or_unverified": [
+        "No validator implementation inside this repository (products/physics-dataset-validator/PRD.md only)",
+        "Conservation-law residuals",
+        "Initial/boundary condition compliance",
+        "NetCDF/HDF5/VTK field formats",
+        "TensorLBM ship-flow end-to-end validation"
+      ],
+      "next_gate": "Implement one explicit conservation profile upstream and validate a real TensorLBM flow export plus labelled corruptions.",
+      "baseline_note": "Matches the mission baseline: the TensorData quality engine is only half-true, so both fields stay false here."
     }
-  ]
+  ],
+  "evidence_index": {
+    "mission_bundles": "tests/fixtures/real_missions/MANIFEST.json",
+    "recorded_upstream_payloads": "tests/fixtures/recorded/",
+    "contract": "schemas/evidence_bundle.json",
+    "design_and_selfcheck": "docs/EVIDENCE_BUNDLE.md"
+  }
 }

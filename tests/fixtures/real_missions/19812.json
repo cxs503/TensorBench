@@ -1,0 +1,84 @@
+{
+  "schema_version": "1.0.0",
+  "kind": "tensorbench.evidence_bundle",
+  "mission_id": 19812,
+  "collected_at": "2026-11-14T09:18:57Z",
+  "collector": {
+    "name": "tensorbench",
+    "version": "0.1.0",
+    "mode": "live_read_only"
+  },
+  "platform": {
+    "api_base": "http://127.0.0.1:8010/api/v1",
+    "mission_endpoint": "/tensor/missions/19812",
+    "payload_sha256": "84c271f8778e57039a2eebf584f8579be599bfd0be4a2550a4a7848429077a7c"
+  },
+  "mission": {
+    "id": 19812,
+    "repo": "TensorCAD",
+    "status": "succeeded",
+    "claimed_by": "tp-gen-1",
+    "created_at": "2026-11-14T03:56:42.317001+00:00",
+    "finished_at": "2026-11-14T05:01:17.290105+00:00",
+    "goal": "【补报单·mission 2449】owner 常设指令：每个工作都要有论文级进展报告。mission 2449（repo=TensorCAD）已成功交付但缺报告，你来补。\n★预算纪律：你只有 80 次工具调用（每轮常 2 个并行调用≈40 轮）。分配：登录 1、读文件 ≤12、写报告 1、POST 1、finish 1。第 55 次调用前必须已进入写报告阶段。\n——背景已嵌入，不用再查——\n原单声明: 本单（tp-mod-4 models 席，TensorCAD）：把「参数化船体静水力八个量无基准」的验证欠账补上，并顺带修掉两处已合并功能的自相矛盾。  ##\n原单 goal 摘要: 【自找活·tp-mod-4（models 席）】（owner 2026-11-01：全席饱和；2026-11-02 控仓令：自驱开发照常，绝不动 TensorPlatform） 你是研究开发 agent，本单=你的自主工时（model 钉扎 deepseek-v4-flash，只有本席能领）。 1) 扫描（全只读）：/root/tp-agent/proposals/ 提案池；GET /api/v1/tensor/reports?limit=20 的    「局限/待办」节；guide_tracker 缺口（/roo\n（工件目录未留档——写诚实 meta-报告：缺失数字一律标注'未留档'，只依据下面嵌入的原单声明，不得编造）\n步骤：\n1. 登录: curl -s -X POST $TENSOR_API_BASE/auth/login -H 'Content-Type: application/json' -d '{\"username\":\"'\"$TENSOR_AGENT_USER\"'\",\"password\":\"'\"$TENSOR_AGENT_PASS\"'\"}'；\n2. 按清单 cat 关键文件（数字从工件程序化提取零手抄；json 可用 python3 -c json.load 打印键值）；\n3. 写 worktree 内 docs/report_m2449.md（论文级六要素：案例介绍/怎么做的/关键结果数字表/结果图/注意点/误差判定——关键量误差显式回答是否<3%，无基准声明原因；工件含 npz/png 可用 matplotlib 画比较曲线/云图内嵌 figures，无图写明理由）；\n4. python3 组 JSON 写 /tmp/rep.json（title/summary/scenario_key='report-backfill'/mission_id=2449/tags=[\"补报\"]/markdown=第3步全文/figures=[]），再 curl -s -X POST $TENSOR_API_BASE/tensor/reports -H 'Authorization: Bearer <token>' -H 'Content-Type: application/json' -d @/tmp/rep.json；\nPOST 成功一次即止（拿到返回 id 后绝不重复 POST，重复发布会被清理并记质检缺陷）。\n5. finish，summary 一句话报 POST 返回的 report id。\n纪律：原单 FAIL 结论如实保留（honest-FAIL）；不改业务代码；报告未发不算完成。",
+    "goal_sha256": "1d3916662ac27e6a3718c5ba6d9c157eb6ca9b15893e598c3f38528c6becef2b",
+    "result_sha256": "7a08e597082fc7c9135bca14d8a633c348628d9301a2246fa49cb5714460a5a2"
+  },
+  "pull_request": {
+    "number": 456,
+    "state": "closed",
+    "merged": true,
+    "merged_at": "2026-11-14T09:02:30Z",
+    "merge_commit_sha": "cab0daeb88f1880adc4e958f91d6f7f4a40b9a28",
+    "head_ref": "agent/m19812",
+    "head_sha": "97bf6bbdbfc597981b71e68574c6e304567a9508",
+    "base_ref": "main",
+    "changed_files": 1,
+    "additions": 225,
+    "deletions": 0,
+    "html_url": "https://github.com/cxs503/TensorCAD/pull/456",
+    "resolution": "branch_head"
+  },
+  "commit": {
+    "sha": "97bf6bbdbfc597981b71e68574c6e304567a9508",
+    "source": "pull_request.head",
+    "matches_mission_head": "inconclusive"
+  },
+  "deliverables": [
+    {
+      "path": "docs/report_m2449.md",
+      "status": "added",
+      "additions": 225,
+      "deletions": 0,
+      "blob_sha": "d705fa432a4a03e9a697ee2059e7e25b5a39ea26",
+      "sha256": "19eb575fad7dccc8dd1f6884859b3a8cdb15e61a84b79967bbf2e6220fa6d58a",
+      "bytes": 10472,
+      "origin": "github_contents@97bf6bbdbfc597981b71e68574c6e304567a9508"
+    }
+  ],
+  "ci": {
+    "conclusion": "not_run",
+    "check_runs": [],
+    "statuses": [],
+    "total_count": 0
+  },
+  "source_fingerprints": {
+    "platform_mission": "84c271f8778e57039a2eebf584f8579be599bfd0be4a2550a4a7848429077a7c",
+    "pull_request": "408743daeaded5db8fd985e25240840c34b111bf67d66e45144dc64df9b6c7db",
+    "pull_request_files": "e84fd61eb19aeb5fd5a9f8b534e6dbe8ad22594e7735f44d7d7d25f54298f39a",
+    "check_runs": "52eee86998cce2fbb2226087de4a5117684d00dfa740957b2c070f4d5fbbbf8b",
+    "commit_statuses": "675962920996e79e7b885d1229844800d6524666d7ba74194212ec01e0f5bc0f"
+  },
+  "missing": [
+    "ci.check_runs",
+    "mission.result.evidence.head_commit"
+  ],
+  "integrity": {
+    "bundle_sha256": "18f135842d0a0f593d1b708643dc02a7d4c9a4cc26ad3c9216596592690c91b0",
+    "digest_scope": "canonical_json_of_bundle_excluding_integrity"
+  },
+  "fixture": {
+    "recorded_raw_path": "tests/fixtures/recorded/m19812.json",
+    "recorded_raw_sha256": "419e141d5a103cedb11c894f64bfc41d3f6a38bac83256b28328d10668a7cbcc"
+  }
+}

@@ -1,0 +1,164 @@
+{
+  "schema_version": "1.0.0",
+  "kind": "tensorbench.evidence_bundle",
+  "mission_id": 18524,
+  "collected_at": "2026-11-14T09:19:45Z",
+  "collector": {
+    "name": "tensorbench",
+    "version": "0.1.0",
+    "mode": "live_read_only"
+  },
+  "platform": {
+    "api_base": "http://127.0.0.1:8010/api/v1",
+    "mission_endpoint": "/tensor/missions/18524",
+    "payload_sha256": "ef3a4d9764142d8b41f560698d25b842f7f9cd94a82f7b892370817e032faf5c"
+  },
+  "mission": {
+    "id": 18524,
+    "repo": "TensorFVM",
+    "status": "succeeded",
+    "claimed_by": "tp-ver-4",
+    "created_at": "2026-11-13T15:04:21.483590+00:00",
+    "finished_at": "2026-11-13T15:17:24.955685+00:00",
+    "goal": "【锚点=REPRO-FVM-SOD1978】【自找活·tp-ds-5（proposer 席）】（owner 2026-11-01：全席饱和；2026-11-02 控仓令：自驱开发照常，绝不动 TensorPlatform）\n你是研究开发 agent，本单=你的自主工时（model 钉扎 deepseek-v4-flash，只有本席能领）。\n1) 扫描（全只读）：/root/tp-agent/proposals/ 提案池；GET /api/v1/tensor/reports?limit=20 的\n   「局限/待办」节；guide_tracker 缺口（/root/tp-agent/guide* 状态 json）；各仓未合并 PR；\n   以及本席上一张 selfstart-* 单的产出（防自我重复）；各仓缺口账\n   （backlog_*/expand_audit_*/dev_report_* 文件——求解器仓选题优先锚，先读账再选题）；\n2) 选定 1 件最有价值、可单干、不与在飞/近 24h 终态单重复的实质增量——优先「验证欠账」类\n   （把已合并功能对文献/解析基准复核），其次功能补全、失效测试补齐；\n   ★总账锚点纪律（owner 2026-11-09 不重复/不随机令）：选题前必对功能点总账——\n   runuser -u postgres -- psql -d tensorplatform -c \"SELECT slug,title,acceptance,status FROM feature_ledger WHERE status IN('planned','in_progress') ORDER BY status,slug\"\n   ★总账锚点纪律（owner 2026-11-09 不重复/不随机令）：本单锚点已由派发器按总账指派——见 goal 首行【锚点=...】（已填真实 slug，与 REPRO-FVM-SOD1978 一致；标题：论文复现·A Survey of Several FD Methods for Nonlinear Hyper）。直接认领该锚做实质增量；开工先核对：SELECT slug,title,acceptance,status FROM feature_ledger WHERE slug='REPRO-FVM-SOD1978'；done/verified 状态不得重做，若你核对时发现该锚已被他单完成，改做 finish summary 中说明的次优项并在 summary 给出建议新条目（slug+量化验收+所属域），不要自行改写 goal 首行锚点值。\n3) 直接开工做完：测试绿 + 平台报告发布 + git commit 落盘（goal 首行自声明 EDIT_WHITELIST，\n   按所选仓常规路径 docs/, src/, tests/, examples/, outputs/）；\n4) 若该活超出单干范围：改为 POST /api/v1/tensor/missions 派单（body 必须显式含\n   \"runner\":\"native\"——表默认 openhands=无人领死单），并在 summary 说明拆分逻辑；\n5) finish summary：干了什么/证据指针（commit+报告 id）/给下次自找活的建议线索。\n容量纪律：重计算任务先看 /proc/loadavg（本机 nproc=128），load15 已 ≥100 时只做轻量\n（文档/测试/分析）活，不起新的重算力进程。\n仓白名单：TensorLBM/TensorDEM/TensorFEM/TensorFVM/TensorBEM/TensorSPH/TensorDG/TensorCAD/ship-performance-platform/TensorPapers。归仓口诀（详见 /root/tp-agent/AGENT_BOOTSTRAP.md ECOSYSTEM-MAP）：求解器→对应 Tensor* 库（当前主战场）；船舶→ship-performance-platform（本地私有仓）；论文素材→TensorPapers。TensorPlatform 平台开发已恢复战役化（2026-11-06 清场重建，owner 亲批亲并）：经战役单可做共性机制，但零领域语义（域词条/域判据/域算例禁硬编码，域数据经 API/配置注入，详见 AGENT_BOOTSTRAP.md ECOSYSTEM-MAP v2）。禁碰 GitHub 推送与 main 分支。honest FAIL 不得覆盖。",
+    "goal_sha256": "ba4c8bbdcff6bb7d1793b16f87709a10ffa0c32e470a8d043bd627f8ebde312f",
+    "result_sha256": "6c22171e117017e16bf2c5a034300debea333664205197b5100fa974243af65c"
+  },
+  "pull_request": {
+    "number": 634,
+    "state": "closed",
+    "merged": true,
+    "merged_at": "2026-11-13T20:26:50Z",
+    "merge_commit_sha": "cf4cb6d827d89c37a3819642b6fa3443236fa7eb",
+    "head_ref": "agent/m18524",
+    "head_sha": "2e6f3ac3a34e395eab69e4c20b5c08debbfb4924",
+    "base_ref": "main",
+    "changed_files": 9,
+    "additions": 1094,
+    "deletions": 94,
+    "html_url": "https://github.com/cxs503/TensorFVM/pull/634",
+    "resolution": "branch_head"
+  },
+  "commit": {
+    "sha": "2e6f3ac3a34e395eab69e4c20b5c08debbfb4924",
+    "source": "pull_request.head",
+    "matches_mission_head": "inconclusive"
+  },
+  "deliverables": [
+    {
+      "path": "docs/repro-fvm-sod1978-paper-time/PUBLISHED.md",
+      "status": "added",
+      "additions": 16,
+      "deletions": 0,
+      "blob_sha": "77f68ca9da2760cc5f8ed657992ed19d4e11bb0a",
+      "sha256": "6bddd1198826234a125529ea9c606058d81933e32d121484b3a501ecda6c535a",
+      "bytes": 786,
+      "origin": "github_contents@2e6f3ac3a34e395eab69e4c20b5c08debbfb4924"
+    },
+    {
+      "path": "docs/repro-fvm-sod1978-paper-time/REPORT.md",
+      "status": "added",
+      "additions": 118,
+      "deletions": 0,
+      "blob_sha": "bd92778d90444ad24ae448dd55c53d208c576916",
+      "sha256": "f0fff71de895d9f4a9d939700595ebd64538fe30c03827d00aad8f7651229349",
+      "bytes": 7808,
+      "origin": "github_contents@2e6f3ac3a34e395eab69e4c20b5c08debbfb4924"
+    },
+    {
+      "path": "docs/repro-fvm-sod1978-paper-time/figures/sod_paper_time_budget.png",
+      "status": "added",
+      "additions": 0,
+      "deletions": 0,
+      "blob_sha": "01d7da160c815e405e343a12cfac57efc7eb4965",
+      "sha256": "8850a2ee2dce2a0ff20f7119a662005340dd4df5d67cd9976ec01aa8f0a03977",
+      "bytes": 29817,
+      "origin": "github_contents@2e6f3ac3a34e395eab69e4c20b5c08debbfb4924"
+    },
+    {
+      "path": "docs/repro-fvm-sod1978-paper-time/figures/sod_paper_time_convergence.png",
+      "status": "added",
+      "additions": 0,
+      "deletions": 0,
+      "blob_sha": "c67daa7a682db1595b01ec7c33cadb05c332ccf3",
+      "sha256": "daeb22e9abf9720b9365f6f3f2cd23e6fcf2c108350216990720c291987dcf85",
+      "bytes": 52860,
+      "origin": "github_contents@2e6f3ac3a34e395eab69e4c20b5c08debbfb4924"
+    },
+    {
+      "path": "docs/repro-fvm-sod1978-paper-time/figures/sod_paper_time_profiles.png",
+      "status": "added",
+      "additions": 0,
+      "deletions": 0,
+      "blob_sha": "c0938d44d708f9e6248ab9b0c0eae3b0419d6cd2",
+      "sha256": "72ecf3e19fdd6d1f81e59a3824300d285b6a7cfc29a1fe7a1cc5925d10b95b6e",
+      "bytes": 58784,
+      "origin": "github_contents@2e6f3ac3a34e395eab69e4c20b5c08debbfb4924"
+    },
+    {
+      "path": "docs/repro-fvm-sod1978-paper-time/paper_time_study.json",
+      "status": "added",
+      "additions": 325,
+      "deletions": 0,
+      "blob_sha": "87721e616ea655242566f3064aa655874569d190",
+      "sha256": "1546a201f5564a035de072f96577ed82bc41d2b4d6800ecbc51fc39af1310766",
+      "bytes": 8043,
+      "origin": "github_contents@2e6f3ac3a34e395eab69e4c20b5c08debbfb4924"
+    },
+    {
+      "path": "src/tensorfvm/compressible/solver.py",
+      "status": "modified",
+      "additions": 24,
+      "deletions": 10,
+      "blob_sha": "020925a2769cde61df6cdd3eeab0e96a02f5326d",
+      "sha256": "c744a9379fedb532d2c6f349749213b58abb15ed40cd0e205531f752e02d8514",
+      "bytes": 38999,
+      "origin": "github_contents@2e6f3ac3a34e395eab69e4c20b5c08debbfb4924"
+    },
+    {
+      "path": "src/tensorfvm/verification/sod1978_paper_time.py",
+      "status": "added",
+      "additions": 448,
+      "deletions": 0,
+      "blob_sha": "0c9a67a81c561db3ea9cde3f90d8d3f458e9aa21",
+      "sha256": "8763e144105f24ed39973b16a4148be3141c669a24d6c033967fcc4cd6ff5599",
+      "bytes": 21874,
+      "origin": "github_contents@2e6f3ac3a34e395eab69e4c20b5c08debbfb4924"
+    },
+    {
+      "path": "tests/test_compressible_sod.py",
+      "status": "modified",
+      "additions": 163,
+      "deletions": 84,
+      "blob_sha": "722ce66a2c8d201612a0d568e54f4bbd95b20d25",
+      "sha256": "8a3083495bb7987d9ca0055e78e31a01e58cdc73988ac50ca5f0ebcb008b17de",
+      "bytes": 7723,
+      "origin": "github_contents@2e6f3ac3a34e395eab69e4c20b5c08debbfb4924"
+    }
+  ],
+  "ci": {
+    "conclusion": "not_run",
+    "check_runs": [],
+    "statuses": [],
+    "total_count": 0
+  },
+  "source_fingerprints": {
+    "platform_mission": "ef3a4d9764142d8b41f560698d25b842f7f9cd94a82f7b892370817e032faf5c",
+    "pull_request": "c4107093b085e95bb816d7667724d22525dd87712a3ce9a9e3d68420e3d011eb",
+    "pull_request_files": "17b6159797b6df6bc2d3b78e4ca215de93b57ab10fa4a51106915c00886e95c8",
+    "check_runs": "52eee86998cce2fbb2226087de4a5117684d00dfa740957b2c070f4d5fbbbf8b",
+    "commit_statuses": "453f4ba7803774e7a12b0613d30595f65d013a05fa2af6f64f76d424679798c4"
+  },
+  "missing": [
+    "ci.check_runs",
+    "mission.result.evidence.head_commit"
+  ],
+  "integrity": {
+    "bundle_sha256": "4dfc133c91f6728e2dd60ecdf51d8f6a40802c1623ff0c081c491a614aa6d67b",
+    "digest_scope": "canonical_json_of_bundle_excluding_integrity"
+  },
+  "fixture": {
+    "recorded_raw_path": "tests/fixtures/recorded/m18524.json",
+    "recorded_raw_sha256": "e229e52b8dff0c2ae8040c6a632cb8fd91a57e7f3fe8377a07c7bf200879a5a1"
+  }
+}
