@@ -21,7 +21,7 @@ A passing unit-test suite never upgrades a product to real_world_verified. Missi
 | ResearchAudit | Partially implemented: citation/provenance integrity checks exist; semantic support and independent review workflow remain open. | No | Audit one permissioned report, bibliography and source bundle; retain reviewer receipt. |
 | Physics Dataset Validator | Partially implemented: CSV structure, units, ranges, leakage and rights checks exist; conservation, boundary/initial conditions and multimodal alignment remain open. | No | Implement one explicit conservation profile and test a real TensorLBM flow export plus labelled corruptions. |
 | Agent Achievement Evaluator | Partially implemented: commit-pinned evidence package checks and explicit publish path exist; automatic mission/CI collection and isolated execution remain open. | No | Collect one real mission, linked PR, commit and CI evidence read-only; retain human grading. |
-| Business Evidence Engine | Partially implemented: PDF page evidence, limited field proposals and normalized reconciliation exist; OCR, tables and approved-field handoff remain open. | No | Add approve/reject transition and pass only approved values into reconciliation. |
+| Business Evidence Engine | Partially implemented: PDF page evidence, limited field proposals and normalized reconciliation exist; OCR, tables and approved-field handoff remain open. | No | Complete a permissioned multi-document PDF → review → normalization → reconciliation run and measure accuracy. |
 
 ## Mandatory acceptance record per product
 
