@@ -143,3 +143,11 @@ def test_authoritative_empty_criteria_do_not_fall_back_to_agent_result():
     assert result["report"]["overall_status"] == "inconclusive"
     assert result["report"]["summary"]["acceptance_criteria_source"] == "not_declared"
     assert result["bundle"]["acceptance_criteria"][0]["criterion_id"] == "mission-goal-not-formalized"
+
+
+def test_awaiting_acceptance_is_eligible_for_independent_evaluation():
+    snapshot = _snapshot()
+    snapshot["mission"]["status"] = "awaiting_acceptance"
+    result = evaluate_mission_snapshot(snapshot)
+    assert not any(check["check_id"] == "mission.status" for check in result["report"]["checks"])
+    assert result["report"]["summary"]["mission_status"] == "awaiting_acceptance"
