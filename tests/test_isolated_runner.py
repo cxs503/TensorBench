@@ -34,7 +34,7 @@ def test_runs_pinned_revision_in_restricted_container(tmp_path, monkeypatch):
     monkeypatch.setattr(isolated_runner.subprocess, "run", fake_run)
     report = isolated_runner.run_isolated_tests(
         checkout_path=repo, expected_revision=SHA, image=IMAGE,
-        command=["python", "-m", "pytest", "-q"],
+        command=["python", "-m", "pytest", "-q"], log_dir=tmp_path / "logs",
     )
     assert report["status"] == "passed"
     assert report["candidate_revision"] == SHA
@@ -51,7 +51,7 @@ def test_rejects_mutated_checkout(tmp_path, monkeypatch):
     with pytest.raises(isolated_runner.IsolatedRunError, match="uncommitted"):
         isolated_runner.run_isolated_tests(
             checkout_path=repo, expected_revision=SHA, image=IMAGE,
-            command=["pytest", "-q"],
+            command=["pytest", "-q"], log_dir=tmp_path / "logs",
         )
 
 
