@@ -127,24 +127,91 @@ def collect_mission_snapshot(
         ],
     }
 
-    criteria = (
-        result.get("acceptance_criteria")
-        or summary.get("acceptance_criteria")
-        or mission.get("acceptance_criteria")
+    result_evidence = result.get("evidence") if isinstance(result.get("evidence"), dict) else {}
+    criteria = mission.get("acceptance_criteria")
+    if criteria is None:
+        criteria = result_evidence.get("acceptance_criteria")
+    if criteria is None:
+        criteria = result.get("acceptance_criteria")
+    if criteria is None:
+        criteria = summary.get("acceptance_criteria")
+
+    def first_value(*values: Any) -> Any:
+        return next((value for value in values if value is not None), None)
+
+    criteria_sha256 = first_value(
+        mission.get("acceptance_criteria_sha256"),
+        result_evidence.get("acceptance_criteria_sha256"),
+        result.get("acceptance_criteria_sha256"),
+        summary.get("acceptance_criteria_sha256"),
     )
+    frozen_at = first_value(
+        mission.get("acceptance_criteria_frozen_at"),
+        result_evidence.get("acceptance_criteria_frozen_at"),
+        result.get("acceptance_criteria_frozen_at"),
+    )
+    freeze_source = first_value(
+        mission.get("acceptance_criteria_freeze_source"),
+        result_evidence.get("acceptance_criteria_freeze_source"),
+        result.get("acceptance_criteria_freeze_source"),
+    )
+    criteria_version = first_value(
+        mission.get("acceptance_criteria_version"),
+        result_evidence.get("acceptance_criteria_version"),
+        result.get("acceptance_criteria_version"),
+    )
+    integrity = "missing"
+    if criteria is not None and criteria_sha256 is not None:
+        try:
+            normalized = []
+            for index, item in enumerate(criteria, start=1):
+                if not isinstance(item, dict):
+                    raise ValueError("criterion must be an object")
+                entry = dict(item)
+                entry["criterion_id"] = entry.get("criterion_id", entry.get("id", f"C{index:03d}"))
+                entry.pop("id", None)
+                if isinstance(entry.get("metric"), str):
+                    entry["metric"] = entry["metric"].strip()
+                normalized.append(entry)
+            payload = json.dumps(normalized, sort_keys=True, ensure_ascii=False,
+                                 separators=(",", ":"), allow_nan=False).encode("utf-8")
+            import hashlib
+            actual_digest = hashlib.sha256(payload).hexdigest()
+            integrity = "verified" if actual_digest == str(criteria_sha256).lower() else "mismatch"
+        except (TypeError, ValueError):
+            integrity = "invalid"
+
+    contract = {
+        "criteria": criteria if isinstance(criteria, list) else [],
+        "sha256": criteria_sha256,
+        "frozen_at": frozen_at,
+        "version": criteria_version,
+        "freeze_source": freeze_source,
+        "integrity_status": integrity,
+        "status": (
+            "declared" if isinstance(criteria, list) and criteria
+            and freeze_source == "mission_created" and integrity == "verified"
+            else "not_declared" if not criteria
+            else "legacy_or_unverified"
+        ),
+    }
     snapshot: dict[str, Any] = {
         "mission": mission,
         "pull_request": pr,
         "checks": checks,
+        "acceptance_contract": contract,
         "collection_metadata": {
             "mode": "live_read_only",
             "mission_endpoint": f"/tensor/missions/{int(mission_id)}",
             "github_repository": repo,
             "associated_commit_sha": head_sha,
             "pull_request_number": number,
-            "acceptance_criteria_source": "mission_result" if criteria else "not_declared",
+            "acceptance_criteria_source": (
+                "mission_contract" if criteria is not None else "not_declared"
+            ),
+            "acceptance_criteria_integrity": integrity,
         },
     }
-    if criteria:
+    if isinstance(criteria, list) and criteria:
         snapshot["acceptance_criteria"] = criteria
     return snapshot
