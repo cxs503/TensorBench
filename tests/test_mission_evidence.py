@@ -1,3 +1,6 @@
+import hashlib
+import json
+
 import pytest
 
 from tensorbench.mission_evidence import (
@@ -8,16 +11,25 @@ from tensorbench.mission_evidence import (
 
 def _snapshot():
     sha = "a" * 40
+    criteria = [{
+        "criterion_id": "feature", "statement": "Feature works",
+        "required": True, "requires_code": True, "requires_test": True,
+        "evidence_refs": ["github://TensorLBM/pull/9@" + sha],
+        "test_ids": ["check-run-1"],
+    }]
+    criteria_sha = hashlib.sha256(json.dumps(
+        criteria, sort_keys=True, ensure_ascii=False, separators=(",", ":")
+    ).encode("utf-8")).hexdigest()
     return {
         "mission": {
             "id": 73, "repo": "TensorLBM", "goal": "Add a tested feature",
             "status": "succeeded", "claimed_by": "agent-7",
-            "acceptance_criteria": [{
-                "criterion_id": "feature", "statement": "Feature works",
-                "required": True, "requires_code": True, "requires_test": True,
-                "evidence_refs": ["github://TensorLBM/pull/9@" + sha],
-                "test_ids": ["check-run-1"],
-            }],
+            "acceptance_criteria": criteria,
+            "acceptance_criteria_sha256": criteria_sha,
+            "acceptance_criteria_freeze_source": "mission_created",
+            "acceptance_criteria_status": "declared",
+            "acceptance_criteria_frozen_at": "2026-11-14T05:00:00Z",
+            "acceptance_criteria_version": 1,
         },
         "pull_request": {
             "number": 9, "html_url": "https://github.com/cxs503/TensorLBM/pull/9",
@@ -42,6 +54,8 @@ def test_snapshot_produces_revision_pinned_bundle_and_pass_report():
 def test_missing_predeclared_acceptance_criteria_is_inconclusive():
     snapshot = _snapshot()
     del snapshot["mission"]["acceptance_criteria"]
+    snapshot["mission"]["acceptance_criteria_sha256"] = None
+    snapshot["mission"]["acceptance_criteria_freeze_source"] = "legacy_unfrozen"
     result = evaluate_mission_snapshot(snapshot)
     assert result["report"]["overall_status"] == "inconclusive"
     assert result["report"]["summary"]["acceptance_criteria_source"] == "not_declared"
@@ -98,3 +112,43 @@ def test_successful_build_check_is_not_mistaken_for_test_evidence():
     result = evaluate_mission_snapshot(snapshot)
     assert result["report"]["overall_status"] == "inconclusive"
     assert result["bundle"]["tests"] == []
+
+
+def test_criteria_digest_mismatch_cannot_be_evaluated_as_passed():
+    snapshot = _snapshot()
+    snapshot["mission"]["acceptance_criteria"][0]["statement"] = "Agent rewrote the criterion"
+    result = evaluate_mission_snapshot(snapshot)
+    assert result["report"]["overall_status"] == "failed"
+    assert result["report"]["summary"]["acceptance_criteria_integrity"] == "mismatch"
+
+
+def test_legacy_start_criteria_are_not_treated_as_predeclared():
+    snapshot = _snapshot()
+    snapshot["mission"]["acceptance_criteria_freeze_source"] = "legacy_start"
+    result = evaluate_mission_snapshot(snapshot)
+    assert result["report"]["overall_status"] == "inconclusive"
+    assert result["report"]["summary"]["acceptance_criteria_source"] == "legacy_frozen_at_start"
+
+
+def test_authoritative_empty_criteria_do_not_fall_back_to_agent_result():
+    snapshot = _snapshot()
+    snapshot["mission"]["acceptance_criteria"] = []
+    snapshot["mission"]["acceptance_criteria_sha256"] = hashlib.sha256(b"[]").hexdigest()
+    snapshot["mission"]["result"] = {"acceptance_criteria": [{
+        "criterion_id": "agent-invented", "statement": "Self-asserted criterion",
+        "required": True, "requires_code": True, "requires_test": True,
+        "evidence_refs": [], "test_ids": ["check-run-1"],
+    }]}
+    result = evaluate_mission_snapshot(snapshot)
+    assert result["report"]["overall_status"] == "inconclusive"
+    assert result["report"]["summary"]["acceptance_criteria_source"] == "not_declared"
+    assert result["bundle"]["acceptance_criteria"][0]["criterion_id"] == "mission-goal-not-formalized"
+
+
+def test_awaiting_acceptance_is_eligible_for_independent_evaluation():
+    snapshot = _snapshot()
+    snapshot["mission"]["status"] = "awaiting_acceptance"
+    result = evaluate_mission_snapshot(snapshot)
+    assert not any(check["check_id"] == "mission.status" for check in result["report"]["checks"])
+    assert result["report"]["summary"]["mission_status"] == "awaiting_acceptance"
+    assert result["report"]["summary"]["owner_acceptance_pending"] is True
