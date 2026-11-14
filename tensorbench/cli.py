@@ -9,6 +9,7 @@ from pathlib import Path
 from .compare import compare_results, load_result
 from .contracts import ContractValidationError, validate_file
 from .business_evidence import BusinessEvidenceError, reconcile_file
+from .achievement import AchievementInputError, evaluate_file
 from .publish import (
     PlatformClient,
     build_capability_delta,
@@ -28,6 +29,12 @@ def build_parser() -> argparse.ArgumentParser:
     validate_parser.add_argument("--kind", choices=("evidence", "report", "asset"), required=True)
     validate_parser.add_argument("--input", required=True, help="Contract JSON file")
     validate_parser.add_argument("--output", help="Optional validation-result JSON path")
+
+    achievement_parser = subparsers.add_parser(
+        "evaluate-work-package", help="evaluate revision-pinned agent work-package evidence"
+    )
+    achievement_parser.add_argument("--input", required=True, help="Work-package evidence JSON")
+    achievement_parser.add_argument("--output", help="Optional evaluation-report JSON path")
 
     business_parser = subparsers.add_parser(
         "reconcile-business", help="reconcile normalized contract/PO/delivery/invoice records"
@@ -168,6 +175,18 @@ def _cmd_publish(args: argparse.Namespace) -> int:
 
 def main() -> int:
     args = build_parser().parse_args()
+    if args.command == "evaluate-work-package":
+        try:
+            result = evaluate_file(args.input)
+            rendered = json.dumps(result, indent=2, ensure_ascii=False)
+            if args.output:
+                Path(args.output).write_text(rendered + "\n", encoding="utf-8")
+            print(rendered)
+            return 0 if result["overall_status"] == "passed" else 1
+        except (OSError, json.JSONDecodeError, AchievementInputError) as exc:
+            print(f"tensorbench: error: {exc}", file=sys.stderr)
+            return 2
+
     if args.command == "reconcile-business":
         try:
             result = reconcile_file(args.input, tolerance=args.tolerance)
