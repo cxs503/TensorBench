@@ -38,3 +38,21 @@ be used on a trusted isolated runner host. Do not execute untrusted Agent code o
 a developer workstation or shared production host. A green test run is evidence
 that a command passed in this environment; it is not proof that tests are meaningful,
 that the feature works, or that scientific results are correct.
+
+## Attach the result to a criterion
+
+After `reverify-tests` writes its JSON report and retained logs, bind that run to the
+specific predeclared acceptance criterion(s). The command verifies both log hashes
+before it adds the test record and evidence artifacts:
+
+```bash
+tensorbench attach-isolated-run \\
+  --bundle mission-123.evidence.json \\
+  --report mission-123-test-run.json \\
+  --test-id isolated-pytest-rerun \\
+  --criterion-id C-IMPLEMENTATION \\
+  --output mission-123.evidence.reverified.json
+```
+
+The reviewer must explicitly map the run to criterion IDs. A timed-out run becomes
+`not_run`; it cannot be counted as a pass. A revision mismatch or altered log is rejected.
