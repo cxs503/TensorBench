@@ -163,13 +163,23 @@ def build_mission_evidence_bundle(snapshot: Mapping[str, Any]) -> dict[str, Any]
                 "target_url": item.get("target_url"),
             })
 
-    supplied_criteria = root.get("acceptance_criteria")
+    contract_raw = root.get("acceptance_contract")
+    contract = dict(contract_raw) if isinstance(contract_raw, Mapping) else {}
+    supplied_criteria = contract.get("criteria")
+    if supplied_criteria is None:
+        supplied_criteria = root.get("acceptance_criteria")
     if supplied_criteria is None:
         supplied_criteria = mission.get("acceptance_criteria")
     if supplied_criteria is None and isinstance(mission.get("result"), Mapping):
         supplied_criteria = mission["result"].get("acceptance_criteria")
-    if supplied_criteria is None:
-        # Deliberately not evaluable: mission goal text is not an acceptance test.
+    criteria_source = (
+        "mission_contract" if contract_raw is not None
+        else "supplied" if supplied_criteria is not None
+        else "not_declared"
+    )
+    if supplied_criteria is None or supplied_criteria == []:
+        # Goal text is not a formal acceptance criterion. Keep an explicit
+        # non-evaluable sentinel so legacy callers retain the evaluator contract.
         supplied_criteria = [{
             "criterion_id": "mission-goal-not-formalized",
             "statement": goal,
@@ -179,16 +189,37 @@ def build_mission_evidence_bundle(snapshot: Mapping[str, Any]) -> dict[str, Any]
             "evidence_refs": [pr_ref],
             "test_ids": [],
         }]
-    if not isinstance(supplied_criteria, list) or not supplied_criteria:
-        raise AchievementInputError("acceptance_criteria must be a non-empty array when supplied")
+    if not isinstance(supplied_criteria, list):
+        raise AchievementInputError("acceptance_criteria must be an array")
+
+    evaluator_criteria = []
+    for index, raw in enumerate(supplied_criteria, start=1):
+        item = _mapping(raw, "acceptance_criteria[]")
+        criterion = dict(item)
+        criterion_id = criterion.get("criterion_id") or criterion.get("id") or f"C{index:03d}"
+        criterion["criterion_id"] = str(criterion_id)
+        criterion.pop("id", None)
+        if "statement" not in criterion:
+            metric = str(criterion.get("metric") or "unspecified metric")
+            target = criterion.get("target", "unspecified")
+            tolerance = criterion.get("tolerance", "unspecified")
+            criterion["statement"] = f"{metric}: target={target}; tolerance={tolerance}"
+        criterion.setdefault("required", True)
+        criterion.setdefault("requires_code", True)
+        criterion.setdefault("requires_test", True)
+        criterion.setdefault("evidence_refs", [pr_ref])
+        # Do not infer a criterion-to-test mapping from unrelated CI green checks.
+        criterion.setdefault("test_ids", [])
+        evaluator_criteria.append(criterion)
 
     bundle = {
         "work_package_id": f"tensorplatform-mission-{mission_id}",
         "candidate_revision": revision,
-        "acceptance_criteria": supplied_criteria,
+        "acceptance_criteria": evaluator_criteria,
         "changed_files": changed_files,
         "tests": tests,
         "artifacts": artifacts,
+        "acceptance_contract": contract,
         "mission": {
             "mission_id": mission_id,
             "repo": repo,
@@ -203,13 +234,9 @@ def build_mission_evidence_bundle(snapshot: Mapping[str, Any]) -> dict[str, Any]
             "mission_sha256": _sha256(mission),
             "pull_request_sha256": _sha256(pr),
             "checks_sha256": _sha256(checks_payload),
-            "acceptance_criteria_source": (
-                "supplied" if root.get("acceptance_criteria") is not None
-                or mission.get("acceptance_criteria") is not None
-                or (isinstance(mission.get("result"), Mapping)
-                    and mission["result"].get("acceptance_criteria") is not None)
-                else "not_declared"
-            ),
+            "acceptance_criteria_source": criteria_source,
+            "acceptance_contract_integrity": contract.get("integrity_status", "not_supplied"),
+            "acceptance_contract_freeze_source": contract.get("freeze_source"),
             "collector_metadata": root.get("collection_metadata") or {},
         },
     }
@@ -235,5 +262,36 @@ def evaluate_mission_snapshot(snapshot: Mapping[str, Any]) -> dict[str, Any]:
     report["summary"]["mission_status"] = mission_status or None
     report["summary"]["pull_request_number"] = bundle["mission"]["pull_request_number"]
     report["summary"]["acceptance_criteria_source"] = bundle["collection"]["acceptance_criteria_source"]
+    contract = bundle.get("acceptance_contract") or {}
+    if contract:
+        integrity = contract.get("integrity_status")
+        source = contract.get("freeze_source")
+        criteria = contract.get("criteria") or []
+        if integrity == "mismatch" or integrity == "invalid":
+            contract_state = "failed"
+            detail = "Mission acceptance criteria fingerprint does not match the frozen snapshot."
+        elif not criteria or source != "mission_created" or integrity != "verified":
+            contract_state = "inconclusive"
+            detail = (
+                "Acceptance criteria were not predeclared with a verified immutable snapshot; "
+                "legacy or missing provenance cannot establish a pass."
+            )
+        else:
+            contract_state = "passed"
+            detail = "Predeclared mission acceptance criteria match the frozen SHA-256 snapshot."
+        report["checks"].append({
+            "check_id": "mission.acceptance_contract",
+            "version": "0.1.0",
+            "method": "deterministic_rule",
+            "state": contract_state,
+            "required": True,
+            "details": detail,
+        })
+        if contract_state == "failed":
+            report["overall_status"] = "failed"
+        elif contract_state == "inconclusive" and report["overall_status"] != "failed":
+            report["overall_status"] = "inconclusive"
+        report["summary"]["acceptance_contract_integrity"] = integrity
+        report["summary"]["acceptance_contract_freeze_source"] = source
     report["provenance"]["collection"] = bundle["collection"]
     return {"bundle": bundle, "report": report}
