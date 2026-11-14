@@ -104,9 +104,8 @@ def test_pdf_field_review_rejects_unknown_duplicate_and_invalid_decisions():
 
 
 def test_pdf_field_review_withholds_conflicting_accepted_values():
-    proposals = propose_pdf_fields(_extraction())
     extraction = _extraction()
-    extraction["pages"][0]["text"] += "Invoice No: INV-2026-002\\n"
+    extraction["pages"][0]["text"] += "Invoice No: INV-2026-002\n"
     proposals = propose_pdf_fields(extraction)
     decisions = [{"proposal_id": item["proposal_id"], "decision": "accept"} for item in proposals["proposals"]]
     reviewed = review_pdf_field_proposals(proposals, decisions, reviewer="reviewer-1")
