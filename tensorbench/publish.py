@@ -373,3 +373,90 @@ class PlatformClient:
 
     def get_capability_delta(self, mission_id: int) -> dict[str, Any]:
         return self._request("GET", f"/tensor/missions/{int(mission_id)}/capability-delta")
+
+def build_achievement_evaluation_payload(
+    report: Mapping[str, Any],
+    *,
+    mission_id: int,
+    contributor: str,
+    reviewer: str,
+    grade: str,
+    e_level: str,
+    report_path: str | Path,
+    repo: str | None = None,
+    baseline_or_scope: str | None = None,
+    boundary: str | None = None,
+    evidence_chain: Mapping[str, Any] | None = None,
+) -> dict[str, Any]:
+    """Build a human-reviewed platform evaluation from an achievement report.
+
+    The deterministic evaluator supplies evidence completeness only. It never
+    chooses the S/E grade or reviewer: those are mandatory caller decisions.
+    """
+    if report.get("product_id") != "agent-achievement-evaluator":
+        raise ValueError("report is not an Agent Achievement Evaluator report")
+    if report.get("overall_status") != "passed":
+        raise ValueError("only passed achievement reports can be submitted")
+    if not reviewer.strip() or reviewer.strip().casefold() == contributor.strip().casefold():
+        raise ValueError("reviewer must be present and differ from contributor")
+    if grade not in {"S1", "S2", "S3", "S4", "S5", "S-N"}:
+        raise ValueError("grade must be an explicit S1-S5 or S-N reviewer decision")
+    if e_level not in {"E1", "E2", "E3", "E4"}:
+        raise ValueError("e_level must be an explicit E1-E4 reviewer decision")
+    if grade in {"S2", "S3", "S4", "S5", "S-N"} and not evidence_chain:
+        raise ValueError("S2+ submissions require an explicit five-element evidence_chain")
+    if grade in {"S2", "S4"} and not baseline_or_scope:
+        raise ValueError(f"{grade} requires baseline_or_scope")
+    if grade == "S5" and not baseline_or_scope:
+        raise ValueError("S5 requires a novelty-search scope")
+
+    summary = report.get("summary") or {}
+    revision = str(summary.get("candidate_revision") or "")
+    work_package = str(summary.get("work_package_id") or "")
+    if not work_package or not revision:
+        raise ValueError("achievement report lacks work-package or candidate revision")
+    artifact_path = Path(report_path).resolve()
+    if not artifact_path.is_file():
+        raise ValueError(f"achievement report file does not exist: {artifact_path}")
+    report_hash = _file_sha256(artifact_path)
+    run_id = str(report.get("run_id") or "")
+    if not run_id:
+        raise ValueError("achievement report lacks run_id")
+
+    grade_reason = (
+        f"Agent Achievement Evaluator {report.get('product_version')} reports "
+        f"{report.get('overall_status')} for work package {work_package}; "
+        f"candidate revision {revision}; changed files={summary.get('changed_file_count')}; "
+        f"code files={summary.get('code_file_count')}; acceptance criteria="
+        f"{summary.get('acceptance_criteria_count')}; tests={summary.get('test_count')}. "
+        "This records evidence completeness only, not independent functional or scientific correctness."
+    )
+    refs = [
+        {"kind": EVIDENCE_KIND_RUN, "ref": run_id},
+        {"kind": "commit", "ref": revision},
+        {"kind": EVIDENCE_KIND_ARTIFACT, "ref": f"{artifact_path}#sha256={report_hash}"},
+    ]
+    for ref in report.get("evidence_refs") or []:
+        refs.append({"kind": EVIDENCE_KIND_ARTIFACT, "ref": str(ref)})
+
+    payload = {
+        "artifact_id": f"agent-work-package:{work_package}@{revision}",
+        "mission_id": int(mission_id),
+        "contributor": contributor,
+        "grade": grade,
+        "e_level": e_level,
+        "grade_reason": grade_reason,
+        "evidence_refs": refs,
+        "reviewer": reviewer,
+        "reviewer_kind": "independent",
+        "baseline_or_scope": baseline_or_scope,
+        "boundary": boundary or (
+            "Scope: revision-pinned work-package evidence completeness and linked test/CI records. "
+            "Out of scope: independent execution, algorithmic correctness, scientific validity, "
+            "security review, and production suitability."
+        ),
+        "repo": repo,
+    }
+    if evidence_chain:
+        payload["evidence_chain"] = dict(evidence_chain)
+    return payload
