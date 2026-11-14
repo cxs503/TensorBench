@@ -18,7 +18,8 @@ class IsolatedRunError(ValueError):
     """Invalid isolated execution request."""
 
 
-_IMAGE_RE = re.compile(r"^[^\s@]+@sha256:[a-f0-9]{64}$")
+_IMAGE_RE = re.compile(r"^(?:[^\s@]+@sha256:[a-f0-9]{64}|sha256:[a-f0-9]{64})$")
+_CONTAINER_ID_RE = re.compile(r"^[a-f0-9]{64}$")
 _SHA_RE = re.compile(r"^(?:[a-fA-F0-9]{40}|[a-fA-F0-9]{64})$")
 
 
@@ -62,7 +63,7 @@ def run_isolated_tests(
     if not _SHA_RE.fullmatch(expected_revision):
         raise IsolatedRunError("expected_revision must be a full Git SHA")
     if not _IMAGE_RE.fullmatch(image):
-        raise IsolatedRunError("image must be pinned by @sha256 digest")
+        raise IsolatedRunError("image must be pinned by registry @sha256 digest or local sha256 image ID")
     if engine not in {"podman", "docker"}:
         raise IsolatedRunError("engine must be podman or docker")
     if not command or any(not isinstance(part, str) or not part or "\x00" in part for part in command):
@@ -96,13 +97,16 @@ def run_isolated_tests(
     if logs.exists() and (not logs.is_dir() or any(logs.iterdir())):
         raise IsolatedRunError("log_dir must be a new or empty directory")
     logs.mkdir(parents=True, exist_ok=True)
+    logs = logs.resolve()
     stdout_path, stderr_path = logs / "stdout.log", logs / "stderr.log"
+    cidfile_path = logs / "container.cid"
 
     argv = [
         executable, "run", "--rm", "--pull=never", "--network=none",
         "--read-only", "--cap-drop=ALL", "--security-opt=no-new-privileges",
         f"--pids-limit={pids_limit}", f"--memory={memory_limit}",
         f"--cpus={cpu_limit}", "--user=65532:65532",
+        f"--cidfile={cidfile_path}",
         "--tmpfs=/tmp:rw,noexec,nosuid,nodev,size=512m",
         "--env=HOME=/tmp", "--env=TMPDIR=/tmp",
         "--env=PYTHONDONTWRITEBYTECODE=1", "--env=PYTEST_ADDOPTS=-p no:cacheprovider",
@@ -111,16 +115,39 @@ def run_isolated_tests(
     ]
     started = datetime.now(UTC)
     timed_out = False
+    cleanup_status = "not_needed"
+    runner_env = {"PATH": os.environ.get("PATH", "/usr/bin:/bin")}
     try:
         with stdout_path.open("wb") as stdout, stderr_path.open("wb") as stderr:
             completed = subprocess.run(
                 argv, stdin=subprocess.DEVNULL, stdout=stdout, stderr=stderr,
-                check=False, timeout=timeout_seconds,
-                env={"PATH": os.environ.get("PATH", "/usr/bin:/bin")},
+                check=False, timeout=timeout_seconds, env=runner_env,
             )
         exit_code = completed.returncode
+        if cidfile_path.exists():
+            cidfile_path.unlink()
     except subprocess.TimeoutExpired:
         timed_out, exit_code = True, None
+        container_id = cidfile_path.read_text(encoding="ascii", errors="ignore").strip() if cidfile_path.exists() else ""
+        if _CONTAINER_ID_RE.fullmatch(container_id):
+            kill_result = subprocess.run(
+                [executable, "kill", container_id], stdin=subprocess.DEVNULL,
+                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+                check=False, timeout=10, env=runner_env,
+            )
+            remove_result = subprocess.run(
+                [executable, "rm", "-f", container_id], stdin=subprocess.DEVNULL,
+                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+                check=False, timeout=10, env=runner_env,
+            )
+            cleanup_status = (
+                "removed" if kill_result.returncode == 0 or remove_result.returncode == 0
+                else "cleanup_failed"
+            )
+        else:
+            cleanup_status = "container_id_unavailable"
+        if cidfile_path.exists():
+            cidfile_path.unlink()
 
     stdout_hash, stderr_hash = _sha256_file(stdout_path), _sha256_file(stderr_path)
     stdout_text = stdout_path.read_text(encoding="utf-8", errors="replace")
@@ -139,6 +166,7 @@ def run_isolated_tests(
         "command": list(command),
         "exit_code": exit_code,
         "timed_out": timed_out,
+        "container_cleanup_status": cleanup_status,
         "timeout_seconds": timeout_seconds,
         "limits": {
             "network": "none", "rootfs": "read_only", "checkout": "read_only",
@@ -152,6 +180,7 @@ def run_isolated_tests(
         "limitations": [
             "Container isolation is defense-in-depth, not a formally verified sandbox.",
             "Docker requires a trusted isolated host; rootless Podman is preferred.",
+            "Timed-out containers are explicitly killed and removed when the engine provides a valid cidfile.",
             "A passing test command does not prove scientific or functional correctness.",
         ],
     }
