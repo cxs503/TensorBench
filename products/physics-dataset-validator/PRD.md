@@ -41,3 +41,27 @@ Start with a small, real TensorLBM/TensorPhysics ship-flow dataset and an explic
 ## Non-goals
 
 A universal physics oracle, automatic proof of simulation correctness, solver replacement, or automatic approval of data for model training. TensorData remains authoritative for asset lifecycle and rights; this product supplies quality evidence.
+
+
+## Implementation status (verified against repository source, 2026-11-14)
+
+**Overall: partially implemented; no TensorLBM ship-flow end-to-end pilot completed.**
+
+Implemented in the current codebase:
+- CSV schema/required-variable, numeric finiteness, axis monotonicity and basic metadata checks.
+- Unit metadata validation and supported conversions.
+- Declared physical-range checks with conservative unresolved outcomes when assumptions are insufficient.
+- Entity-level split-leakage checks, rights gating and report fingerprinting.
+- Focused validator tests (the preceding implementation run reported 79 passed, 1 skipped).
+
+Not yet implemented or not yet demonstrated:
+- Executable conservation-law checks with explicit control-volume/discretization definitions.
+- Initial/boundary-condition compliance checks.
+- Multimodal time/coordinate-frame/mesh alignment.
+- NetCDF/HDF5/VTK and other field/mesh-native formats.
+- Validation against a real TensorLBM ship-flow dataset and labelled good/bad samples.
+
+Release interpretation:
+- Unsupported conservation, boundary or initial-condition checks must return `inconclusive`, never pass.
+- CSV fixture success is not evidence of physical correctness for a solver dataset.
+- A physics profile must declare variables, units, formula, discretization, tolerance and applicability assumptions before a physical check can run.
