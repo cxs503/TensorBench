@@ -10,7 +10,8 @@ from .achievement import AchievementInputError, evaluate_file
 from .business_evidence import BusinessEvidenceError, reconcile_file
 from .compare import compare_results, load_result
 from .contracts import ContractValidationError, validate_file
-from .pdf_evidence import PdfEvidenceError, extract_pdf_file\nfrom .publish import (
+from .pdf_evidence import PdfEvidenceError, extract_pdf_file
+from .publish import (
     PlatformClient,
     build_capability_delta,
     build_evaluation_payload,
