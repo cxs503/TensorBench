@@ -86,3 +86,36 @@ def test_agent_evaluator_rejects_artifacts_from_a_different_revision():
     assert report["overall_status"] == "inconclusive"
     assert any("not pinned to candidate revision" in finding["summary"]
                for finding in report["findings"])
+
+
+def test_agent_evaluator_rejects_non_git_candidate_revision():
+    bundle = _bundle()
+    bundle["candidate_revision"] = "latest"
+    try:
+        evaluate_work_package(bundle)
+    except ValueError as exc:
+        assert "Git SHA" in str(exc)
+    else:
+        raise AssertionError("candidate revision must be an immutable Git SHA")
+
+
+def test_agent_evaluator_rejects_duplicate_acceptance_criteria():
+    bundle = _bundle()
+    bundle["acceptance_criteria"].append(dict(bundle["acceptance_criteria"][0]))
+    try:
+        evaluate_work_package(bundle)
+    except ValueError as exc:
+        assert "duplicate criterion_id" in str(exc)
+    else:
+        raise AssertionError("duplicate criterion IDs must be rejected")
+
+
+def test_agent_evaluator_does_not_treat_diff_as_test_log():
+    bundle = _bundle()
+    bundle["tests"][0]["artifact_refs"] = ["artifact://diff"]
+    report = evaluate_work_package(bundle)
+    assert report["overall_status"] == "inconclusive"
+    assert any(
+        "not identified as test/CI evidence" in finding["summary"]
+        for finding in report["findings"]
+    )
