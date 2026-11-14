@@ -7,6 +7,7 @@ import sys
 from pathlib import Path
 
 from .compare import compare_results, load_result
+from .contracts import ContractValidationError, validate_file
 from .publish import (
     PlatformClient,
     build_capability_delta,
@@ -20,7 +21,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="tensorbench")
     subparsers = parser.add_subparsers(dest="command", required=True)
 
-    run_parser = subparsers.add_parser("run", help="run one local benchmark spec")
+    validate_parser = subparsers.add_parser(\n        "validate", help="validate an evidence, report or asset contract JSON file"\n    )\n    validate_parser.add_argument("--kind", choices=("evidence", "report", "asset"), required=True)\n    validate_parser.add_argument("--input", required=True, help="Contract JSON file")\n    validate_parser.add_argument("--output", help="Optional validation-result JSON path")\n\n    run_parser = subparsers.add_parser("run", help="run one local benchmark spec")
     run_parser.add_argument("--spec", required=True, help="Path to benchmark specification JSON")
     run_parser.add_argument("--output", default="tensorbench-runs", help="Evidence output directory")
     run_parser.add_argument("--project", help="Implementation project name override")
