@@ -56,3 +56,7 @@ tensorbench attach-isolated-run \\
 
 The reviewer must explicitly map the run to criterion IDs. A timed-out run becomes
 `not_run`; it cannot be counted as a pass. A revision mismatch or altered log is rejected.
+
+## Real container integration
+
+The `Isolated Runner Integration` GitHub Actions workflow builds the minimal test image in `.github/runner/Dockerfile`, captures its local SHA-256 image ID, and executes the evaluator/collector test suites in a real Docker container with the production isolation flags. It then attaches the report and full log fingerprints to a small evidence bundle and uploads the artifacts for review. This validates the actual container path on a GitHub-hosted runner; it does not provision a persistent production runner.
