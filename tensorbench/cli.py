@@ -18,7 +18,9 @@ from .isolated_runner import IsolatedRunError, run_isolated_tests
 from .isolated_evidence import attach_isolated_run_files
 from .business_evidence import BusinessEvidenceError, reconcile_file
 from .business_pdf_fields import (
+    DEFAULT_FIELD_SPECTRUM,
     PdfFieldProposalError,
+    field_spectrum_names,
     propose_pdf_fields_file,
     review_pdf_field_proposals,
     approved_pdf_fields_to_document,
@@ -131,6 +133,12 @@ def build_parser() -> argparse.ArgumentParser:
         "propose-pdf-fields", help="propose labeled business fields from page-addressable PDF text JSON"
     )
     field_parser.add_argument("--input", required=True, help="JSON output from tensorbench extract-pdf")
+    field_parser.add_argument(
+        "--spectrum",
+        default=DEFAULT_FIELD_SPECTRUM,
+        choices=list(field_spectrum_names()),
+        help="Declared field spectrum to measure the document against",
+    )
     field_parser.add_argument("--output", help="Optional field-proposal JSON path")
 
     review_pdf_parser = subparsers.add_parser(
@@ -451,7 +459,7 @@ def main() -> int:
 
     if args.command == "propose-pdf-fields":
         try:
-            result = propose_pdf_fields_file(args.input)
+            result = propose_pdf_fields_file(args.input, spectrum=args.spectrum)
             rendered = json.dumps(result, indent=2, ensure_ascii=False)
             if args.output:
                 Path(args.output).write_text(rendered + "\n", encoding="utf-8")

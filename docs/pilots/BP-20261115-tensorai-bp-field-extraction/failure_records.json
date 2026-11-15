@@ -1,0 +1,104 @@
+{
+  "records": [
+    {
+      "keywords": [
+        "BE",
+        "business_pdf_fields",
+        "trade-spectrum-blind-to-business-plan"
+      ],
+      "anchor": "GAP-ACCEPT-⑥",
+      "category": "gap",
+      "fail_stage": "execution",
+      "failure_reason": "The only pre-existing field spectrum matches invoice/PO/contract labels; a business plan carries none of them, so all 5 declared fields returned 0 proposals and the covering 0 % was invisible rather than reported.",
+      "repro_cmd": "python -m tensorbench.cli propose-pdf-fields --input <pages.json> --spectrum trade_documents_v1  # 0feace24d7b12a5f54189d2e47c2e2620d580b75",
+      "evidence_refs": [
+        "docs/pilots/BP-20261115-tensorai-bp-field-extraction/field_coverage.json"
+      ],
+      "affects": [
+        "C2",
+        "GAP: business-plan document type unsupported by any declared spectrum"
+      ],
+      "resolution": "mitigated",
+      "resolution_ref": "business_plan_v1 spectrum added to tensorbench/business_pdf_fields.py",
+      "cited_kb": [],
+      "filed_at": "2026-11-15T15:38:42Z",
+      "source_sha256": "91f9d4a4bbf9689414a152ff7d10c7066054d799c5bc6a3c3b230d9894c472dd"
+    },
+    {
+      "keywords": [
+        "BE",
+        "business_pdf_fields",
+        "market_reference",
+        "year-anchored-rule"
+      ],
+      "anchor": "GAP-ACCEPT-③",
+      "category": "defect",
+      "fail_stage": "execution",
+      "failure_reason": "The market-reference rule requires a parenthesised publication year, so reference lines published without a year (and the wrapped-URL lines) produce no proposal; 2 of 5 references on the source page were dropped.",
+      "repro_cmd": "python -m tensorbench.cli propose-pdf-fields --input <pages.json> --spectrum business_plan_v1  # 0feace24d7b12a5f54189d2e47c2e2620d580b75",
+      "evidence_refs": [
+        "docs/pilots/BP-20261115-tensorai-bp-field-extraction/field_coverage.json"
+      ],
+      "affects": [
+        "field coverage: market_reference"
+      ],
+      "resolution": "accepted_limitation",
+      "cited_kb": [],
+      "filed_at": "2026-11-15T15:38:42Z",
+      "source_sha256": "91f9d4a4bbf9689414a152ff7d10c7066054d799c5bc6a3c3b230d9894c472dd"
+    },
+    {
+      "keywords": [
+        "BE",
+        "business_pdf_fields",
+        "table_label_percent",
+        "first-column-only"
+      ],
+      "anchor": "GAP-ACCEPT-③",
+      "category": "defect",
+      "fail_stage": "execution",
+      "failure_reason": "The label+percent rule consumes only the first percentage line under a table row label, so in a 4-column revenue table it returns one cell per row and the other cells are only recovered by the separate ratio_block rule.",
+      "repro_cmd": "python -m tensorbench.cli propose-pdf-fields --input <pages.json> --spectrum business_plan_v1  # 0feace24d7b12a5f54189d2e47c2e2620d580b75",
+      "evidence_refs": [
+        "docs/pilots/BP-20261115-tensorai-bp-field-extraction/field_coverage.json"
+      ],
+      "affects": [
+        "field coverage: table_label_percent"
+      ],
+      "resolution": "accepted_limitation",
+      "cited_kb": [],
+      "filed_at": "2026-11-15T15:38:42Z",
+      "source_sha256": "91f9d4a4bbf9689414a152ff7d10c7066054d799c5bc6a3c3b230d9894c472dd"
+    },
+    {
+      "keywords": [
+        "BE",
+        "scenario_acceptance",
+        "independent-review-not-run"
+      ],
+      "anchor": "GAP-ACCEPT-④",
+      "category": "gap",
+      "fail_stage": "review",
+      "failure_reason": "Steps ④ (independent-party re-execution) and ⑤ (publish status) were not performed by this mission: the framework forbids the author from signing its own gate, so the pilot stops at a partial report with a provisional author review.",
+      "repro_cmd": "python scripts/run_bp_pilot.py run --pdf <private>/TensorAI_BP.pdf  # 0feace24d7b12a5f54189d2e47c2e2620d580b75",
+      "evidence_refs": [
+        "docs/pilots/BP-20261115-tensorai-bp-field-extraction/validation_report.json"
+      ],
+      "affects": [
+        "scenario_validated",
+        "review_receipt",
+        "status publication"
+      ],
+      "resolution": "open",
+      "cited_kb": [],
+      "filed_at": "2026-11-15T15:38:42Z",
+      "source_sha256": "91f9d4a4bbf9689414a152ff7d10c7066054d799c5bc6a3c3b230d9894c472dd"
+    }
+  ],
+  "platform_ledger_submission": {
+    "attempted": true,
+    "endpoint": "POST {TENSOR_API_BASE}/tensor/negative-knowledge",
+    "result": "HTTP 405 Method Not Allowed (ledger is read-only on this API surface)",
+    "consequence": "records are kept here in the §5 field format as the repo-side pointer; filing into the platform ledger is still open"
+  }
+}

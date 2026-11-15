@@ -1,0 +1,404 @@
+{
+  "pilot_id": "BP-20261115-tensorai-bp-field-extraction",
+  "source_sha256": "91f9d4a4bbf9689414a152ff7d10c7066054d799c5bc6a3c3b230d9894c472dd",
+  "declared_spectra": [
+    "business_plan_v1",
+    "trade_documents_v1"
+  ],
+  "legacy_spectrum": {
+    "name": "trade_documents_v1",
+    "fields_declared": 5,
+    "fields_extracted": 0,
+    "rows": [
+      {
+        "field": "invoice_number",
+        "proposal_count": 0,
+        "state": "failed",
+        "failure_reason": "document carries no invoice/PO/contract label: a business plan is not a trade document",
+        "pages": []
+      },
+      {
+        "field": "contract_number",
+        "proposal_count": 0,
+        "state": "failed",
+        "failure_reason": "document carries no invoice/PO/contract label: a business plan is not a trade document",
+        "pages": []
+      },
+      {
+        "field": "purchase_order_number",
+        "proposal_count": 0,
+        "state": "failed",
+        "failure_reason": "document carries no invoice/PO/contract label: a business plan is not a trade document",
+        "pages": []
+      },
+      {
+        "field": "document_date",
+        "proposal_count": 0,
+        "state": "failed",
+        "failure_reason": "document carries no invoice/PO/contract label: a business plan is not a trade document",
+        "pages": []
+      },
+      {
+        "field": "total_amount",
+        "proposal_count": 0,
+        "state": "failed",
+        "failure_reason": "document carries no invoice/PO/contract label: a business plan is not a trade document",
+        "pages": []
+      }
+    ]
+  },
+  "business_plan_spectrum": {
+    "name": "business_plan_v1",
+    "fields_declared": 10,
+    "fields_extracted": 9,
+    "coverage_fraction": 0.9,
+    "rows": [
+      {
+        "field": "document_title",
+        "proposal_count": 1,
+        "state": "extracted",
+        "failure_reason": null,
+        "pages": [
+          1
+        ],
+        "items": [
+          {
+            "subject": null,
+            "page_number": 1,
+            "start_offset": 57,
+            "end_offset": 71,
+            "value": "Te***(len=14,sha256=ceea350f451f)",
+            "normalized_candidate": "Te***(len=14,sha256=ceea350f451f)",
+            "value_sha256": "ceea350f451f66990e73f71bb7c3f6687f876d81256f97e31822437c86f4f010",
+            "matched_text_sha256": "ceea350f451f66990e73f71bb7c3f6687f876d81256f97e31822437c86f4f010"
+          }
+        ]
+      },
+      {
+        "field": "document_version",
+        "proposal_count": 1,
+        "state": "extracted",
+        "failure_reason": null,
+        "pages": [
+          1
+        ],
+        "items": [
+          {
+            "subject": null,
+            "page_number": 1,
+            "start_offset": 109,
+            "end_offset": 113,
+            "value": "V1.0",
+            "normalized_candidate": "V1.0",
+            "value_sha256": "35a6fd96d1fdcfa5e7af2835bcbb523bd99798499c8115df9eaba3b77c261ba8",
+            "matched_text_sha256": "4f40b210bea4a632546f834194d36aa8dbef579ca5fc7d7b1ec82dead842b5cf"
+          }
+        ]
+      },
+      {
+        "field": "document_issue_date",
+        "proposal_count": 1,
+        "state": "extracted",
+        "failure_reason": null,
+        "pages": [
+          1
+        ],
+        "items": [
+          {
+            "subject": null,
+            "page_number": 1,
+            "start_offset": 116,
+            "end_offset": 124,
+            "value": "2026年11月",
+            "normalized_candidate": "2026-11",
+            "value_sha256": "4e6249545ffd27441093222b74279db9658568b73b5c02e3af78971a3e60a2e1",
+            "matched_text_sha256": "9fbc4edee8cb98818f2677a6a0a0e7e0de709a67993a492ce105ee94a3b5d729"
+          }
+        ]
+      },
+      {
+        "field": "legal_disclaimer",
+        "proposal_count": 1,
+        "state": "extracted",
+        "failure_reason": null,
+        "pages": [
+          19
+        ],
+        "items": [
+          {
+            "subject": null,
+            "page_number": 19,
+            "start_offset": 904,
+            "end_offset": 915,
+            "value": "本文***(len=11,sha256=4a445e86f9a2)",
+            "normalized_candidate": "本文***(len=11,sha256=4a445e86f9a2)",
+            "value_sha256": "4a445e86f9a2d76cfdd1410dca9a4df4f428c404566021f48d3e71538fba3a34",
+            "matched_text_sha256": "4a445e86f9a2d76cfdd1410dca9a4df4f428c404566021f48d3e71538fba3a34"
+          }
+        ]
+      },
+      {
+        "field": "financing_stage",
+        "proposal_count": 1,
+        "state": "extracted",
+        "failure_reason": null,
+        "pages": [
+          13
+        ],
+        "items": [
+          {
+            "subject": null,
+            "page_number": 13,
+            "start_offset": 57,
+            "end_offset": 69,
+            "value": "种子***(len=12,sha256=ad51ca01f458)",
+            "normalized_candidate": "种子***(len=12,sha256=ad51ca01f458)",
+            "value_sha256": "ad51ca01f458b5ebcce75f1550737010e29970323c0f3d0f695d88334feff3f3",
+            "matched_text_sha256": "ce70b9572c271772ff41ac7199e1013f63d48d3bf8ff466360149a95ea9656a8"
+          }
+        ]
+      },
+      {
+        "field": "funding_amount",
+        "proposal_count": 0,
+        "state": "failed",
+        "failure_reason": "no label/table shape declared for this field matched on any page",
+        "pages": [],
+        "items": []
+      },
+      {
+        "field": "table_label_percent",
+        "proposal_count": 8,
+        "state": "extracted",
+        "failure_reason": null,
+        "pages": [
+          10,
+          13
+        ],
+        "items": [
+          {
+            "subject": "早期",
+            "page_number": 10,
+            "start_offset": 514,
+            "end_offset": 516,
+            "value": "30",
+            "normalized_candidate": "30",
+            "value_sha256": "624b60c58c9d8bfb6ff1886c2fd605d2adeb6ea4da576068201b6c6958ce93f4",
+            "matched_text_sha256": "8b3c9986d3726f8194643567558cbb77dae3315627935de9e5aa85bb726cea4f"
+          },
+          {
+            "subject": "成长期",
+            "page_number": 10,
+            "start_offset": 533,
+            "end_offset": 535,
+            "value": "40",
+            "normalized_candidate": "40",
+            "value_sha256": "d59eced1ded07f84c145592f65bdf854358e009c5cd705f5215bf18697fed103",
+            "matched_text_sha256": "ff6e57add65e9baab46f42d9209a7108fc2b675b3345813ec546dcddcce8e538"
+          },
+          {
+            "subject": "成熟期",
+            "page_number": 10,
+            "start_offset": 553,
+            "end_offset": 555,
+            "value": "45",
+            "normalized_candidate": "45",
+            "value_sha256": "811786ad1ae74adfdd20dd0372abaaebc6246e343aebd01da0bfc4c02bf0106c",
+            "matched_text_sha256": "f7a1dd25d4b669491875bc65bca7e44be75e5c7ed8a84b43eaaa74b4057aaf4b"
+          },
+          {
+            "subject": "研发***(len=7,sha256=e1cbaac876bf)",
+            "page_number": 13,
+            "start_offset": 183,
+            "end_offset": 185,
+            "value": "40",
+            "normalized_candidate": "40",
+            "value_sha256": "d59eced1ded07f84c145592f65bdf854358e009c5cd705f5215bf18697fed103",
+            "matched_text_sha256": "bfe8650094cfa14d7c15b36976ad69921f7b16c37cf77a5c68b9b25867eed390"
+          },
+          {
+            "subject": "产品***(len=8,sha256=b4ef8e59751d)",
+            "page_number": 13,
+            "start_offset": 215,
+            "end_offset": 217,
+            "value": "25",
+            "normalized_candidate": "25",
+            "value_sha256": "b7a56873cd771f2c446d369b649430b65a756ba278ff97ec81bb6f55b2e73569",
+            "matched_text_sha256": "a46436627a738bf4c0c769314841611373704551dd72f9bfdadb479fbe00507b"
+          },
+          {
+            "subject": "算力***(len=7,sha256=7161c901ba5d)",
+            "page_number": 13,
+            "start_offset": 244,
+            "end_offset": 246,
+            "value": "15",
+            "normalized_candidate": "15",
+            "value_sha256": "e629fa6598d732768f7c726b4b621285f9c3b85303900aa912017db7617d8bdb",
+            "matched_text_sha256": "c4f759062f70a07165412518cc91deba4cb93481b2855172f468db44b82b29d4"
+          },
+          {
+            "subject": "市场***(len=7,sha256=c95fc98f9f15)",
+            "page_number": 13,
+            "start_offset": 269,
+            "end_offset": 271,
+            "value": "10",
+            "normalized_candidate": "10",
+            "value_sha256": "4a44dc15364204a80fe80e9039455cc1608281820fe2b24f1e5233ade6af1dd5",
+            "matched_text_sha256": "ba3fca55fbcedaf261a2f149fb5f58fb9a77bf60b938cbe94a6d4803de2e22ac"
+          },
+          {
+            "subject": "运营***(len=7,sha256=e8a79225c9a0)",
+            "page_number": 13,
+            "start_offset": 297,
+            "end_offset": 299,
+            "value": "10",
+            "normalized_candidate": "10",
+            "value_sha256": "4a44dc15364204a80fe80e9039455cc1608281820fe2b24f1e5233ade6af1dd5",
+            "matched_text_sha256": "6d801ca9ab3a868e1dd80a1ebce025445c3a7545c4088464faeeab412e52eafc"
+          }
+        ]
+      },
+      {
+        "field": "ratio_block",
+        "proposal_count": 3,
+        "state": "extracted",
+        "failure_reason": null,
+        "pages": [
+          10
+        ],
+        "items": [
+          {
+            "subject": "早期",
+            "page_number": 10,
+            "start_offset": 514,
+            "end_offset": 528,
+            "value": "30%\n55%\n15%\n0%",
+            "normalized_candidate": "30/55/15/0",
+            "value_sha256": "3d4640126dd1cdbb198e71e45dfd99724b8daa594b3f729ca123e7f99d6b61ab",
+            "matched_text_sha256": "8038b4289b1ae8999a37e7f2f2cda8867a5d808c14bb608eab8c7645986a9398"
+          },
+          {
+            "subject": "成长期",
+            "page_number": 10,
+            "start_offset": 533,
+            "end_offset": 548,
+            "value": "40%\n35%\n15%\n10%",
+            "normalized_candidate": "40/35/15/10",
+            "value_sha256": "18c8ce7b60ef42b460a0af65b07f35571a4fe03dd26e9efa207373d336b316a2",
+            "matched_text_sha256": "a81ba477032135ade0dcdf1219ff15c5295279172a953e60acd3c4c01bb201b1"
+          },
+          {
+            "subject": "成熟期",
+            "page_number": 10,
+            "start_offset": 553,
+            "end_offset": 568,
+            "value": "45%\n20%\n15%\n20%",
+            "normalized_candidate": "45/20/15/20",
+            "value_sha256": "cd61e6d533e5f3d3b7bd2e4470c5ea676f71411013076241f6bb468e5f1a4bfb",
+            "matched_text_sha256": "e0b96cc89ebde26c484505eb5e0af10a3a4d7c52404dc6100c24136513c5ab8c"
+          }
+        ]
+      },
+      {
+        "field": "roadmap_window",
+        "proposal_count": 3,
+        "state": "extracted",
+        "failure_reason": null,
+        "pages": [
+          12
+        ],
+        "items": [
+          {
+            "subject": "基础***(len=6,sha256=c7b8f503f672)",
+            "page_number": 12,
+            "start_offset": 64,
+            "end_offset": 68,
+            "value": "0–12",
+            "normalized_candidate": "0-12",
+            "value_sha256": "66ad9d50a8afbd6c0a61cabf46983b3c11622cf41e2fe60d447d82d37b924849",
+            "matched_text_sha256": "1a60c9dd8efdfe2cec18595d2da06f7ff1985f1124b43770ff724fa5cd6d80e0"
+          },
+          {
+            "subject": "商业***(len=6,sha256=d3f9a4cfaa09)",
+            "page_number": 12,
+            "start_offset": 151,
+            "end_offset": 156,
+            "value": "12–24",
+            "normalized_candidate": "12-24",
+            "value_sha256": "849823a852c67fee3a03e1141ca7d53f6580aef9386a4b80e37bd5f94cefe25d",
+            "matched_text_sha256": "ac81cbd9b263d6e8daa7b4e0025fd7253958e3eabe3c0e5933777005fef310ce"
+          },
+          {
+            "subject": "跨领***(len=5,sha256=9dd7aa472680)",
+            "page_number": 12,
+            "start_offset": 222,
+            "end_offset": 227,
+            "value": "24–36",
+            "normalized_candidate": "24-36",
+            "value_sha256": "01c01b3dc77a02296446779ba6134993f4b02e9e2ca86e9f806589e5ebe1ecef",
+            "matched_text_sha256": "6e459fc77699417d16cde6220572a385e3e2fbb1bec630d7171f99fcebfdc1c7"
+          }
+        ]
+      },
+      {
+        "field": "market_reference",
+        "proposal_count": 3,
+        "state": "extracted",
+        "failure_reason": null,
+        "pages": [
+          19
+        ],
+        "items": [
+          {
+            "subject": "Mc***(len=61,sha256=4251045c6814)",
+            "page_number": 19,
+            "start_offset": 135,
+            "end_offset": 181,
+            "value": "Re***(len=46,sha256=9b95e884b888)",
+            "normalized_candidate": "Re***(len=46,sha256=9b95e884b888)",
+            "value_sha256": "9b95e884b888df6d18691b654f4efe5e505e303127b6262b60009bfc11d1c528",
+            "matched_text_sha256": "4251045c68149aa4c72f2765d01bbb15a53fadfce29e0b6903e34f9d0e3a3453"
+          },
+          {
+            "subject": "Ga***(len=39,sha256=513e7ca7bf0c)",
+            "page_number": 19,
+            "start_offset": 324,
+            "end_offset": 349,
+            "value": "AI***(len=25,sha256=80eb19098168)",
+            "normalized_candidate": "AI***(len=25,sha256=80eb19098168)",
+            "value_sha256": "80eb19098168fbc62509ffc2e9b264b30fdb370bcefa673a09d151b3d9c8e538",
+            "matched_text_sha256": "513e7ca7bf0c53c21d76648c741eba54627aeade7d6b385c5bc2f1a5b5bae655"
+          },
+          {
+            "subject": "Ga***(len=27,sha256=e452c864449b)",
+            "page_number": 19,
+            "start_offset": 643,
+            "end_offset": 656,
+            "value": "AI***(len=13,sha256=c84d8ceafd64)",
+            "normalized_candidate": "AI***(len=13,sha256=c84d8ceafd64)",
+            "value_sha256": "c84d8ceafd64d107155e73fc3b4ac6abef04e65b85308c5d8f79dbf2e9f1fecc",
+            "matched_text_sha256": "e452c864449b803c4b40901e8777aaf21e44f323514014b2180d8c5e0c629916"
+          }
+        ]
+      }
+    ]
+  },
+  "redaction": {
+    "policy": "metric/taxonomy tokens verbatim; identity and citation values masked to a <=2-char prefix plus length and sha256",
+    "verbatim_fields": [
+      "document_issue_date",
+      "document_version",
+      "ratio_block",
+      "roadmap_window",
+      "table_label_percent"
+    ],
+    "masked_fields": [
+      "document_title",
+      "financing_stage",
+      "legal_disclaimer",
+      "market_reference"
+    ],
+    "verbatim_source_committed": false,
+    "verbatim_text_location": "private bundle outside the repository (see private_pointer.json)"
+  }
+}

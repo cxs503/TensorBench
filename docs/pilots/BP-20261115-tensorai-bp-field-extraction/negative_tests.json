@@ -1,0 +1,58 @@
+{
+  "cases": [
+    {
+      "case": "truncated_body",
+      "input_bytes": 27163,
+      "input_sha256": "28aea0987889e1c296447f564d9eacc960f6b124c3b5d54e03317ffc1b440ea4",
+      "expectation": "PdfEvidenceError: PDF cannot be parsed",
+      "cli_exit_code": 2,
+      "cli_error_line": "tensorbench: error: cannot parse PDF: EOF marker not found",
+      "module_error": "PdfEvidenceError: cannot parse PDF: EOF marker not found",
+      "declared_error_type": true,
+      "output_artifact_written": false,
+      "state": "passed"
+    },
+    {
+      "case": "non_pdf_bytes",
+      "input_bytes": 100,
+      "input_sha256": "f6d11c8433f1067bdda32942c06c8519697f4851cddb589aa4df302c571e9cea",
+      "expectation": "PdfEvidenceError: PDF cannot be parsed",
+      "cli_exit_code": 2,
+      "cli_error_line": "tensorbench: error: cannot parse PDF: PDF starts with 'this ', but '%PDF-' expected",
+      "module_error": "PdfEvidenceError: cannot parse PDF: PDF starts with 'this ', but '%PDF-' expected",
+      "declared_error_type": true,
+      "output_artifact_written": false,
+      "state": "passed"
+    },
+    {
+      "case": "zero_byte",
+      "input_bytes": 0,
+      "input_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "expectation": "PdfEvidenceError: PDF input is empty",
+      "cli_exit_code": 2,
+      "cli_error_line": "tensorbench: error: PDF input is empty",
+      "module_error": "PdfEvidenceError: PDF input is empty",
+      "declared_error_type": true,
+      "output_artifact_written": false,
+      "state": "passed"
+    },
+    {
+      "case": "header_only",
+      "input_bytes": 8,
+      "input_sha256": "e16fa5d9b51928755db85b917f0297babaf22c7a47e97d9212adab56e61ba04e",
+      "expectation": "PdfEvidenceError: PDF cannot be parsed",
+      "cli_exit_code": 2,
+      "cli_error_line": "tensorbench: error: cannot parse PDF: EOF marker not found",
+      "module_error": "PdfEvidenceError: cannot parse PDF: EOF marker not found",
+      "declared_error_type": true,
+      "output_artifact_written": false,
+      "state": "passed"
+    }
+  ],
+  "cases_total": 4,
+  "cases_passed": 4,
+  "silent_successes": 0,
+  "undeclared_exceptions": 0,
+  "artifacts_written": 0,
+  "state": "passed"
+}
