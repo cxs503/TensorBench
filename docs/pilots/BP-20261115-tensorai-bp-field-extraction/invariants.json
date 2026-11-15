@@ -1,0 +1,68 @@
+{
+  "checks": [
+    {
+      "check_id": "C6a.funding_use_ratio_sum",
+      "state": "passed",
+      "criterion": "funding-use rows sum to 100 % exactly",
+      "measured": {
+        "rows": 5,
+        "sum_percent": 100,
+        "section_page": 13
+      }
+    },
+    {
+      "check_id": "C6b.revenue_mix_row_sums",
+      "state": "passed",
+      "criterion": "each revenue-mix row sums to 100 % exactly",
+      "measured": {
+        "rows": 3,
+        "sums": [
+          {
+            "subject_sha256": "7b643e8bf16837d1fa1edd67208a90c8eff685c4000f486781e917feab9178b4",
+            "sum": 100,
+            "terms": 4
+          },
+          {
+            "subject_sha256": "4458770c0c93b0b9982ec3e5585b252a98d80efeac512d805c0a2d642cd478b7",
+            "sum": 100,
+            "terms": 4
+          },
+          {
+            "subject_sha256": "63744dbfb17976fc5bee359a151774acdf065d01508741d29c0d45c712c0cb3e",
+            "sum": 100,
+            "terms": 4
+          }
+        ],
+        "section_page": 10
+      }
+    },
+    {
+      "check_id": "C6c.roadmap_window_contiguity",
+      "state": "passed",
+      "criterion": "roadmap windows are contiguous and cover 0-36 months exactly",
+      "measured": {
+        "windows": [
+          [
+            0,
+            12
+          ],
+          [
+            12,
+            24
+          ],
+          [
+            24,
+            36
+          ]
+        ],
+        "contiguous": true,
+        "span": [
+          0,
+          36
+        ],
+        "section_page": 12
+      }
+    }
+  ],
+  "pages_scanned": 19
+}
