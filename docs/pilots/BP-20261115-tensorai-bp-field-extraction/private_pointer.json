@@ -1,0 +1,20 @@
+{
+  "note": "verbatim extraction / proposals / corrupt copies live outside the repository",
+  "private_root": "/srv/tensor/agent/work/pilot_inputs_1115/out",
+  "files": {
+    "/srv/tensor/agent/work/pilot_inputs_1115/out/corrupt/header_only.pdf": "e16fa5d9b51928755db85b917f0297babaf22c7a47e97d9212adab56e61ba04e",
+    "/srv/tensor/agent/work/pilot_inputs_1115/out/corrupt/non_pdf_bytes.pdf": "f6d11c8433f1067bdda32942c06c8519697f4851cddb589aa4df302c571e9cea",
+    "/srv/tensor/agent/work/pilot_inputs_1115/out/corrupt/truncated_body.pdf": "28aea0987889e1c296447f564d9eacc960f6b124c3b5d54e03317ffc1b440ea4",
+    "/srv/tensor/agent/work/pilot_inputs_1115/out/corrupt/zero_byte.pdf": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "/srv/tensor/agent/work/pilot_inputs_1115/out/pages_private.json": "bc7915ff165fe10a8c1efaa23678f1192e3e878060a7bf9caa5d7cb4bdaab8fc",
+    "/srv/tensor/agent/work/pilot_inputs_1115/out/proposals_private.json": "4747512e3c52f99e9c17e5649afa0bd91a3e965b15bb84c37ba0b6f186229c56",
+    "/srv/tensor/agent/work/pilot_inputs_1115/out/pytest_regression.log": "872dd56a4162d591d90a8dc059272e20a657b2953904290511508f8cdd345851",
+    "/srv/tensor/agent/work/pilot_inputs_1115/out/reviewed_private.json": "0ee3e2bc36e0033466719e65fb137711ababaec710a27d3f68336ade014ff058",
+    "/srv/tensor/agent/work/pilot_inputs_1115/out/spotcheck_private.json": "655b5c779dfa7a3bdcf6744ba34b5b8bb97f3ec82873d5a360d1c750fee52e36"
+  },
+  "source_pdf": {
+    "sha256": "91f9d4a4bbf9689414a152ff7d10c7066054d799c5bc6a3c3b230d9894c472dd",
+    "bytes": 67908,
+    "committed": false
+  }
+}
