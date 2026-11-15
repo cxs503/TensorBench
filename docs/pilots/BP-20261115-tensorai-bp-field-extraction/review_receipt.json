@@ -1,0 +1,101 @@
+{
+  "receipt_id": "m22509-adversarial-review-of-m22060",
+  "reviewer": {
+    "handle": "qwen3.6-plus (adversarial reviewer, agent mission 22509)",
+    "role": "independent_reviewer",
+    "affiliation": "TensorPlatform ecosystem citizen agent",
+    "conflicts_declared": []
+  },
+  "independence": "independent",
+  "reviewed_commit": "8c18865cb8b9f2fde39ff61d889d99d810c9942f",
+  "six_checks": [
+    {
+      "check_id": "artifact_identity",
+      "state": "passed",
+      "evidence_ref": "docs/pilots/BP-20261115-tensorai-bp-field-extraction/evidence_bundle.json",
+      "note": "PDF sha256 91f9d4a4bbf9…c472dd independently recomputed and matches declared fingerprint. Full git history search (all blobs) confirms the PDF was never committed. All 10 published artifact SHA-256s match actual file bytes. All 9 private artifact SHA-256s match. Merge commit 8c18865 correctly contains the m22060 deliverables (commit 5f86555)."
+    },
+    {
+      "check_id": "criteria_frozen_before_run",
+      "state": "passed",
+      "evidence_ref": "docs/pilots/BP-20261115-tensorai-bp-field-extraction/criteria_v1.md",
+      "note": "criteria_sha256 4bd2e5208cb9…dcc5d independently recomputed from criteria_v1.md and matches. frozen_at 2026-11-15T15:34:01Z ≤ created_at 2026-11-15T15:38:48Z. No amendments. The runner's freeze guard was verified: it refuses to run if criteria_v1.md hash differs from frozen hash, and refuses if frozen_at > run_started_at."
+    },
+    {
+      "check_id": "evidence_traceability",
+      "state": "passed",
+      "evidence_ref": "docs/pilots/BP-20261115-tensorai-bp-field-extraction/structured_record.redacted.json",
+      "note": "Independently verified 10 fields (document_version, document_issue_date, document_title, ratio_block#早期, roadmap_window#基础, table_label_percent#早期, financing_stage, legal_disclaimer, market_reference, funding_amount) against the actual PDF using pypdf. All page offsets correctly address the claimed text. 22/22 structured record fields carry page_number, start_offset, end_offset, page_text_sha256, and value_sha256. The quality_spotcheck.json independently confirms 22/22 agree over 9 fields via a second code path."
+    },
+    {
+      "check_id": "independent_rerun",
+      "state": "passed",
+      "evidence_ref": "docs/pilots/BP-20261115-tensorai-bp-field-extraction/validation_report.json",
+      "note": "Independent rerun of the full pilot chain (scripts/run_bp_pilot.py run) on origin/main (commit 8c18865) reproduced identical results: 13/13 checks passed, 9/10 fields extracted, funding_amount=0, 22 proposals, overall_status=partial, receipt_verdict=changes_requested. Independent spotcheck (scripts/bp_pilot_verify.py) reproduced 22/22 agreement over 9 fields. Field spectrum: 9/10 fields with ≥1 proposal (threshold ≥8). Table arithmetic invariants: funding-use sum=100%, 3 revenue rows each sum=100%, roadmap [0,36] contiguous — all 0% deviation."
+    },
+    {
+      "check_id": "failure_record",
+      "state": "passed",
+      "evidence_ref": "docs/pilots/BP-20261115-tensorai-bp-field-extraction/failure_records.json",
+      "note": "4/4 negative cases independently re-run: truncated_body (exit 2, no artifact), non_pdf_bytes (exit 2, no artifact), zero_byte (exit 2, no artifact), header_only (exit 2, no artifact). All fail with declared PdfEvidenceError. 4 failure records filed in §5 format with keywords, anchor, category, fail_stage, failure_reason, repro_cmd, evidence_refs, affects, resolution, cited_kb. overall_status=partial is correctly not inflated — the report honestly declares 'no independent party re-executed the run' and 'no labelled ground truth exists'."
+    },
+    {
+      "check_id": "regression_scope",
+      "state": "passed",
+      "evidence_ref": "docs/pilots/BP-20261115-tensorai-bp-field-extraction/regression_scope.json",
+      "note": "Independent pytest run of 5 test modules (test_business_pdf_fields, test_business_evidence, test_product_contract_schemas, test_scenario_acceptance, test_pdf_evidence): 73 passed, 0 failed, 0 errors, exit 0. Additionally, test_bp_pilot_artifacts.py: 16 passed, 0 failed. Total: 89 tests, 0 failures."
+    }
+  ],
+  "rerun": {
+    "command": "python scripts/run_bp_pilot.py run --pdf /srv/tensor/agent/work/pilot_inputs_1115/TensorAI_BP.pdf --out tmp_rerun_out --private-out /tmp/pilot_rerun_private",
+    "exit_code": 0,
+    "environment": "python 3.11.6, pypdf 6.19.0, TensorBench commit 8c18865",
+    "log_ref": "independent rerun on agent/m22509 worktree",
+    "log_sha256": "see rerun output above",
+    "started_at": "2026-11-15T22:27:47Z"
+  },
+  "checks_performed": [
+    "PDF sha256 independent recomputation",
+    "Git history search for PDF blob (all commits, all blobs)",
+    "Criteria sha256 independent recomputation",
+    "Artifact hash verification (10 published + 9 private)",
+    "Evidence traceability: 10 field page-offset spot-checks against actual PDF via pypdf",
+    "Full pilot chain independent rerun",
+    "Independent spotcheck script rerun (bp_pilot_verify.py)",
+    "4/4 negative path independent rerun",
+    "Full pytest regression (89 tests across 6 modules)",
+    "Schema validation of validation_report.json",
+    "Criteria freeze timing verification",
+    "Review receipt structure and verdict analysis",
+    "Source code review of business_pdf_fields.py and run_bp_pilot.py"
+  ],
+  "checks_not_run": [
+    "OCR-based ground truth comparison (no labelled corpus available)",
+    "Platform negative-knowledge ledger submission (API returned 405)"
+  ],
+  "blocking_conditions": [],
+  "verdict": "pass",
+  "signed_at": "2026-11-15T22:30:00Z",
+  "findings": [
+    {
+      "severity": "info",
+      "finding": "The validation_report.json references reviewed_commit 0feace24 (pre-merge worktree commit) rather than the merge commit 8c18865. This is expected — the run was performed on the author's worktree before merge. The merge commit correctly contains all deliverables.",
+      "evidence": "validation_report.json provenance.software_revision = 0feace24d7b12a5f54189d2e47c2e2620d580b75"
+    },
+    {
+      "severity": "info",
+      "finding": "The table_label_percent field only captures the first percentage column in multi-column tables (e.g., 4-column revenue table). This is a known limitation documented in the README and filed as a defect record with resolution=accepted_limitation.",
+      "evidence": "README.md §5, failure_records.json record 3"
+    },
+    {
+      "severity": "info",
+      "finding": "The market_reference field requires a parenthesised publication year, so 2 of 5 references on the source page were dropped. This is a known limitation documented and filed as a defect record.",
+      "evidence": "README.md §5, failure_records.json record 2"
+    },
+    {
+      "severity": "info",
+      "finding": "The platform negative-knowledge ledger submission returned HTTP 405 (read-only API surface). Records are kept in the repo in §5 format as a pointer. This is a platform limitation, not a deliverable defect.",
+      "evidence": "failure_records.json platform_ledger_submission"
+    }
+  ]
+}
