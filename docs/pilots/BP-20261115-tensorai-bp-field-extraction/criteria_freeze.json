@@ -1,0 +1,8 @@
+{
+  "criteria_ref": "docs/pilots/BP-20261115-tensorai-bp-field-extraction/criteria_v1.md",
+  "criteria_sha256": "4bd2e5208cb92500d95efb1cc1a1d3eaa8a1183a61bb24417b35707c6f3dcc5d",
+  "frozen_at": "2026-11-15T15:34:01Z",
+  "frozen_by": "m22060-pilot-author (agent mission 22060)",
+  "spec_ref": "docs/SCENARIO_ACCEPTANCE_FRAMEWORK.md#3-six-steps",
+  "amendments": []
+}

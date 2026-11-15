@@ -1,0 +1,233 @@
+{
+  "schema_version": "1.0.0",
+  "kind": "tensorbench.pilot_evidence_bundle",
+  "pilot_id": "BP-20261115-tensorai-bp-field-extraction",
+  "scenario_id": "BE-20261115-tensorai-bp-field-extraction",
+  "criteria": {
+    "criteria_ref": "docs/pilots/BP-20261115-tensorai-bp-field-extraction/criteria_v1.md",
+    "criteria_sha256": "4bd2e5208cb92500d95efb1cc1a1d3eaa8a1183a61bb24417b35707c6f3dcc5d",
+    "frozen_at": "2026-11-15T15:34:01Z"
+  },
+  "source_input": {
+    "sha256": "91f9d4a4bbf9689414a152ff7d10c7066054d799c5bc6a3c3b230d9894c472dd",
+    "bytes": 67908,
+    "committed": false,
+    "path_published": false,
+    "note": "private input under internal consent; only its fingerprint is published",
+    "external_path_hint": "/srv/tensor/agent/work/pilot_inputs_1115"
+  },
+  "checks": [
+    {
+      "check_id": "C1.pdf_ingestion",
+      "state": "passed",
+      "required": true
+    },
+    {
+      "check_id": "C2.legacy_spectrum_coverage",
+      "state": "passed",
+      "required": true
+    },
+    {
+      "check_id": "C3.business_plan_spectrum_coverage",
+      "state": "passed",
+      "required": true
+    },
+    {
+      "check_id": "C4.page_backreference",
+      "state": "passed",
+      "required": true
+    },
+    {
+      "check_id": "C5.absence_honesty",
+      "state": "passed",
+      "required": true
+    },
+    {
+      "check_id": "C6a.funding_use_ratio_sum",
+      "state": "passed",
+      "required": true
+    },
+    {
+      "check_id": "C6b.revenue_mix_row_sums",
+      "state": "passed",
+      "required": true
+    },
+    {
+      "check_id": "C6c.roadmap_window_contiguity",
+      "state": "passed",
+      "required": true
+    },
+    {
+      "check_id": "C7.independent_spotcheck",
+      "state": "passed",
+      "required": true
+    },
+    {
+      "check_id": "C8.negative_path",
+      "state": "passed",
+      "required": true
+    },
+    {
+      "check_id": "C10a.regression_scope",
+      "state": "passed",
+      "required": true
+    },
+    {
+      "check_id": "C9.private_input_containment",
+      "state": "passed",
+      "required": true
+    },
+    {
+      "check_id": "C10.report_contract",
+      "state": "passed",
+      "required": true
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "docs/pilots/BP-20261115-tensorai-bp-field-extraction/validation_report.json",
+      "sha256": "f9b88fec299c09435355d5d0eaea5df6191312f524c79cf8d9df1e0138e49428",
+      "bytes": 10394,
+      "serves_checks": [
+        "C1.pdf_ingestion",
+        "C2.legacy_spectrum_coverage",
+        "C3.business_plan_spectrum_coverage",
+        "C4.page_backreference",
+        "C5.absence_honesty",
+        "C6a.funding_use_ratio_sum",
+        "C6b.revenue_mix_row_sums",
+        "C6c.roadmap_window_contiguity",
+        "C7.independent_spotcheck",
+        "C8.negative_path",
+        "C10a.regression_scope",
+        "C9.private_input_containment",
+        "C10.report_contract"
+      ]
+    },
+    {
+      "path": "docs/pilots/BP-20261115-tensorai-bp-field-extraction/field_coverage.json",
+      "sha256": "bc0a28a2eaae9cbddf2c2391edbbc83f2af41773e64e63b2db47d7b0951cb7f5",
+      "bytes": 14574,
+      "serves_checks": [
+        "C2.legacy_spectrum_coverage",
+        "C3.business_plan_spectrum_coverage"
+      ]
+    },
+    {
+      "path": "docs/pilots/BP-20261115-tensorai-bp-field-extraction/structured_record.redacted.json",
+      "sha256": "f8fc009a4419c18e6520a1607688e02bdb6062a392a3169bf4ff44541a6a7f1f",
+      "bytes": 15861,
+      "serves_checks": [
+        "C4.page_backreference"
+      ]
+    },
+    {
+      "path": "docs/pilots/BP-20261115-tensorai-bp-field-extraction/invariants.json",
+      "sha256": "a5bd8252f9d2dcabff56d0a8c4708d0267557eee30c7dafa0114bf4cf42ec9c6",
+      "bytes": 1560,
+      "serves_checks": [
+        "C6a.funding_use_ratio_sum",
+        "C6b.revenue_mix_row_sums",
+        "C6c.roadmap_window_contiguity"
+      ]
+    },
+    {
+      "path": "docs/pilots/BP-20261115-tensorai-bp-field-extraction/quality_spotcheck.json",
+      "sha256": "655b5c779dfa7a3bdcf6744ba34b5b8bb97f3ec82873d5a360d1c750fee52e36",
+      "bytes": 22796,
+      "serves_checks": [
+        "C7.independent_spotcheck",
+        "C5.absence_honesty"
+      ]
+    },
+    {
+      "path": "docs/pilots/BP-20261115-tensorai-bp-field-extraction/negative_tests.json",
+      "sha256": "09d7cd05896e5e34eb57e21c2248c6eb59ac268ebe305ffddeb5acd58cb82282",
+      "bytes": 2228,
+      "serves_checks": [
+        "C8.negative_path"
+      ]
+    },
+    {
+      "path": "docs/pilots/BP-20261115-tensorai-bp-field-extraction/failure_records.json",
+      "sha256": "bb7866ac02931cfeb08ae0f8b134031f5be7f94132ed3b47543362d8f45d383f",
+      "bytes": 4616,
+      "serves_checks": [
+        "review_receipt.failure_record"
+      ]
+    },
+    {
+      "path": "docs/pilots/BP-20261115-tensorai-bp-field-extraction/regression_scope.json",
+      "sha256": "c17b27329b734d4490ac1a2068d6a589ec91b3a2361980ebd0b8af061297bf21",
+      "bytes": 532,
+      "serves_checks": [
+        "C10a.regression_scope",
+        "review_receipt.regression_scope"
+      ]
+    },
+    {
+      "path": "docs/pilots/BP-20261115-tensorai-bp-field-extraction/criteria_freeze.json",
+      "sha256": "b4dbcf9b3dab430b67ca58f07974ae1a24d2ece44f5685bcd47f02f6e72478ea",
+      "bytes": 367,
+      "serves_checks": [
+        "criteria_frozen_before_run"
+      ]
+    },
+    {
+      "path": "docs/pilots/BP-20261115-tensorai-bp-field-extraction/criteria_v1.md",
+      "sha256": "4bd2e5208cb92500d95efb1cc1a1d3eaa8a1183a61bb24417b35707c6f3dcc5d",
+      "bytes": 3700,
+      "serves_checks": [
+        "criteria_frozen_before_run"
+      ]
+    }
+  ],
+  "private_artifacts": [
+    {
+      "path": "/srv/tensor/agent/work/pilot_inputs_1115/out/corrupt/header_only.pdf",
+      "sha256": "e16fa5d9b51928755db85b917f0297babaf22c7a47e97d9212adab56e61ba04e"
+    },
+    {
+      "path": "/srv/tensor/agent/work/pilot_inputs_1115/out/corrupt/non_pdf_bytes.pdf",
+      "sha256": "f6d11c8433f1067bdda32942c06c8519697f4851cddb589aa4df302c571e9cea"
+    },
+    {
+      "path": "/srv/tensor/agent/work/pilot_inputs_1115/out/corrupt/truncated_body.pdf",
+      "sha256": "28aea0987889e1c296447f564d9eacc960f6b124c3b5d54e03317ffc1b440ea4"
+    },
+    {
+      "path": "/srv/tensor/agent/work/pilot_inputs_1115/out/corrupt/zero_byte.pdf",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/srv/tensor/agent/work/pilot_inputs_1115/out/pages_private.json",
+      "sha256": "bc7915ff165fe10a8c1efaa23678f1192e3e878060a7bf9caa5d7cb4bdaab8fc"
+    },
+    {
+      "path": "/srv/tensor/agent/work/pilot_inputs_1115/out/proposals_private.json",
+      "sha256": "4747512e3c52f99e9c17e5649afa0bd91a3e965b15bb84c37ba0b6f186229c56"
+    },
+    {
+      "path": "/srv/tensor/agent/work/pilot_inputs_1115/out/pytest_regression.log",
+      "sha256": "872dd56a4162d591d90a8dc059272e20a657b2953904290511508f8cdd345851"
+    },
+    {
+      "path": "/srv/tensor/agent/work/pilot_inputs_1115/out/reviewed_private.json",
+      "sha256": "0ee3e2bc36e0033466719e65fb137711ababaec710a27d3f68336ade014ff058"
+    },
+    {
+      "path": "/srv/tensor/agent/work/pilot_inputs_1115/out/spotcheck_private.json",
+      "sha256": "655b5c779dfa7a3bdcf6744ba34b5b8bb97f3ec82873d5a360d1c750fee52e36"
+    }
+  ],
+  "missing": [
+    "review_receipt.independent_rerun: no independent party re-executed the run",
+    "review_receipt.artifact_identity: reviewed revision was an uncommitted worktree",
+    "products/STATUS.json: scenario_validated intentionally left false (out of scope for this mission)",
+    "verbatim page text: withheld from the repository on purpose (private input)"
+  ],
+  "integrity": {
+    "digest_scope": "sha256 over each artifact's file bytes as published",
+    "self_sha256_excluded": true
+  }
+}

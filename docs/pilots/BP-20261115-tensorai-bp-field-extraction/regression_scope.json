@@ -1,0 +1,18 @@
+{
+  "state": "passed",
+  "targets": [
+    "tests/test_business_pdf_fields.py",
+    "tests/test_business_evidence.py",
+    "tests/test_product_contract_schemas.py",
+    "tests/test_scenario_acceptance.py",
+    "tests/test_pdf_evidence.py"
+  ],
+  "exit_code": 0,
+  "passed": 73,
+  "failed": 0,
+  "errors": 0,
+  "skipped": 0,
+  "summary": "5 test modules: 73 passed, 0 failed, 0 errors, exit 0",
+  "log_ref": "private bundle: pytest_regression.log",
+  "log_sha256": "872dd56a4162d591d90a8dc059272e20a657b2953904290511508f8cdd345851"
+}

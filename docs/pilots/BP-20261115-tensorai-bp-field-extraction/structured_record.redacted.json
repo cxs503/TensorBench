@@ -1,0 +1,380 @@
+{
+  "schema_version": "1.0.0",
+  "product_id": "business-evidence-engine",
+  "record_id": "tensorai-bp-2026-11",
+  "record_type": "business_plan",
+  "field_spectrum": "business_plan_v1",
+  "source": {
+    "source_ref": "pilot://tensorai-bp/v1",
+    "sha256": "91f9d4a4bbf9689414a152ff7d10c7066054d799c5bc6a3c3b230d9894c472dd",
+    "byte_length": 67908,
+    "page_count": 19,
+    "media_type": "application/pdf",
+    "filename_sha256": "ed177b819d4f455e27711fb6e6e2fb2a7c48409c1bd2405b841945f3037b192f"
+  },
+  "evidence_ref": "pdf:91f9d4a4bbf9689414a152ff7d10c7066054d799c5bc6a3c3b230d9894c472dd",
+  "field_count": 22,
+  "fields": {
+    "document_issue_date": {
+      "field": "document_issue_date",
+      "subject": null,
+      "value": "2026-11",
+      "value_sha256": "05e01bd602cd4d89d1e4f3f0243cf6a1b1b132f0c0183008542d6d381ba87de6",
+      "evidence": [
+        {
+          "proposal_id": "3047ce887560f585d1c93a361a45d00fd4f4aac329bce05b1e008c38eb8b7776",
+          "page_number": 1,
+          "start_offset": 116,
+          "end_offset": 124,
+          "page_text_sha256": "4b511284b43b8a421775aa502c70a144ed7c40eb4d02d397ff849c87c8ed4e94",
+          "value_sha256": "4e6249545ffd27441093222b74279db9658568b73b5c02e3af78971a3e60a2e1"
+        }
+      ]
+    },
+    "document_title": {
+      "field": "document_title",
+      "subject": null,
+      "value": "Te***(len=14,sha256=ceea350f451f)",
+      "value_sha256": "ceea350f451f66990e73f71bb7c3f6687f876d81256f97e31822437c86f4f010",
+      "evidence": [
+        {
+          "proposal_id": "aed567a0599e42b337ea1d7d4bc1f863cee75b188937a42b21f6e1838a68375c",
+          "page_number": 1,
+          "start_offset": 57,
+          "end_offset": 71,
+          "page_text_sha256": "4b511284b43b8a421775aa502c70a144ed7c40eb4d02d397ff849c87c8ed4e94",
+          "value_sha256": "ceea350f451f66990e73f71bb7c3f6687f876d81256f97e31822437c86f4f010"
+        }
+      ]
+    },
+    "document_version": {
+      "field": "document_version",
+      "subject": null,
+      "value": "V1.0",
+      "value_sha256": "35a6fd96d1fdcfa5e7af2835bcbb523bd99798499c8115df9eaba3b77c261ba8",
+      "evidence": [
+        {
+          "proposal_id": "7dd73256889257b3df1bb1ef2a6dbde88e973c27040e8b78f86b42c98ce20bcd",
+          "page_number": 1,
+          "start_offset": 109,
+          "end_offset": 113,
+          "page_text_sha256": "4b511284b43b8a421775aa502c70a144ed7c40eb4d02d397ff849c87c8ed4e94",
+          "value_sha256": "35a6fd96d1fdcfa5e7af2835bcbb523bd99798499c8115df9eaba3b77c261ba8"
+        }
+      ]
+    },
+    "financing_stage": {
+      "field": "financing_stage",
+      "subject": null,
+      "value": "种子***(len=12,sha256=ad51ca01f458)",
+      "value_sha256": "ad51ca01f458b5ebcce75f1550737010e29970323c0f3d0f695d88334feff3f3",
+      "evidence": [
+        {
+          "proposal_id": "c4a5a415d64c49d2f3506bab43f47103aae448b39d18eab502a8c85fadca83b4",
+          "page_number": 13,
+          "start_offset": 57,
+          "end_offset": 69,
+          "page_text_sha256": "a1b907d4c2df895f0459de9eb948796293254aaffc3b4d8c52d713408297b54a",
+          "value_sha256": "ad51ca01f458b5ebcce75f1550737010e29970323c0f3d0f695d88334feff3f3"
+        }
+      ]
+    },
+    "legal_disclaimer": {
+      "field": "legal_disclaimer",
+      "subject": null,
+      "value": "本文***(len=11,sha256=4a445e86f9a2)",
+      "value_sha256": "4a445e86f9a2d76cfdd1410dca9a4df4f428c404566021f48d3e71538fba3a34",
+      "evidence": [
+        {
+          "proposal_id": "b4a00cb5273b5fa3b23dc3197b35f8cda7e3b8c2a0e5b20022eaf6e021705088",
+          "page_number": 19,
+          "start_offset": 904,
+          "end_offset": 915,
+          "page_text_sha256": "50a2a97ace8222374b437982a0d80531bff895e9ebe9021e03630b9a8b784489",
+          "value_sha256": "4a445e86f9a2d76cfdd1410dca9a4df4f428c404566021f48d3e71538fba3a34"
+        }
+      ]
+    },
+    "market_reference#Ga***(len=39,sha256=513e7ca7bf0c)": {
+      "field": "market_reference",
+      "subject": "Ga***(len=39,sha256=513e7ca7bf0c)",
+      "value": "AI***(len=25,sha256=80eb19098168)",
+      "value_sha256": "80eb19098168fbc62509ffc2e9b264b30fdb370bcefa673a09d151b3d9c8e538",
+      "evidence": [
+        {
+          "proposal_id": "83bd5541e39cbd9a36dd94029700f8b859416461a2d3982cdba2c6b77a01372c",
+          "page_number": 19,
+          "start_offset": 324,
+          "end_offset": 349,
+          "page_text_sha256": "50a2a97ace8222374b437982a0d80531bff895e9ebe9021e03630b9a8b784489",
+          "value_sha256": "80eb19098168fbc62509ffc2e9b264b30fdb370bcefa673a09d151b3d9c8e538"
+        }
+      ]
+    },
+    "market_reference#Ga***(len=27,sha256=e452c864449b)": {
+      "field": "market_reference",
+      "subject": "Ga***(len=27,sha256=e452c864449b)",
+      "value": "AI***(len=13,sha256=c84d8ceafd64)",
+      "value_sha256": "c84d8ceafd64d107155e73fc3b4ac6abef04e65b85308c5d8f79dbf2e9f1fecc",
+      "evidence": [
+        {
+          "proposal_id": "98f99a09d19ff386218902d1e0ae128a9376136c750d78d2381d7c1268e33632",
+          "page_number": 19,
+          "start_offset": 643,
+          "end_offset": 656,
+          "page_text_sha256": "50a2a97ace8222374b437982a0d80531bff895e9ebe9021e03630b9a8b784489",
+          "value_sha256": "c84d8ceafd64d107155e73fc3b4ac6abef04e65b85308c5d8f79dbf2e9f1fecc"
+        }
+      ]
+    },
+    "market_reference#Mc***(len=61,sha256=4251045c6814)": {
+      "field": "market_reference",
+      "subject": "Mc***(len=61,sha256=4251045c6814)",
+      "value": "Re***(len=46,sha256=9b95e884b888)",
+      "value_sha256": "9b95e884b888df6d18691b654f4efe5e505e303127b6262b60009bfc11d1c528",
+      "evidence": [
+        {
+          "proposal_id": "fc246bddee29f075e61a452ecf077dad09ff3a93de2c89cea6e648d85200c995",
+          "page_number": 19,
+          "start_offset": 135,
+          "end_offset": 181,
+          "page_text_sha256": "50a2a97ace8222374b437982a0d80531bff895e9ebe9021e03630b9a8b784489",
+          "value_sha256": "9b95e884b888df6d18691b654f4efe5e505e303127b6262b60009bfc11d1c528"
+        }
+      ]
+    },
+    "ratio_block#成熟期": {
+      "field": "ratio_block",
+      "subject": "成熟期",
+      "value": "45/20/15/20",
+      "value_sha256": "1a15056a0a0effaab143b4e0d3d87f0b96e70d6046df0b43932c0673a65ddc20",
+      "evidence": [
+        {
+          "proposal_id": "f62e97a616ae1bf6b440af525e39bd6585e5e48ed9c4ce6e7cdbb89c6fc99e5b",
+          "page_number": 10,
+          "start_offset": 553,
+          "end_offset": 568,
+          "page_text_sha256": "1656397837acbf0b53298dbb3c78ad6ccd7fadb9d5eab39f5c1c8d4c4de9587f",
+          "value_sha256": "cd61e6d533e5f3d3b7bd2e4470c5ea676f71411013076241f6bb468e5f1a4bfb"
+        }
+      ]
+    },
+    "ratio_block#成长期": {
+      "field": "ratio_block",
+      "subject": "成长期",
+      "value": "40/35/15/10",
+      "value_sha256": "c0a0b707174c5aee8b93a399ad5c38d0c42845e1e360f4bc9b27c3d319e7504d",
+      "evidence": [
+        {
+          "proposal_id": "315d127e5c93993f2708ca6a36b4a5cc29c9595f003397c010fcc4d0b26fc390",
+          "page_number": 10,
+          "start_offset": 533,
+          "end_offset": 548,
+          "page_text_sha256": "1656397837acbf0b53298dbb3c78ad6ccd7fadb9d5eab39f5c1c8d4c4de9587f",
+          "value_sha256": "18c8ce7b60ef42b460a0af65b07f35571a4fe03dd26e9efa207373d336b316a2"
+        }
+      ]
+    },
+    "ratio_block#早期": {
+      "field": "ratio_block",
+      "subject": "早期",
+      "value": "30/55/15/0",
+      "value_sha256": "bebb45877f4b0e0eda66b8e1666ff66736689af426046b4ce8a6a842e75aa901",
+      "evidence": [
+        {
+          "proposal_id": "d8804be54be732f58883286a63775ef92d2d7106a8feaea1d2962b4a005a2c3e",
+          "page_number": 10,
+          "start_offset": 514,
+          "end_offset": 528,
+          "page_text_sha256": "1656397837acbf0b53298dbb3c78ad6ccd7fadb9d5eab39f5c1c8d4c4de9587f",
+          "value_sha256": "3d4640126dd1cdbb198e71e45dfd99724b8daa594b3f729ca123e7f99d6b61ab"
+        }
+      ]
+    },
+    "roadmap_window#商业***(len=6,sha256=d3f9a4cfaa09)": {
+      "field": "roadmap_window",
+      "subject": "商业***(len=6,sha256=d3f9a4cfaa09)",
+      "value": "12-24",
+      "value_sha256": "e1282b811ac24dbec99d1a4f8fb27813816ec3046c4e7a0edb3bd1c65892af14",
+      "evidence": [
+        {
+          "proposal_id": "920ea7b4d60a45fb13813eb5cccec9c89f94a3790187cb5ba320cccb309afdf3",
+          "page_number": 12,
+          "start_offset": 151,
+          "end_offset": 156,
+          "page_text_sha256": "6ed5b04846bd8eb817ae93de7a09256273b724111a0691b9072c0b36944b0373",
+          "value_sha256": "849823a852c67fee3a03e1141ca7d53f6580aef9386a4b80e37bd5f94cefe25d"
+        }
+      ]
+    },
+    "roadmap_window#基础***(len=6,sha256=c7b8f503f672)": {
+      "field": "roadmap_window",
+      "subject": "基础***(len=6,sha256=c7b8f503f672)",
+      "value": "0-12",
+      "value_sha256": "b91f14ffce370c92dbfc9ac045b3272df2a89e6f21f93ebf79efe2a2725bbaab",
+      "evidence": [
+        {
+          "proposal_id": "3276c5971f0e069f6ca41c3685c8c930d615597eb94044c17baa1eea0f90e7b0",
+          "page_number": 12,
+          "start_offset": 64,
+          "end_offset": 68,
+          "page_text_sha256": "6ed5b04846bd8eb817ae93de7a09256273b724111a0691b9072c0b36944b0373",
+          "value_sha256": "66ad9d50a8afbd6c0a61cabf46983b3c11622cf41e2fe60d447d82d37b924849"
+        }
+      ]
+    },
+    "roadmap_window#跨领***(len=5,sha256=9dd7aa472680)": {
+      "field": "roadmap_window",
+      "subject": "跨领***(len=5,sha256=9dd7aa472680)",
+      "value": "24-36",
+      "value_sha256": "ee55c930e868a7a86e8370111cee64d780935c97a2545254f92b0e22413e0434",
+      "evidence": [
+        {
+          "proposal_id": "d2384e91ea98ee58e7c8e36f65d93c3130397359099684da6a11eeab8aab5eb4",
+          "page_number": 12,
+          "start_offset": 222,
+          "end_offset": 227,
+          "page_text_sha256": "6ed5b04846bd8eb817ae93de7a09256273b724111a0691b9072c0b36944b0373",
+          "value_sha256": "01c01b3dc77a02296446779ba6134993f4b02e9e2ca86e9f806589e5ebe1ecef"
+        }
+      ]
+    },
+    "table_label_percent#产品***(len=8,sha256=b4ef8e59751d)": {
+      "field": "table_label_percent",
+      "subject": "产品***(len=8,sha256=b4ef8e59751d)",
+      "value": "25",
+      "value_sha256": "b7a56873cd771f2c446d369b649430b65a756ba278ff97ec81bb6f55b2e73569",
+      "evidence": [
+        {
+          "proposal_id": "e9af2fcd86098b5831a9dd2ac5a860b6aa331ff94a171c0dcd19cd024d95edd9",
+          "page_number": 13,
+          "start_offset": 215,
+          "end_offset": 217,
+          "page_text_sha256": "a1b907d4c2df895f0459de9eb948796293254aaffc3b4d8c52d713408297b54a",
+          "value_sha256": "b7a56873cd771f2c446d369b649430b65a756ba278ff97ec81bb6f55b2e73569"
+        }
+      ]
+    },
+    "table_label_percent#市场***(len=7,sha256=c95fc98f9f15)": {
+      "field": "table_label_percent",
+      "subject": "市场***(len=7,sha256=c95fc98f9f15)",
+      "value": "10",
+      "value_sha256": "4a44dc15364204a80fe80e9039455cc1608281820fe2b24f1e5233ade6af1dd5",
+      "evidence": [
+        {
+          "proposal_id": "236def0f808e6faab9e5d75b931b6fa35bb72e08448de9dfebfe7d8d07e0bec0",
+          "page_number": 13,
+          "start_offset": 269,
+          "end_offset": 271,
+          "page_text_sha256": "a1b907d4c2df895f0459de9eb948796293254aaffc3b4d8c52d713408297b54a",
+          "value_sha256": "4a44dc15364204a80fe80e9039455cc1608281820fe2b24f1e5233ade6af1dd5"
+        }
+      ]
+    },
+    "table_label_percent#成熟期": {
+      "field": "table_label_percent",
+      "subject": "成熟期",
+      "value": "45",
+      "value_sha256": "811786ad1ae74adfdd20dd0372abaaebc6246e343aebd01da0bfc4c02bf0106c",
+      "evidence": [
+        {
+          "proposal_id": "328b9cbff579147d16d6ebdddd989a1a742e737aa307c39db83fd16177b47447",
+          "page_number": 10,
+          "start_offset": 553,
+          "end_offset": 555,
+          "page_text_sha256": "1656397837acbf0b53298dbb3c78ad6ccd7fadb9d5eab39f5c1c8d4c4de9587f",
+          "value_sha256": "811786ad1ae74adfdd20dd0372abaaebc6246e343aebd01da0bfc4c02bf0106c"
+        }
+      ]
+    },
+    "table_label_percent#成长期": {
+      "field": "table_label_percent",
+      "subject": "成长期",
+      "value": "40",
+      "value_sha256": "d59eced1ded07f84c145592f65bdf854358e009c5cd705f5215bf18697fed103",
+      "evidence": [
+        {
+          "proposal_id": "79250540e7adbcccd725d52a687e04a52914ec0011e3207a136f7d95ad9d19d3",
+          "page_number": 10,
+          "start_offset": 533,
+          "end_offset": 535,
+          "page_text_sha256": "1656397837acbf0b53298dbb3c78ad6ccd7fadb9d5eab39f5c1c8d4c4de9587f",
+          "value_sha256": "d59eced1ded07f84c145592f65bdf854358e009c5cd705f5215bf18697fed103"
+        }
+      ]
+    },
+    "table_label_percent#早期": {
+      "field": "table_label_percent",
+      "subject": "早期",
+      "value": "30",
+      "value_sha256": "624b60c58c9d8bfb6ff1886c2fd605d2adeb6ea4da576068201b6c6958ce93f4",
+      "evidence": [
+        {
+          "proposal_id": "26eb4ee73f3f126b7aee0589765f67ff8ab11fdcbf376de2ef73fd9dac65d375",
+          "page_number": 10,
+          "start_offset": 514,
+          "end_offset": 516,
+          "page_text_sha256": "1656397837acbf0b53298dbb3c78ad6ccd7fadb9d5eab39f5c1c8d4c4de9587f",
+          "value_sha256": "624b60c58c9d8bfb6ff1886c2fd605d2adeb6ea4da576068201b6c6958ce93f4"
+        }
+      ]
+    },
+    "table_label_percent#研发***(len=7,sha256=e1cbaac876bf)": {
+      "field": "table_label_percent",
+      "subject": "研发***(len=7,sha256=e1cbaac876bf)",
+      "value": "40",
+      "value_sha256": "d59eced1ded07f84c145592f65bdf854358e009c5cd705f5215bf18697fed103",
+      "evidence": [
+        {
+          "proposal_id": "ee6c98d051040541bb63aac23e28175e8a660ed2bd76c241db2d6db04d6b9ded",
+          "page_number": 13,
+          "start_offset": 183,
+          "end_offset": 185,
+          "page_text_sha256": "a1b907d4c2df895f0459de9eb948796293254aaffc3b4d8c52d713408297b54a",
+          "value_sha256": "d59eced1ded07f84c145592f65bdf854358e009c5cd705f5215bf18697fed103"
+        }
+      ]
+    },
+    "table_label_percent#算力***(len=7,sha256=7161c901ba5d)": {
+      "field": "table_label_percent",
+      "subject": "算力***(len=7,sha256=7161c901ba5d)",
+      "value": "15",
+      "value_sha256": "e629fa6598d732768f7c726b4b621285f9c3b85303900aa912017db7617d8bdb",
+      "evidence": [
+        {
+          "proposal_id": "a2ad26e5ba436e72ec1b463ea9ea3d8873aa3856722c10c891bb7d4da72642fc",
+          "page_number": 13,
+          "start_offset": 244,
+          "end_offset": 246,
+          "page_text_sha256": "a1b907d4c2df895f0459de9eb948796293254aaffc3b4d8c52d713408297b54a",
+          "value_sha256": "e629fa6598d732768f7c726b4b621285f9c3b85303900aa912017db7617d8bdb"
+        }
+      ]
+    },
+    "table_label_percent#运营***(len=7,sha256=e8a79225c9a0)": {
+      "field": "table_label_percent",
+      "subject": "运营***(len=7,sha256=e8a79225c9a0)",
+      "value": "10",
+      "value_sha256": "4a44dc15364204a80fe80e9039455cc1608281820fe2b24f1e5233ade6af1dd5",
+      "evidence": [
+        {
+          "proposal_id": "e9aee3b7abb7352be7433c27972d528cd13f94efbb90cbbe3e7edc61cacc48f3",
+          "page_number": 13,
+          "start_offset": 297,
+          "end_offset": 299,
+          "page_text_sha256": "a1b907d4c2df895f0459de9eb948796293254aaffc3b4d8c52d713408297b54a",
+          "value_sha256": "4a44dc15364204a80fe80e9039455cc1608281820fe2b24f1e5233ade6af1dd5"
+        }
+      ]
+    }
+  },
+  "review": {
+    "reviewer": "m22060-pilot-author (provisional, not independent)",
+    "reviewed_at": "2026-11-15T15:38:42+00:00",
+    "proposal_bundle_sha256": "adabc1056a1f0e5da0f728f7b40c1bee877cdf2b761d11838883b599e110e678"
+  },
+  "limitations": [
+    "Values are reviewer-accepted proposals, not an independent verification of document truth.",
+    "No OCR, table reconstruction or financial interpretation is performed."
+  ]
+}
