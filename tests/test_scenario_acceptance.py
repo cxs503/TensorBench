@@ -161,7 +161,10 @@ def test_status_rejects_scenario_validated_on_missing_code(status: dict) -> None
 
 def test_status_rejects_passing_verdict_without_scenario_claim(status: dict) -> None:
     forged = copy.deepcopy(status)
-    forged["products"][1]["acceptance_evidence"]["verdict"] = "pass"
+    # Choose an unpublished line by id: products[1] was BE until mission m22925 published it,
+    # at which point a pass verdict there is correct rather than a bypass attempt.
+    line = next(p for p in forged["products"] if p["scenario_validated"] is False)
+    line["acceptance_evidence"]["verdict"] = "pass"
     errors = validate_payload("status", forged)
     assert any("must set scenario_validated=true" in e for e in errors)
 

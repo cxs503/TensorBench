@@ -61,31 +61,37 @@
       "name": "Business Evidence Engine",
       "repository": "cxs503/TensorBench",
       "code_implemented": true,
-      "scenario_validated": false,
+      "scenario_validated": true,
       "acceptance_evidence": {
-        "scenario_id": null,
-        "validation_report_ref": null,
-        "review_receipt_ref": null,
-        "criteria_sha256": null,
-        "reviewed_commit": null,
-        "verdict": null
+        "scenario_id": "BE-20261115-tensorai-bp-field-extraction",
+        "validation_report_ref": "TensorBench@8c18865cb8b9f2fde39ff61d889d99d810c9942f:docs/pilots/BP-20261115-tensorai-bp-field-extraction/validation_report.json#sha256:f9b88fec299c09435355d5d0eaea5df6191312f524c79cf8d9df1e0138e49428",
+        "review_receipt_ref": "TensorBench@ee5d8289af0e6431e6eef7ccd9825300e0be0f90:docs/pilots/BP-20261115-tensorai-bp-field-extraction/review_receipt_amended.json#sha256:51d7210f016fdb192a204cee377628e6e221fac3ef16b3cea3b7367e68c14cdd",
+        "criteria_sha256": "4bd2e5208cb92500d95efb1cc1a1d3eaa8a1183a61bb24417b35707c6f3dcc5d",
+        "reviewed_commit": "8c18865cb8b9f2fde39ff61d889d99d810c9942f",
+        "verdict": "pass",
+        "maturity_verdict_ref": "tensorplatform:tensor_maturity_verdicts#id=911 (repo=TensorBench, mission_id=22060, level=3, gate_state=pending)"
       },
       "implemented_evidence": [
-        "tensorbench/pdf_evidence.py bounded PDF ingestion with page fingerprints",
-        "tensorbench/business_pdf_fields.py rule-based unverified field proposals",
-        "tensorbench/business_evidence.py normalized-record reconciliation",
-        "CLI propose-pdf-fields / review-pdf-fields / reconcile-business",
-        "tests/test_pdf_evidence.py, test_business_pdf_fields.py, test_business_evidence.py"
+        "tensorbench/pdf_evidence.py bounded PDF ingestion with per-page text + page_text_sha256 + file fingerprint",
+        "tensorbench/business_pdf_fields.py declared spectra (trade_documents_v1, business_plan_v1) -> rule-based page-addressable field proposals, reviewer decisions, evidence-record/document emitters",
+        "tensorbench/business_evidence.py normalized-record reconciliation (Decimal tolerance, cross-document checks)",
+        "CLI: extract-pdf / propose-pdf-fields / review-pdf-fields / reconcile-business",
+        "docs/pilots/BP-20261115-tensorai-bp-field-extraction/ — stage-3 pilot on one real permissioned business plan (19 pages, 9/10 fields, 22/22 locators, 4/4 negative cases, 13/13 frozen criteria)",
+        "Independent six-check review receipt: docs/pilots/BP-20261115-tensorai-bp-field-extraction/review_receipt_amended.json (verdict=pass, checks_not_run=[], blocking_conditions=[])",
+        "docs/m22925/DEMO.md + docs/m22925/demo/ — end-to-end demo chain re-run with committed artifacts",
+        "tests/test_pdf_evidence.py, tests/test_business_pdf_fields.py, tests/test_business_evidence.py, tests/test_bp_pilot_artifacts.py, tests/test_be_scenario_publish.py"
       ],
+      "external_partial_state": "BE is scenario-validated for one document: single-language, single-layout business-plan PDF, extraction is rule-based (no OCR, no table cell reconstruction), and the pilot's own overall_status is 'partial' because no labelled ground truth corpus exists. Publication rests on the independent six-check receipt (verdict=pass), not on a ground-truth accuracy claim.",
       "not_implemented_or_unverified": [
-        "OCR",
-        "Reliable table/line-item cell extraction",
-        "Permissioned labelled real-document pilot",
-        "Customer-grade privacy/security verification",
-        "Automatic multi-document bundle orchestration"
+        "OCR / scanned-document ingestion: not implemented",
+        "Reliable table/line-item cell extraction beyond label-line + value-line shapes: not implemented",
+        "Multi-document bundle orchestration in one command: the reconciler accepts a bundle, the extraction chain does not assemble one automatically",
+        "Field/market accuracy against a labelled ground-truth corpus: no labelled corpus exists for this document type (pilot overall_status=partial)",
+        "Customer-grade privacy/security verification: the pilot ran under internal_consent with a private bundle outside the repo; no security audit was performed",
+        "Cross-language / cross-layout generalisation: unverified (one document, one language, one layout)"
       ],
-      "next_gate": "Run a permissioned multi-document bundle through extraction, human review and reconciliation; measure field and match accuracy.",
-      "baseline_note": "code_implemented=true reflects code that existed before this mission; scenario_validated stays false."
+      "next_gate": "Run a second, permissioned document of a different layout (or a labelled holdout) and measure field precision/recall against ground truth; that is also the precondition for level 4 on the maturity ledger.",
+      "baseline_note": "Deviation from the mission baseline: BE scenario_validated was false because no independent review existed. Review mission m22509 produced a six-check passing receipt (amended by m22762: two items resolved, checks_not_run=[]), and the pilot row (tensor_maturity_verdicts id=911, level=3) records it. This mission publishes the status only; it re-ran the guards, not the pilot. code_implemented=true is unchanged from the pre-mission baseline."
     },
     {
       "id": "RA",

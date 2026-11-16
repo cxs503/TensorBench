@@ -1,0 +1,112 @@
+{
+  "schema_version": "0.1.0",
+  "product_id": "business-evidence-engine",
+  "product_version": "0.3.0",
+  "created_at": "2026-11-16T04:42:37+00:00",
+  "source": {
+    "source_ref": "demo://m22925/demo-invoice/v1",
+    "filename": "demo_invoice.pdf",
+    "media_type": "application/pdf",
+    "byte_length": 877,
+    "sha256": "afafb7c9d14de2d78b7360efe71f1b5f7a85aca42176a5be1710177f7b6fb173",
+    "page_count": 1
+  },
+  "field_spectrum": "trade_documents_v1",
+  "field_spectrum_fields": [
+    "invoice_number",
+    "contract_number",
+    "purchase_order_number",
+    "document_date",
+    "total_amount"
+  ],
+  "status": "needs_review",
+  "proposal_count": 4,
+  "proposals": [
+    {
+      "proposal_id": "d11ff31a915354fa5d9d00349b3d79e5bfaa97f0e5e3a71fc154270a78d839e7",
+      "field": "invoice_number",
+      "raw_value": "INV-2026-001",
+      "normalized_candidate": "INV-2026-001",
+      "currency_candidate": null,
+      "review_status": "proposed_unverified",
+      "source_evidence_id": "sha256:afafb7c9d14de2d78b7360efe71f1b5f7a85aca42176a5be1710177f7b6fb173:page:1",
+      "source_ref": "demo://m22925/demo-invoice/v1",
+      "source_sha256": "afafb7c9d14de2d78b7360efe71f1b5f7a85aca42176a5be1710177f7b6fb173",
+      "locator": {
+        "page_number": 1,
+        "start_offset": 61,
+        "end_offset": 73,
+        "matched_text": "Invoice No: INV-2026-001",
+        "page_text_sha256": "f48e22929d492c9c1237b710ad99c127f23e2b95722a98761129bc167b4391f1",
+        "value_sha256": "b2458d7cb216405ec38dddbaf5359f5418e58da1bbc9aec3fe98105b26cda6fd"
+      },
+      "extraction_method": "label_pattern"
+    },
+    {
+      "proposal_id": "ba47a32ce07d3608318bb53d8c534ec95bc0b536eb74f29f33ff0657de7426b9",
+      "field": "purchase_order_number",
+      "raw_value": "PO-2026-077",
+      "normalized_candidate": "PO-2026-077",
+      "currency_candidate": null,
+      "review_status": "proposed_unverified",
+      "source_evidence_id": "sha256:afafb7c9d14de2d78b7360efe71f1b5f7a85aca42176a5be1710177f7b6fb173:page:1",
+      "source_ref": "demo://m22925/demo-invoice/v1",
+      "source_sha256": "afafb7c9d14de2d78b7360efe71f1b5f7a85aca42176a5be1710177f7b6fb173",
+      "locator": {
+        "page_number": 1,
+        "start_offset": 93,
+        "end_offset": 104,
+        "matched_text": "Purchase Order No: PO-2026-077",
+        "page_text_sha256": "f48e22929d492c9c1237b710ad99c127f23e2b95722a98761129bc167b4391f1",
+        "value_sha256": "e38161f1bb8a95d9b5533f59f3f55bae09ff8ff6b4e3d9158391d509321e4b9d"
+      },
+      "extraction_method": "label_pattern"
+    },
+    {
+      "proposal_id": "e7b62bf96ad424e6c856371591df188c7b7eb740451b4fcb0e3ea96c066835f6",
+      "field": "document_date",
+      "raw_value": "2026-11-16",
+      "normalized_candidate": "2026-11-16",
+      "currency_candidate": null,
+      "review_status": "proposed_unverified",
+      "source_evidence_id": "sha256:afafb7c9d14de2d78b7360efe71f1b5f7a85aca42176a5be1710177f7b6fb173:page:1",
+      "source_ref": "demo://m22925/demo-invoice/v1",
+      "source_sha256": "afafb7c9d14de2d78b7360efe71f1b5f7a85aca42176a5be1710177f7b6fb173",
+      "locator": {
+        "page_number": 1,
+        "start_offset": 119,
+        "end_offset": 129,
+        "matched_text": "Invoice Date: 2026-11-16",
+        "page_text_sha256": "f48e22929d492c9c1237b710ad99c127f23e2b95722a98761129bc167b4391f1",
+        "value_sha256": "af40659fc9f7a95a6d28bf85dff7f9e3865db1fa6117e171a314718eb4593b4d"
+      },
+      "extraction_method": "label_pattern"
+    },
+    {
+      "proposal_id": "402cae8d15fcfa859921a6192c5a7a244f96f4de8e6d856c06147b542a96d21d",
+      "field": "total_amount",
+      "raw_value": "1,234.50",
+      "normalized_candidate": "1234.50",
+      "currency_candidate": "CNY",
+      "review_status": "proposed_unverified",
+      "source_evidence_id": "sha256:afafb7c9d14de2d78b7360efe71f1b5f7a85aca42176a5be1710177f7b6fb173:page:1",
+      "source_ref": "demo://m22925/demo-invoice/v1",
+      "source_sha256": "afafb7c9d14de2d78b7360efe71f1b5f7a85aca42176a5be1710177f7b6fb173",
+      "locator": {
+        "page_number": 1,
+        "start_offset": 144,
+        "end_offset": 152,
+        "matched_text": "Total Amount: 1,234.50 CNY",
+        "page_text_sha256": "f48e22929d492c9c1237b710ad99c127f23e2b95722a98761129bc167b4391f1",
+        "value_sha256": "217e5150feacc61444d74e570f6898697249aca5beb14a56128880c5be38a0bc"
+      },
+      "extraction_method": "label_pattern"
+    }
+  ],
+  "limitations": [
+    "Candidates are not accepted normalized document fields.",
+    "No OCR, table-cell extraction, handwriting recognition or legal interpretation is performed.",
+    "Label-pattern matches can be wrong; review must verify the page image and surrounding context.",
+    "Line-item rows and supplier identity are not inferred."
+  ]
+}

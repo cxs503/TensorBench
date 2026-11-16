@@ -1,5 +1,9 @@
 # PDF Evidence Ingestion (Business Evidence Engine)
 
+> **Quickstart:** `docs/m22925/DEMO.md` walks `extract-pdf` → `propose-pdf-fields` →
+> `review-pdf-fields` → `reconcile-business` end to end on committed demo artifacts. This page
+> stays the reference for the ingestion adapter's semantics and boundaries.
+
 ## Purpose
 
 The PDF adapter converts an authorized source PDF into page-addressable text evidence. Each page retains the original source reference, whole-file SHA-256, page number, and a hash of the extracted page text. Downstream extraction and review can cite `evidence_id` and `locator.page_number`.

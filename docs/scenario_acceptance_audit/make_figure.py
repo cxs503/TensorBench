@@ -175,7 +175,15 @@ def bypass_cases() -> list[tuple[str, str, dict, list[str]]]:
     cases.append(("validated line without code", "status", st, ["code_implemented=true"]))
 
     st = _status()
-    st["products"][1]["acceptance_evidence"]["verdict"] = "pass"
+    # Pick an unpublished line by id: hard-coding products[1] broke as soon as the BE line
+    # published scenario_validated=true (mission m22925), since that line legitimately carries
+    # verdict=pass.
+    unpublished = next(line for line in st["products"] if line["scenario_validated"] is False)
+    unpublished["acceptance_evidence"] = {
+        "validation_report_ref": "r.json",
+        "review_receipt_ref": "s.json",
+        "verdict": "pass",
+    }
     cases.append(("pass verdict, claim off", "status", st, ["scenario_validated=true"]))
 
     return cases
