@@ -1,0 +1,123 @@
+{
+  "record_id": "BE-m22925-six-dimension-value",
+  "product_id": "BE",
+  "product_name": "Business Evidence Engine",
+  "scenario_id": "BE-20261115-tensorai-bp-field-extraction",
+  "mission_id": 22925,
+  "framework": "docs/SCENARIO_ACCEPTANCE_FRAMEWORK.md §6 (six-dimension value evidence record)",
+  "caliber": {
+    "field_names": "value.problem / value.automation / value.quality / value.cost / value.reproducibility / value.delivery — §6 verbatim",
+    "duration_mapping": "The mission's 时长 dimension is recorded as value.cost.wall_clock_seconds (state it the same way for every pilot)",
+    "rule": "An unevidenced dimension is written 'unknown' with a reason; it is never estimated, and 'unknown' is not 'planned'.",
+    "pv_note": "PV (TensorData artifacts/pv-pilot/ex1_kcs/pilot_report.json@857a189 summary) records scenario metrics but no value block; the single caliber applied here is therefore §6 itself, and the unknowns below stay unknown rather than being back-filled from PV."
+  },
+  "value": {
+    "problem": {
+      "state": "recorded_qualitative",
+      "decision_changed": "Due-diligence intake of one inbound business plan: today a reviewer reads 19 pages by hand to find the ten quantities the intake checklist asks for, and the answer arrives without page-addressable provenance, so a second reviewer cannot re-check a number without re-reading the document.",
+      "what_is_removed": "Re-reading cost per number (every accepted value carries page_number + start/end offset + page_text_sha256 + value_sha256) and the silent-invention risk on a declared-absent quantity (funding_amount produced 0 proposals).",
+      "evidence_refs": [
+        "docs/pilots/BP-20261115-tensorai-bp-field-extraction/README.md",
+        "docs/pilots/BP-20261115-tensorai-bp-field-extraction/criteria_v1.md",
+        "docs/pilots/BP-20261115-tensorai-bp-field-extraction/structured_record.redacted.json"
+      ],
+      "limitation": "No time-and-motion study of the current manual process was run, so no cost saving is quantified."
+    },
+    "automation": {
+      "state": "recorded",
+      "auto_steps": 9,
+      "manual_steps": 1,
+      "total_steps": 10,
+      "auto_ratio": 0.9,
+      "steps": [
+        {"step": "criteria freeze (hash + frozen_at guard)", "mode": "auto", "evidence": "criteria_freeze.json"},
+        {"step": "extract-pdf (19 pages, per-page fingerprints)", "mode": "auto", "evidence": "validation_report.json C1.pdf_ingestion"},
+        {"step": "propose-pdf-fields (business_plan_v1, 22 proposals)", "mode": "auto", "evidence": "validation_report.json C3"},
+        {"step": "accept/reject 22 proposals", "mode": "manual", "evidence": "review receipt six_checks[criteria_frozen_before_run] + validation_report scenario.limits[2] ('provisional author review')"},
+        {"step": "table arithmetic invariants C6a/C6b/C6c", "mode": "auto", "evidence": "validation_report.json"},
+        {"step": "independent spot-check C7 (second code path, separate process)", "mode": "auto", "evidence": "validation_report.json C7.independent_spotcheck"},
+        {"step": "negative path C8 (4 corrupted inputs)", "mode": "auto", "evidence": "failure_records.json"},
+        {"step": "regression scope C10a (73 pytest)", "mode": "auto", "evidence": "regression_scope.json"},
+        {"step": "report contract C10 + private containment C9", "mode": "auto", "evidence": "validation_report.json"},
+        {"step": "independent six-check review (m22509, separate mission)", "mode": "auto", "evidence": "review_receipt_amended.json"}
+      ]
+    },
+    "quality": {
+      "state": "recorded_partial",
+      "criteria_passed": 13,
+      "criteria_total": 13,
+      "key_quantities": [
+        {"quantity": "business_plan_v1 field spectrum coverage", "value": "9/10 fields produced >=1 page-addressable proposal", "threshold": ">=8/10 (frozen)", "deviation": null},
+        {"quantity": "page back-reference integrity (C4)", "value": "22/22 approved fields: offset slice == raw value and page hash == page_text_sha256", "threshold": "22/22", "deviation": "0"},
+        {"quantity": "independent spot-check agreement (C7)", "value": "22/22 agree over 9 fields", "threshold": "22/22", "deviation": "0"},
+        {"quantity": "funding-use table row sum", "value": "100 % over 5 rows", "threshold": "100 %", "deviation": "0"},
+        {"quantity": "revenue-mix rows (3 rows x 4 terms)", "value": "each row sums 100 %", "threshold": "100 %", "deviation": "0"},
+        {"quantity": "roadmap window contiguity", "value": "[0,12] [12,24] [24,36] -> span [0,36]", "threshold": "contiguous", "deviation": "0"},
+        {"quantity": "negative path detection (C8)", "value": "4/4 corrupted inputs rejected with declared PdfEvidenceError and no artifact", "threshold": "4/4", "deviation": "0"},
+        {"quantity": "legacy spectrum trade_documents_v1 on a business plan", "value": "0/5 fields", "threshold": "n/a", "deviation": null},
+        {"quantity": "funding_amount (declared absent in the document)", "value": "0 proposals, explicit non-disclosure sentence located", "threshold": "0 proposals", "deviation": "0"}
+      ],
+      "miss_rate": {
+        "state": "unknown",
+        "reason": "There is no labelled ground-truth corpus for this document type, so precision/recall over the extracted values cannot be computed; the pilot's overall_status is 'partial' for exactly this reason (validation_report.json scenario.limits)."
+      },
+      "human_baseline": {
+        "state": "unknown",
+        "reason": "No human extraction of the same document was performed and timed, so 'quality vs a human reviewer' is unmeasured."
+      },
+      "known_sub_field_limits": [
+        "table_label_percent captures only the first percentage column of a multi-column table (README §5, failure_records record 3, resolution=accepted_limitation)",
+        "market_reference requires a parenthesised year, so 2 of 5 references on the source page were dropped (failure_records record 2, accepted_limitation)"
+      ],
+      "evidence_refs": [
+        "docs/pilots/BP-20261115-tensorai-bp-field-extraction/validation_report.json",
+        "docs/pilots/BP-20261115-tensorai-bp-field-extraction/numbers.json",
+        "docs/pilots/BP-20261115-tensorai-bp-field-extraction/quality_spotcheck.json",
+        "docs/pilots/BP-20261115-tensorai-bp-field-extraction/failure_records.json"
+      ]
+    },
+    "cost": {
+      "state": "recorded_partial",
+      "wall_clock_seconds": 6,
+      "wall_clock_basis": "numbers.json run_started_at 2026-11-15T15:38:42Z -> report_created_at 2026-11-15T15:38:48Z (one `run` command, 19-page PDF)",
+      "compute": {"cores": 1, "core_minutes": 0.1, "note": "local control-plane process, no cluster job submitted"},
+      "human_review_minutes": {
+        "state": "unknown",
+        "reason": "The pilot review was a provisional author review with no timestamped reviewer log, so review minutes are not recorded."
+      },
+      "demo_chain": {
+        "wall_clock_seconds": 1.281,
+        "stages": 5,
+        "note": "docs/m22925/demo/timing.json — the packaging demo (1-page synthetic invoice) timed per stage; reported separately from the pilot so the two are not conflated."
+      },
+      "evidence_refs": [
+        "docs/pilots/BP-20261115-tensorai-bp-field-extraction/numbers.json",
+        "docs/m22925/demo/timing.json"
+      ]
+    },
+    "reproducibility": {
+      "state": "recorded",
+      "independent_rerun": true,
+      "rerun_exit_code": 0,
+      "rerun_criteria": "13/13 reproduced",
+      "rerun_command": "python scripts/run_bp_pilot.py run --pdf <private>/TensorAI_BP.pdf --out tmp_rerun_out --private-out /tmp/pilot_rerun_private",
+      "rerun_environment": "python 3.11.6, pypdf 6.19.0, TensorBench commit 8c18865",
+      "reviewed_commit": "8c18865cb8b9f2fde39ff61d889d99d810c9942f",
+      "evidence_refs": [
+        "docs/pilots/BP-20261115-tensorai-bp-field-extraction/review_receipt_amended.json",
+        "docs/m22925/PUBLISH_RECORD.md"
+      ]
+    },
+    "delivery": {
+      "state": "unknown",
+      "accepted_by_consuming_owner": null,
+      "reason": "No consuming owner has stated acceptance of the output as-is; there is no owner statement or record to cite. Per §6 an absent statement is 'unknown', not 'planned'."
+    }
+  },
+  "admissibility": {
+    "framework_rule": "A pilot with any dimension 'unknown' may still be accepted as partial, but cannot be promoted to a calibrated/operational claim (G3/G4 in docs/FOUR_PRODUCT_ACCEPTANCE_MATRIX.md).",
+    "consequence_here": "BE stays a partial/level-3 claim: scenario_validated=true is backed by the independent receipt (verdict=pass), while the quality-vs-human, review-minutes and delivery dimensions remain unknown.",
+    "unknown_dimensions": ["value.quality.miss_rate", "value.quality.human_baseline", "value.cost.human_review_minutes", "value.delivery"]
+  },
+  "published_by": "TensorBench mission m22925"
+}

@@ -1,0 +1,114 @@
+{
+  "demo_id": "BE-m22925-onboarding-demo",
+  "product_id": "business-evidence-engine",
+  "tensorbench_version": "0.2.0",
+  "run_at_utc": "2026-11-16T04:42:38Z",
+  "environment": {
+    "python": "3.11.6",
+    "pypdf": "6.19.0",
+    "cwd": "worktree root"
+  },
+  "input": {
+    "pdf": "docs/m22925/demo/demo_invoice.pdf",
+    "pdf_sha256": "afafb7c9d14de2d78b7360efe71f1b5f7a85aca42176a5be1710177f7b6fb173",
+    "pdf_bytes": 877,
+    "synthetic": true
+  },
+  "stages": [
+    {
+      "stage": "extract-pdf",
+      "command": "python3 -m tensorbench extract-pdf --input docs/m22925/demo/demo_invoice.pdf --source-ref demo://m22925/demo-invoice/v1 --output docs/m22925/demo/1_pages.json",
+      "cwd": "worktree root",
+      "exit_code": 0,
+      "wall_seconds": 0.388,
+      "stdout_bytes": 1433
+    },
+    {
+      "stage": "propose-pdf-fields",
+      "command": "python3 -m tensorbench propose-pdf-fields --input docs/m22925/demo/1_pages.json --spectrum trade_documents_v1 --output docs/m22925/demo/2_proposals.json",
+      "cwd": "worktree root",
+      "exit_code": 0,
+      "wall_seconds": 0.215,
+      "stdout_bytes": 4795
+    },
+    {
+      "stage": "review-pdf-fields",
+      "command": "python3 -m tensorbench review-pdf-fields --input docs/m22925/demo/2_proposals.json --decisions docs/m22925/demo/3_decisions.json --reviewer demo-auto-review (TensorBench onboarding demo, not a human reviewer) --document-type invoice --doc-id INV-2026-001 --output docs/m22925/demo/4_reviewed.json",
+      "cwd": "worktree root",
+      "exit_code": 0,
+      "wall_seconds": 0.225,
+      "stdout_bytes": 9244
+    },
+    {
+      "stage": "reconcile-business (consistent)",
+      "command": "python3 -m tensorbench reconcile-business --input docs/m22925/demo/5_bundle_happy.json --output docs/m22925/demo/6_reconcile_happy.json",
+      "cwd": "worktree root",
+      "exit_code": 0,
+      "wall_seconds": 0.237,
+      "stdout_bytes": 2672
+    },
+    {
+      "stage": "reconcile-business (total mismatch)",
+      "command": "python3 -m tensorbench reconcile-business --input docs/m22925/demo/7_bundle_mismatch.json --output docs/m22925/demo/8_reconcile_mismatch.json",
+      "cwd": "worktree root",
+      "exit_code": 1,
+      "wall_seconds": 0.216,
+      "stdout_bytes": 3404
+    }
+  ],
+  "spectrum": {
+    "name": "trade_documents_v1",
+    "fields_declared": 5,
+    "note": "fields_declared counts the declared spectrum; absent fields produce no proposal by design."
+  },
+  "totals": {
+    "stages": 5,
+    "wall_seconds_total": 1.281,
+    "auto_steps": 5,
+    "manual_steps": 1,
+    "manual_step_note": "review-pdf-fields decisions must be supplied by a named reviewer; in this demo the acceptances were generated (demo auto-review)."
+  },
+  "extraction": {
+    "pages": 1,
+    "proposals": 4,
+    "fields_with_proposals": [
+      "document_date",
+      "invoice_number",
+      "purchase_order_number",
+      "total_amount"
+    ],
+    "reviewed_fields": [
+      "document_date",
+      "invoice_number",
+      "purchase_order_number",
+      "total_amount"
+    ],
+    "conflicting_fields": [],
+    "pending_proposals": 0
+  },
+  "reconciliation": {
+    "consistent_bundle": {
+      "overall_status": "passed",
+      "failed_checks": [],
+      "checks": 6
+    },
+    "mismatch_bundle": {
+      "overall_status": "failed",
+      "failed_checks": [
+        "invoice.purchase_order_match"
+      ],
+      "findings": 1
+    }
+  },
+  "artifacts": {
+    "1_pages.json": "bc11c1ef2a35b9f44a7baef9b3654d156343bb409c3e3a6da1060b9a5fac999e",
+    "2_proposals.json": "538a223cd06386dbc0a73b9b2e5faaa165a60c1681c73c79fd3a593cc2c243ef",
+    "3_decisions.json": "d9cb73dd8da343435c534df9ace421e0cf6bfa83a87075877eb8e2191abb6529",
+    "4_reviewed.json": "e0588f930ca97e6aeb72d1fb99130aa871188a4d74140c16c86a7b2a1e33952f",
+    "5_bundle_happy.json": "81cfc47a15163736730dadd651de41e67787fa030c81ae635e9c09e0abc1daac",
+    "6_reconcile_happy.json": "a0d55f209ae1ddbfbfa94ace326d9add047703cf1dba7acca8a8d64f014afc3a",
+    "7_bundle_mismatch.json": "5fd82d447420514e61d967d3f5f993afc881c43489af9a4548ccfd62af16c827",
+    "8_reconcile_mismatch.json": "e659ee9c90c4254ef0018f20f9be99dcecb94f38b775423e1364e5c56331bfbc",
+    "demo_invoice.pdf": "afafb7c9d14de2d78b7360efe71f1b5f7a85aca42176a5be1710177f7b6fb173"
+  }
+}

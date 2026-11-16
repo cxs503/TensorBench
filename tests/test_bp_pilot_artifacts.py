@@ -248,12 +248,19 @@ def test_published_values_are_masked_for_identity_fields() -> None:
 
 
 @requires_pilot
-def test_status_file_still_declares_business_evidence_unvalidated() -> None:
+def test_status_file_declares_business_evidence_state_consistently() -> None:
     status_text = (ROOT / "products" / "STATUS.json").read_text(encoding="utf-8")
     status = json.loads(status_text)
     products = {entry["id"]: entry for entry in status["products"]}
-    assert products["BE"]["scenario_validated"] is False
-    assert products["BE"]["acceptance_evidence"]["verdict"] in (None, "pass")
+    # Mission m22925 published BE as scenario_validated=true; what must hold is that a validated
+    # line carries a passing verdict and both evidence refs, never a bare boolean.
+    be = products["BE"]
+    if be["scenario_validated"]:
+        assert be["acceptance_evidence"]["verdict"] == "pass"
+        assert be["acceptance_evidence"]["validation_report_ref"]
+        assert be["acceptance_evidence"]["review_receipt_ref"]
+    else:
+        assert be["acceptance_evidence"]["verdict"] in (None, "pass")
     for line in products.values():
         if line["scenario_validated"]:
             assert line["acceptance_evidence"]["verdict"] == "pass"

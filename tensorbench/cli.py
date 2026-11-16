@@ -6,6 +6,7 @@ import json
 import sys
 from pathlib import Path
 
+from . import __version__
 from .achievement import AchievementInputError, evaluate_file
 from .mission_evidence import evaluate_mission_snapshot
 from .live_mission import collect_mission_snapshot
@@ -55,6 +56,12 @@ def _default_contract_input(kind: str) -> Path | None:
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="tensorbench")
+    parser.add_argument(
+        "--version",
+        action="version",
+        version=f"tensorbench {__version__}",
+        help="print the installed TensorBench version and exit",
+    )
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     validate_parser = subparsers.add_parser(
