@@ -116,7 +116,7 @@ going after a failure with exit 2; id parsing; creds-file login; git-credentials
 
 ## Pre-flight checks (三查)
 
-- `negative_knowledge_ledger`: `GET /api/v1/tensor/negative-knowledge` reachable
+- `negative_knowledge_ledger`: read=`GET /api/v1/tensor/negative-knowledge`, write=`POST /api/v1/tensor/negative-knowledge/register`
   (100 entries). Keyword filtering (`q=TensorBench`) is not honoured by this API
   version (the query returns the unfiltered ledger), so no prior TensorBench entry
   could be isolated by keyword; entries inspected are mission-loop/gate failures of
