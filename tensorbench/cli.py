@@ -38,6 +38,21 @@ from .publish import (
 from .runner import run_benchmark
 
 
+#: Repository-relative default contract file per kind (only where an unambiguous
+#: canonical file exists; every other kind still requires an explicit --input).
+DEFAULT_CONTRACT_INPUTS = {
+    "status": Path("products") / "STATUS.json",
+}
+
+REPO_ROOT = Path(__file__).resolve().parents[1]
+
+
+def _default_contract_input(kind: str) -> Path | None:
+    """Return the canonical in-repository contract file for ``kind``, if one exists."""
+    relative = DEFAULT_CONTRACT_INPUTS.get(kind)
+    return REPO_ROOT / relative if relative is not None else None
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="tensorbench")
     subparsers = parser.add_subparsers(dest="command", required=True)
@@ -48,7 +63,11 @@ def build_parser() -> argparse.ArgumentParser:
     validate_parser.add_argument(
         "--kind", choices=("evidence", "report", "asset", "status"), required=True
     )
-    validate_parser.add_argument("--input", required=True, help="Contract JSON file")
+    validate_parser.add_argument(
+        "--input",
+        default=None,
+        help="Contract JSON file (defaults to products/STATUS.json for --kind status)",
+    )
     validate_parser.add_argument("--output", help="Optional validation-result JSON path")
 
     achievement_parser = subparsers.add_parser(
@@ -503,8 +522,15 @@ def main() -> int:
             return 2
 
     if args.command == "validate":
+        source = args.input or _default_contract_input(args.kind)
+        if source is None:
+            print(
+                f"tensorbench: error: --input is required for --kind {args.kind}",
+                file=sys.stderr,
+            )
+            return 2
         try:
-            result = validate_file(args.kind, args.input)
+            result = validate_file(args.kind, source)
             rendered = json.dumps(result, indent=2, ensure_ascii=False)
             if args.output:
                 Path(args.output).write_text(rendered + "\n", encoding="utf-8")
