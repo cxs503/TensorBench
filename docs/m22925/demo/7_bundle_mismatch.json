@@ -1,0 +1,113 @@
+{
+  "documents": [
+    {
+      "doc_id": "INV-2026-001",
+      "document_type": "invoice",
+      "source_ref": "demo://m22925/demo-invoice/v1",
+      "sha256": "afafb7c9d14de2d78b7360efe71f1b5f7a85aca42176a5be1710177f7b6fb173",
+      "field_evidence": {
+        "invoice_number": [
+          {
+            "proposal_id": "d11ff31a915354fa5d9d00349b3d79e5bfaa97f0e5e3a71fc154270a78d839e7",
+            "source_evidence_id": "sha256:afafb7c9d14de2d78b7360efe71f1b5f7a85aca42176a5be1710177f7b6fb173:page:1",
+            "source_ref": "demo://m22925/demo-invoice/v1",
+            "source_sha256": "afafb7c9d14de2d78b7360efe71f1b5f7a85aca42176a5be1710177f7b6fb173",
+            "locator": {
+              "page_number": 1,
+              "start_offset": 61,
+              "end_offset": 73,
+              "matched_text": "Invoice No: INV-2026-001",
+              "page_text_sha256": "f48e22929d492c9c1237b710ad99c127f23e2b95722a98761129bc167b4391f1",
+              "value_sha256": "b2458d7cb216405ec38dddbaf5359f5418e58da1bbc9aec3fe98105b26cda6fd"
+            }
+          }
+        ],
+        "po_number": [
+          {
+            "proposal_id": "ba47a32ce07d3608318bb53d8c534ec95bc0b536eb74f29f33ff0657de7426b9",
+            "source_evidence_id": "sha256:afafb7c9d14de2d78b7360efe71f1b5f7a85aca42176a5be1710177f7b6fb173:page:1",
+            "source_ref": "demo://m22925/demo-invoice/v1",
+            "source_sha256": "afafb7c9d14de2d78b7360efe71f1b5f7a85aca42176a5be1710177f7b6fb173",
+            "locator": {
+              "page_number": 1,
+              "start_offset": 93,
+              "end_offset": 104,
+              "matched_text": "Purchase Order No: PO-2026-077",
+              "page_text_sha256": "f48e22929d492c9c1237b710ad99c127f23e2b95722a98761129bc167b4391f1",
+              "value_sha256": "e38161f1bb8a95d9b5533f59f3f55bae09ff8ff6b4e3d9158391d509321e4b9d"
+            }
+          }
+        ],
+        "document_date": [
+          {
+            "proposal_id": "e7b62bf96ad424e6c856371591df188c7b7eb740451b4fcb0e3ea96c066835f6",
+            "source_evidence_id": "sha256:afafb7c9d14de2d78b7360efe71f1b5f7a85aca42176a5be1710177f7b6fb173:page:1",
+            "source_ref": "demo://m22925/demo-invoice/v1",
+            "source_sha256": "afafb7c9d14de2d78b7360efe71f1b5f7a85aca42176a5be1710177f7b6fb173",
+            "locator": {
+              "page_number": 1,
+              "start_offset": 119,
+              "end_offset": 129,
+              "matched_text": "Invoice Date: 2026-11-16",
+              "page_text_sha256": "f48e22929d492c9c1237b710ad99c127f23e2b95722a98761129bc167b4391f1",
+              "value_sha256": "af40659fc9f7a95a6d28bf85dff7f9e3865db1fa6117e171a314718eb4593b4d"
+            }
+          }
+        ],
+        "total_amount": [
+          {
+            "proposal_id": "402cae8d15fcfa859921a6192c5a7a244f96f4de8e6d856c06147b542a96d21d",
+            "source_evidence_id": "sha256:afafb7c9d14de2d78b7360efe71f1b5f7a85aca42176a5be1710177f7b6fb173:page:1",
+            "source_ref": "demo://m22925/demo-invoice/v1",
+            "source_sha256": "afafb7c9d14de2d78b7360efe71f1b5f7a85aca42176a5be1710177f7b6fb173",
+            "locator": {
+              "page_number": 1,
+              "start_offset": 144,
+              "end_offset": 152,
+              "matched_text": "Total Amount: 1,234.50 CNY",
+              "page_text_sha256": "f48e22929d492c9c1237b710ad99c127f23e2b95722a98761129bc167b4391f1",
+              "value_sha256": "217e5150feacc61444d74e570f6898697249aca5beb14a56128880c5be38a0bc"
+            }
+          }
+        ]
+      },
+      "invoice_number": "INV-2026-001",
+      "po_number": "PO-2026-077",
+      "document_date": "2026-11-16",
+      "total_amount": "1234.50",
+      "currency": "CNY",
+      "evidence_ref": "pdf:afafb7c9d14de2d78b7360efe71f1b5f7a85aca42176a5be1710177f7b6fb173",
+      "po_ref": "PO-2026-077",
+      "supplier_id": "SUP-001",
+      "buyer_id": "BUY-001",
+      "line_items": [
+        {
+          "sku": "A-1",
+          "quantity": 10,
+          "unit_price": 123.45,
+          "amount": 1234.5
+        }
+      ]
+    },
+    {
+      "doc_id": "PO-2026-077",
+      "document_type": "purchase_order",
+      "po_number": "PO-2026-077",
+      "supplier_id": "SUP-001",
+      "buyer_id": "BUY-001",
+      "currency": "CNY",
+      "document_date": "2026-11-02",
+      "line_items": [
+        {
+          "sku": "A-1",
+          "quantity": 10,
+          "unit_price": 123.4,
+          "amount": 1234.0
+        }
+      ],
+      "total_amount": "1234.00",
+      "source_ref": "erp://demo/purchase-order/PO-2026-077/v1",
+      "sha256": "164972885d89e019c0c92d2a5f6dbe6755e140ceecec040b3094a18aa3980c73"
+    }
+  ]
+}

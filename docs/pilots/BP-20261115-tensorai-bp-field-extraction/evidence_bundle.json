@@ -150,7 +150,7 @@
     },
     {
       "path": "docs/pilots/BP-20261115-tensorai-bp-field-extraction/failure_records.json",
-      "sha256": "bb7866ac02931cfeb08ae0f8b134031f5be7f94132ed3b47543362d8f45d383f",
+      "sha256": "6a013bc9afc323eb5c1c5330113387cee72d9b70cd502c21850fb339f5c91e94",
       "bytes": 4616,
       "serves_checks": [
         "review_receipt.failure_record"

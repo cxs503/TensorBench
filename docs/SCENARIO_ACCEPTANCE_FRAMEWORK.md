@@ -227,7 +227,9 @@ cannot be promoted to a calibrated/operational claim (G3/G4 in
   a receipt — the record then carries the reviewer's identity, which is the accountability handle.
 - The six checks are structural. Domain sufficiency (is this scenario representative?) stays with
   the product owner and WP-Q independent QA.
-- `scenario_validated` remains `false` for all four lines: no pilot has been run. The added
+- As of 2026-11-16 two lines have published a passing scenario (`PV` via mission m22761, `BE` via
+  mission m22925); `AE` and `RA` remain `false`. Each publication cites a commit-pinned independent
+  review receipt, not this framework. The added
   schema proves the status file *can* be checked, not that any line is validated.
 - The `synthetic_labelled`/`quarantined` refusal rules are enforced by the runtime validator; they
   are not a substitute for permission review (`docs/PRODUCT_SHARED_CONTRACTS.md` §6).
@@ -241,9 +243,9 @@ cannot be promoted to a calibrated/operational claim (G3/G4 in
 | Line | `code_implemented` | `scenario_validated` | Last independent review | Next gate |
 |---|---:|---:|---|---|
 | AE | true | false | AE-01 evidence infrastructure: #20 (`adf6d02`), six checks passed (external report) | One closed mission set collected read-only + reviewer receipt |
-| BE | true | false | none on a real document bundle | Permissioned multi-document PDF → review → reconcile run |
+| BE | true | **true** | m22509 six-check receipt on the BP pilot (amended by m22762), verdict `pass`, `checks_not_run=[]` | Second document of a different layout or a labelled holdout, with field precision/recall |
 | RA | false | false | none (engine lives in TensorKnowledge) | Land audit engine upstream, then one permissioned report+bibliography bundle |
-| PV | false | false | none (engine lives in TensorData, half-true) | One explicit conservation profile on a real TensorLBM export |
+| PV | true | **true** | m22510 six-check receipt on the EX1/KCS column-acceptance pilot, verdict `pass` | Second scenario on a TensorLBM flow export (NetCDF/VTK) with an EFD or analytic cross-check |
 
 Next acceptance gate for **this** work package: an independent reviewer applies §2–§3 to the diff
 itself (identity of reviewed commit, non-breaking behaviour of the report schema, the status
