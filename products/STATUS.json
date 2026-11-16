@@ -1,6 +1,6 @@
 {
   "schema_version": "2.0.0",
-  "as_of": "2026-11-14",
+  "as_of": "2026-11-16",
   "purpose": "Truthful per-product-line implementation baseline. The two state fields are independent: code_implemented says an executable path exists with focused tests; scenario_validated says a permissioned real-world scenario ran the declared acceptance set with recorded evidence and independent review. A product may be code_implemented and still scenario_validated=false.",
   "field_definitions": {
     "code_implemented": "Executable code path exists in this repository (or the named owning repository) and focused automated tests cover its declared behavior.",
@@ -20,9 +20,9 @@
       "AE_code_implemented": true,
       "BE_code_implemented": true,
       "RA_code_implemented": false,
-      "PV_code_implemented": false
+      "PV_code_implemented": true
     },
-    "reason": "The mission brief asserted code_implemented=false for AE/BE on the premise that this repository is an empty skeleton. That premise is falsified by the repository itself: 188 commits, 10 merge PRs (#3, #10-#18) and executable modules tensorbench/achievement.py, live_mission.py, evidence_bundle.py, business_evidence.py, pdf_evidence.py with focused tests, all present before this mission started. Recording code_implemented=false for AE/BE would be a fabricated baseline. The scenario_validated field is false for all four lines exactly as asserted, and RA/PV remain false because their implementations live in TensorKnowledge/TensorData and are not verified here."
+    "reason": "The mission brief asserted code_implemented=false for AE/BE on the premise that this repository is an empty skeleton. That premise is falsified by the repository itself: 188 commits, 10 merge PRs (#3, #10-#18) and executable modules tensorbench/achievement.py, live_mission.py, evidence_bundle.py, business_evidence.py, pdf_evidence.py with focused tests, all present before this mission started. Recording code_implemented=false for AE/BE would be a fabricated baseline. The scenario_validated field is false for all four lines exactly as asserted, and RA/PV remain false because their implementations live in TensorKnowledge/TensorData and are not verified here. PV was reconciled to false/false on the same premise; mission m22761 publishes code_implemented=true and scenario_validated=true for PV against the reviewed commit 18559035a5d8eb108055619f36191523e1a9364d, so reconciled.PV_code_implemented is corrected to true here."
   },
   "products": [
     {
@@ -115,27 +115,34 @@
       "id": "PV",
       "name": "Physics Dataset Validator",
       "repository": "cxs503/TensorData",
-      "code_implemented": false,
-      "scenario_validated": false,
+      "code_implemented": true,
+      "scenario_validated": true,
       "acceptance_evidence": {
-        "scenario_id": null,
-        "validation_report_ref": null,
-        "review_receipt_ref": null,
-        "criteria_sha256": null,
-        "reviewed_commit": null,
-        "verdict": null
+        "scenario_id": "pv-kcs-ex1-20261115-prereg-column-acceptance",
+        "validation_report_ref": "TensorData@857a189ee66cfda0fc208556b1316e25ff2e2104:artifacts/pv-pilot/ex1_kcs/pilot_report.json#sha256:7cbf516a9d563a983b705fea40d30cdf68a3ca25260b839ec203769d6a8f100a",
+        "review_receipt_ref": "TensorData@857a189ee66cfda0fc208556b1316e25ff2e2104:artifacts/pv-pilot/ex1_kcs/review_receipt.json#sha256:db77659dc634f016226be6c6b4d720b6d46170eb70db4ad044c1aeca20fe491e",
+        "criteria_sha256": "06fc0ee0272ef5a9fc3e71fbe67335fa1f5389a65231f311df77c0f54368406d",
+        "reviewed_commit": "18559035a5d8eb108055619f36191523e1a9364d",
+        "verdict": "pass"
       },
-      "implemented_evidence": [],
-      "external_partial_state": "TensorData quality engine is half-true: structural/numeric CSV checks exist upstream, conservation-law and field-format validation do not.",
-      "not_implemented_or_unverified": [
-        "No validator implementation inside this repository (products/physics-dataset-validator/PRD.md only)",
-        "Conservation-law residuals",
-        "Initial/boundary condition compliance",
-        "NetCDF/HDF5/VTK field formats",
-        "TensorLBM ship-flow end-to-end validation"
+      "implemented_evidence": [
+        "TensorData@1855903:tensordata/quality/physics_csv.py — profile-driven physics CSV adapter (structure / axis / unit / physical-range rules)",
+        "TensorData@1855903:tensordata/quality/units.py — unit registry with exact SI conversion factors and unit-suffix resolution",
+        "TensorData@1855903:tensordata/quality/fields.py — numeric-column identification (symbol table, unit-less canonical-unit fallback)",
+        "TensorData@1855903:tensordata/quality/{engine,rules,profiles} — quality engine plus registered tabular profile, reachable through POST /api/v1/artifacts/{artifact_id}/quality-checks",
+        "TensorData@857a189:scripts/pv_pilot_ex1_kcs.py — stage-3 pilot driver (criteria freeze, four negative injections, report)",
+        "TensorData@1855903:tests/test_physics_csv_validator.py, tests/test_physics_field_inference.py, tests/test_physics_unit_conversion.py, tests/test_quality_engine.py — 96/96 pytest on the reviewed commit (review receipt, regression_scope)"
       ],
-      "next_gate": "Implement one explicit conservation profile upstream and validate a real TensorLBM flow export plus labelled corruptions.",
-      "baseline_note": "Matches the mission baseline: the TensorData quality engine is only half-true, so both fields stay false here."
+      "external_partial_state": "TensorData PV chain is implemented and scenario-validated for CSV column acceptance (physics CSV adapter + unit registry + field identification). Field-format (NetCDF/HDF5/VTK) and towing-tank accuracy remain unverified.",
+      "not_implemented_or_unverified": [
+        "NetCDF/HDF5/VTK field formats: not implemented — the adapter is CSV-only (declared scenario limit, pilot_report.json scenario.limits[0])",
+        "Initial/boundary-condition compliance rules: not implemented",
+        "Conservation-law residuals as a general profile: only the EX1 envelope closure (density / power / speed cross-column) is checked",
+        "TensorLBM ship-flow end-to-end validation: no such scenario has been run",
+        "Model accuracy vs towing tank (EFD): out of scope for this data-quality scenario, recorded as accepted_limitation in artifacts/pv-pilot/ex1_kcs/failure_records.json"
+      ],
+      "next_gate": "Run a second, independent PV scenario on a TensorLBM flow export (NetCDF/VTK) with an EFD or analytic cross-check, which is also the precondition for claiming level 4 (cross-validated) on the maturity ledger.",
+      "baseline_note": "Deviation from the mission baseline: the premise 'TensorData quality engine half-true' no longer holds for PV. The PV chain is implemented at TensorData@1855903 and one permissioned real scenario (EX1/KCS prereg column acceptance) passed the frozen criteria set on 29/29 numeric columns with all four negative injections detected, under an independent review receipt (verdict=pass, six checks pass, checks_not_run=[]). code_implemented and scenario_validated are therefore both true for PV only; AE/RA/BE are unchanged."
     }
   ],
   "evidence_index": {

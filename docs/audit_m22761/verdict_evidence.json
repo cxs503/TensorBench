@@ -1,0 +1,69 @@
+{
+  "repo": "TensorData",
+  "scope": "m22061 PROD-PV 试点验收",
+  "mission_id": 22061,
+  "level": 2,
+  "verdict_by": "pv-pilot-review（m22510 回执补录）",
+  "evidence": {
+    "summary": "PROD-PV (Physics Dataset Validator) stage-3 pilot: the TensorData PV chain accepted the ship-performance platform's real EX1/KCS prereg exports (13-variant resistance envelope + nominal Fn table) at column level — 29/29 numeric columns identified, unknown_rate 0.0, 11/11 frozen criteria passed, 4/4 injected defects detected — and an independent six-check review receipt (mission m22510, TensorData artifacts/pv-pilot/ex1_kcs/review_receipt.json) authorised the publication of products/STATUS.json PV scenario_validated=true in TensorBench mission m22761.",
+    "acceptance_report": "TensorData@857a189ee66cfda0fc208556b1316e25ff2e2104:artifacts/pv-pilot/ex1_kcs/pilot_report.json#sha256:7cbf516a9d563a983b705fea40d30cdf68a3ca25260b839ec203769d6a8f100a",
+    "review_receipt": "TensorData@857a189ee66cfda0fc208556b1316e25ff2e2104:artifacts/pv-pilot/ex1_kcs/review_receipt.json#sha256:db77659dc634f016226be6c6b4d720b6d46170eb70db4ad044c1aeca20fe491e",
+    "reviewed_commit": "18559035a5d8eb108055619f36191523e1a9364d",
+    "review_verdict": "pass",
+    "review_independence": "independent_party",
+    "review_six_checks": {
+      "artifact_identity": "pass",
+      "criteria_frozen_before_run": "pass",
+      "evidence_traceability": "pass",
+      "independent_rerun": "pass (exit_code 0; 11/11 criteria reproduced)",
+      "failure_record": "pass (3 gap records, 4/4 negative injections detected)",
+      "regression_scope": "pass (pytest 96/96, 0 failed)"
+    },
+    "checks_not_run": [],
+    "blocking_conditions": [],
+    "criteria_sha256": "06fc0ee0272ef5a9fc3e71fbe67335fa1f5389a65231f311df77c0f54368406d",
+    "criteria_frozen_at": "2026-11-15T22:27:02.293101+00:00",
+    "impl_files": [
+      "/srv/tensor/workspace/TensorData/tensordata/quality/physics_csv.py",
+      "/srv/tensor/workspace/TensorData/tensordata/quality/units.py",
+      "/srv/tensor/workspace/TensorData/tensordata/quality/fields.py",
+      "/srv/tensor/workspace/TensorData/tensordata/quality/engine.py",
+      "/srv/tensor/workspace/TensorData/tensordata/quality/rules/csv_structure.py",
+      "/srv/tensor/workspace/TensorData/tensordata/quality/profiles/tabular.py",
+      "/srv/tensor/agent/work/m22061/scripts/pv_pilot_ex1_kcs.py"
+    ],
+    "entry": "python3 scripts/pv_pilot_ex1_kcs.py --input-dir <prereg exports dir> [--report-payload PATH]  ->  tensordata.quality.physics_csv.validate_physics_csv(csv, profile)  ->  pilot_report.json + metrics.json + 2 figures",
+    "run_artifacts": [
+      "/srv/tensor/agent/work/m22510/artifacts/pv-pilot/ex1_kcs/pilot_report.json",
+      "/srv/tensor/agent/work/m22510/artifacts/pv-pilot/ex1_kcs/metrics.json",
+      "/srv/tensor/agent/work/m22510/artifacts/pv-pilot/ex1_kcs/column_report.json",
+      "/srv/tensor/agent/work/m22510/artifacts/pv-pilot/ex1_kcs/criteria_evaluation.json",
+      "/srv/tensor/agent/work/m22510/artifacts/pv-pilot/ex1_kcs/criteria_freeze.json",
+      "/srv/tensor/agent/work/m22510/artifacts/pv-pilot/ex1_kcs/evidence_manifest.json",
+      "/srv/tensor/agent/work/m22510/artifacts/pv-pilot/ex1_kcs/failure_records.json",
+      "/srv/tensor/agent/work/m22510/artifacts/pv-pilot/ex1_kcs/negative_cases.json",
+      "/srv/tensor/agent/work/m22510/artifacts/pv-pilot/ex1_kcs/figs/fig1_column_identification.png",
+      "/srv/tensor/agent/work/m22510/artifacts/pv-pilot/ex1_kcs/figs/fig2_physics_closure.png",
+      "/srv/tensor/agent/work/m22510/artifacts/pv-pilot/ex1_kcs/review_receipt.json"
+    ],
+    "run_artifacts_committed": "TensorData@857a189ee66cfda0fc208556b1316e25ff2e2104:artifacts/pv-pilot/ex1_kcs/ (20 deliverables, sha256-pinned in evidence_manifest.json)",
+    "tests": [
+      "TensorData pytest 96 passed / 0 failed on the reviewed commit (review receipt, regression_scope)",
+      "TensorBench tests/test_pv_scenario_publish.py — 9 passed: status contract via `python -m tensorbench validate --kind status`, ref→bytes sha256 resolution, receipt pass-preconditions (verdict/independence/checks_not_run/blocking_conditions/rerun exit 0), criteria_sha256 recomputation from the frozen criteria object",
+      "TensorBench full suite 191 passed / 0 failed with the published status (mission m22761)"
+    ],
+    "integration_callers": [],
+    "integration_callers_note": "L3 not claimed. The only caller of validate_physics_csv is the in-repo pilot driver scripts/pv_pilot_ex1_kcs.py. The physics CSV path is NOT registered as a quality profile (tensordata/quality/profiles/__init__.py registers GENERAL/TABULAR only), so the product surface POST /api/v1/artifacts/{id}/quality-checks cannot reach it, and grep over /root/ship-performance-platform, /srv/tensor/workspace/ship-performance-platform and /srv/tensor/ship-workspace/ship-performance-platform for validate_physics_csv|tensordata.quality|physics_csv returns no hits. Gradeable at L3 if the board accepts a same-repo driver consuming real platform exports as an integration caller; it is a one-row UPDATE away.",
+    "external_anchor": "NONE for validator accuracy: the scenario is data-quality acceptance, and no towing-tank (EFD) baseline is in scope — declared in pilot_report.json scenario.limits[4] and recorded as accepted_limitation in artifacts/pv-pilot/ex1_kcs/failure_records.json. The one anchor-like comparison in the pilot (Holtrop wetted-surface S vs published value, -3.35%) belongs to the input data, not to the validator.",
+    "level_reason": "L2 (implemented + independently verified implementation): real deterministic input->compute->output path over the platform's real EX1/KCS exports, committed code, 96/96 tests, run artifacts sha256-pinned, and an independent reviewer re-ran the declared command (exit 0). L3 withheld for lack of an external integration caller (see integration_callers_note). L4 (cross-validated) withheld: no EFD/analytic anchor exists for this scenario's accuracy, and the receipt itself records 'no EFD baseline: model accuracy is out of scope'. The review receipt contains no `level` field, so this level was derived by applying the platform maturity rubric (L1 tests / L2 impl_files+entry+run_artifacts / L3 +integration_callers / L4 +external anchor) to the receipt's own evidence; the basis is stated here so the board can regrade without re-running anything.",
+    "repro_cmd": "cd /srv/tensor/agent/work/m22061 && python3 scripts/pv_pilot_ex1_kcs.py --input-dir /srv/tensor/ship-workspace/ship-performance-platform/docs/prereg/ex1_kcs --report-payload /tmp/pv_pilot_report.json  # TensorData 18559035a5d8eb108055619f36191523e1a9364d",
+    "repro_executed": "YES by the independent reviewer (m22510 receipt, independent_rerun): exit_code 0, criteria 11/11, unknown_rate 0.0, density_relative_spread 2.22e-16, power_closure_max_rel 0.0, speed_cross_column_worst_rel 8.64e-07, negative cases 4/4 detected.",
+    "pilot_limitations": [
+      "CSV inputs only — no NetCDF/HDF5/VTK field formats",
+      "column identification for unit-less names falls back to a canonical unit (medium confidence)",
+      "acceptance is per input fingerprint: regenerating the exports invalidates the run",
+      "no towing-tank baseline (data-quality scope, not model accuracy)"
+    ],
+    "published_by": "TensorBench mission m22761 — products/STATUS.json PV scenario_validated=true (docs/SCENARIO_ACCEPTANCE_FRAMEWORK.md §3 step ⑤)"
+  }
+}
