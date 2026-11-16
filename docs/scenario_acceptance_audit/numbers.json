@@ -171,7 +171,7 @@
       "case": "pass verdict, claim off",
       "kind": "status",
       "errors": [
-        "BE: a passing acceptance verdict must set scenario_validated=true"
+        "AE: a passing acceptance verdict must set scenario_validated=true"
       ],
       "as_expected": true
     }

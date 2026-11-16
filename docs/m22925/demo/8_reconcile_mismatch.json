@@ -1,0 +1,99 @@
+{
+  "schema_version": "0.1.0",
+  "product_id": "business-evidence-engine",
+  "product_version": "0.1.0",
+  "run_id": "business-evidence-c911290c5917da6c",
+  "created_at": "2026-11-16T04:42:38+00:00",
+  "input_refs": [
+    "pdf:afafb7c9d14de2d78b7360efe71f1b5f7a85aca42176a5be1710177f7b6fb173",
+    "document:PO-2026-077:sha256:164972885d89e019c0c92d2a5f6dbe6755e140ceecec040b3094a18aa3980c73"
+  ],
+  "input_fingerprints": {
+    "bundle_sha256": "c911290c5917da6cc14f614afef768204c7395858f695afac088c667c25c5ead"
+  },
+  "checks": [
+    {
+      "check_id": "source.provenance",
+      "version": "0.1.0",
+      "method": "deterministic_rule",
+      "state": "passed",
+      "required": true,
+      "details": "Every document has a source reference and a valid SHA-256 content fingerprint."
+    },
+    {
+      "check_id": "document.arithmetic",
+      "version": "0.1.0",
+      "method": "deterministic_rule",
+      "state": "passed",
+      "required": true,
+      "details": "All supplied line-item arithmetic and document totals reconcile."
+    },
+    {
+      "check_id": "invoice.duplicate_number",
+      "version": "0.1.0",
+      "method": "deterministic_rule",
+      "state": "passed",
+      "required": true,
+      "details": "No duplicate invoice numbers found."
+    },
+    {
+      "check_id": "invoice.purchase_order_match",
+      "version": "0.1.0",
+      "method": "deterministic_rule",
+      "state": "failed",
+      "required": true,
+      "details": "Invoice INV-2026-001 does not match PO PO-2026-077: total_amount: invoice=1234.50, PO=1234.00"
+    },
+    {
+      "check_id": "invoice.delivery_quantity",
+      "version": "0.1.0",
+      "method": "deterministic_rule",
+      "state": "passed",
+      "required": false,
+      "details": "No invoice quantity exceeds a linked accepted-delivery quantity."
+    },
+    {
+      "check_id": "supplier.bank_account_change",
+      "version": "0.1.0",
+      "method": "deterministic_rule",
+      "state": "passed",
+      "required": false,
+      "details": "No bank-account difference found against the supplied vendor master."
+    }
+  ],
+  "findings": [
+    {
+      "finding_id": "invoice.purchase_order_match:1",
+      "check_id": "invoice.purchase_order_match",
+      "status": "confirmed",
+      "severity": "high",
+      "summary": "Invoice INV-2026-001 does not match PO PO-2026-077: total_amount: invoice=1234.50, PO=1234.00",
+      "rationale": "Invoice INV-2026-001 does not match PO PO-2026-077: total_amount: invoice=1234.50, PO=1234.00",
+      "evidence_refs": [
+        "pdf:afafb7c9d14de2d78b7360efe71f1b5f7a85aca42176a5be1710177f7b6fb173",
+        "document:PO-2026-077"
+      ],
+      "review_state": "unreviewed",
+      "limitations": [
+        "Finding is a document discrepancy signal, not a fraud or legal conclusion."
+      ]
+    }
+  ],
+  "evidence_refs": [
+    "document:PO-2026-077:sha256:164972885d89e019c0c92d2a5f6dbe6755e140ceecec040b3094a18aa3980c73",
+    "pdf:afafb7c9d14de2d78b7360efe71f1b5f7a85aca42176a5be1710177f7b6fb173"
+  ],
+  "overall_status": "failed",
+  "summary": {
+    "document_count": 2,
+    "invoice_count": 1,
+    "purchase_order_count": 1,
+    "finding_count": 1,
+    "note": "Structured extraction input only; no OCR, legal verdict or fraud determination."
+  },
+  "provenance": {
+    "input_fingerprints": {
+      "bundle_sha256": "c911290c5917da6cc14f614afef768204c7395858f695afac088c667c25c5ead"
+    }
+  }
+}
