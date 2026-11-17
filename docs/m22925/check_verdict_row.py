@@ -153,7 +153,11 @@ def check_ledger(product: dict) -> dict:
         "coalesce(evidence->>'rerun_exit',''), evidence->'checks_not_run' "
         f"from tensor_maturity_verdicts where id = {row_id}"
     )
-    proc = subprocess.run(DB + ["-c", query], capture_output=True, text=True)
+    try:
+        proc = subprocess.run(DB + ["-c", query], capture_output=True, text=True, timeout=15)
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        return {"check": "maturity_verdict_row", "state": "unknown",
+                "note": f"database client unavailable: {type(exc).__name__}"}
     if proc.returncode != 0:
         return {"check": "maturity_verdict_row", "state": "unknown",
                 "note": f"database unreachable: {proc.stderr.strip()[:200]}"}
