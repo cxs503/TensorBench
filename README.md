@@ -180,3 +180,17 @@ tensorbench attach-isolated-run \\
   --criterion-id C-IMPLEMENTATION \\
   --output mission-123.evidence.reverified.json
 ```
+
+## Test environment and external publication evidence
+
+Run `python -m pytest -q -rs` to see both results and unavailable evidence.
+The PV publication checks use a sibling `TensorData` checkout by default, or
+`TENSORDATA_REPO=/path/to/TensorData`. Checkout discovery occurs at test runtime;
+an absent or inaccessible optional checkout skips only the five binding checks.
+An invalid explicitly configured path fails. A present checkout with missing
+pinned commits or mismatched artifact hashes also fails; it is never a skip.
+
+The BE ledger verifier reports `unknown` if `psql` cannot start, the query exceeds
+15 seconds, or the database cannot be reached. Its CLI returns a nonzero exit with
+a `partial` verdict when evidence is unavailable. Skipped integration tests and
+`unknown` evidence do not validate the published product claims.

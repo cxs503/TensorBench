@@ -12,7 +12,8 @@ that justify it. These tests do two things:
   criteria object. If the checkout is absent the binding tests skip instead of
   pretending to have verified anything.
 
-Override the checkout with ``TENSORDATA_REPO=/path/to/TensorData``.
+Defaults to the sibling ``TensorData`` checkout. Override with
+``TENSORDATA_REPO=/path/to/TensorData``; an invalid explicit path is an error.
 """
 from __future__ import annotations
 
@@ -30,7 +31,6 @@ from tensorbench.criteria import canonical_sha256
 
 ROOT = Path(__file__).resolve().parents[1]
 STATUS_PATH = ROOT / "products" / "STATUS.json"
-TENSORDATA = Path(os.environ.get("TENSORDATA_REPO", "/srv/tensor/workspace/TensorData"))
 
 REF_PATTERN = re.compile(r"^(?P<repo>[^@]+)@(?P<commit>[0-9a-f]{40}):(?P<path>.+?)#sha256:(?P<sha>[0-9a-f]{64})$")
 SIX_CHECKS = {
@@ -58,18 +58,43 @@ def _parse_ref(ref: str) -> dict:
     return match.groupdict()
 
 
-def _git_show(commit_and_path: str) -> bytes:
+def _git_show(checkout: Path, commit_and_path: str) -> bytes:
     return subprocess.run(
-        ["git", "-C", str(TENSORDATA), "show", commit_and_path],
+        ["git", "-C", str(checkout), "show", commit_and_path],
         check=True,
         capture_output=True,
+        timeout=30,
     ).stdout
 
 
-requires_tensordata = pytest.mark.skipif(
-    not (TENSORDATA / ".git").exists(),
-    reason=f"TensorData checkout not available at {TENSORDATA}",
-)
+def _resolve_tensordata_repo() -> Path:
+    """Probe only at test runtime, including inaccessible optional checkouts."""
+    configured = os.environ.get("TENSORDATA_REPO")
+    if configured is not None and not configured.strip():
+        pytest.fail("Invalid TENSORDATA_REPO: empty path", pytrace=False)
+    checkout = Path(configured).expanduser() if configured else ROOT.parent / "TensorData"
+    try:
+        # .git may be a file (worktree) or a directory. Check it explicitly so
+        # git cannot silently walk up to an unrelated parent repository.
+        if not (checkout / ".git").exists():
+            raise OSError("no .git entry")
+        proc = subprocess.run(
+            ["git", "-C", str(checkout), "rev-parse", "--show-toplevel"],
+            check=True, capture_output=True, text=True, timeout=10,
+        )
+        if Path(proc.stdout.strip()).resolve() != checkout.resolve():
+            raise OSError("checkout root does not match")
+    except (OSError, subprocess.SubprocessError) as exc:
+        note = f"TensorData checkout unavailable at {checkout}: {exc}"
+        if configured is not None:
+            pytest.fail(f"Invalid TENSORDATA_REPO: {note}", pytrace=False)
+        pytest.skip(note)
+    return checkout.resolve()
+
+
+@pytest.fixture(scope="module")
+def tensordata_repo() -> Path:
+    return _resolve_tensordata_repo()
 
 
 def test_published_status_is_valid_via_module_entry_point() -> None:
@@ -119,19 +144,17 @@ def test_publisher_patch_is_idempotent() -> None:
     assert result.returncode == 0, result.stdout + result.stderr
 
 
-@requires_tensordata
 @pytest.mark.parametrize("field", ["validation_report_ref", "review_receipt_ref"])
-def test_recorded_refs_resolve_to_the_recorded_bytes(field: str) -> None:
+def test_recorded_refs_resolve_to_the_recorded_bytes(field: str, tensordata_repo: Path) -> None:
     ref = _parse_ref(_pv()["acceptance_evidence"][field])
     assert ref["repo"] == "TensorData"
-    blob = _git_show(f"{ref['commit']}:{ref['path']}")
+    blob = _git_show(tensordata_repo, f"{ref['commit']}:{ref['path']}")
     assert hashlib.sha256(blob).hexdigest() == ref["sha"], f"{field} sha256 drift"
 
 
-@requires_tensordata
-def test_review_receipt_authorises_a_pass() -> None:
+def test_review_receipt_authorises_a_pass(tensordata_repo: Path) -> None:
     ref = _parse_ref(_pv()["acceptance_evidence"]["review_receipt_ref"])
-    receipt = json.loads(_git_show(f"{ref['commit']}:{ref['path']}"))
+    receipt = json.loads(_git_show(tensordata_repo, f"{ref['commit']}:{ref['path']}"))
 
     assert receipt["verdict"] == "pass"
     assert receipt["overall_status"] == "passed"
@@ -150,18 +173,16 @@ def test_review_receipt_authorises_a_pass() -> None:
     assert receipt["reviewed_commit"] == _pv()["acceptance_evidence"]["reviewed_commit"]
 
 
-@requires_tensordata
-def test_criteria_sha256_recomputes_from_the_frozen_criteria() -> None:
+def test_criteria_sha256_recomputes_from_the_frozen_criteria(tensordata_repo: Path) -> None:
     receipt_ref = _parse_ref(_pv()["acceptance_evidence"]["review_receipt_ref"])
     freeze_path = receipt_ref["path"].replace("review_receipt.json", "criteria_freeze.json")
-    freeze = json.loads(_git_show(f"{receipt_ref['commit']}:{freeze_path}"))
+    freeze = json.loads(_git_show(tensordata_repo, f"{receipt_ref['commit']}:{freeze_path}"))
     assert canonical_sha256(freeze["criteria"]) == _pv()["acceptance_evidence"]["criteria_sha256"]
 
 
-@requires_tensordata
-def test_pilot_report_belongs_to_the_same_scenario_and_commit() -> None:
+def test_pilot_report_belongs_to_the_same_scenario_and_commit(tensordata_repo: Path) -> None:
     evidence = _pv()["acceptance_evidence"]
     ref = _parse_ref(evidence["validation_report_ref"])
-    report = json.loads(_git_show(f"{ref['commit']}:{ref['path']}"))
+    report = json.loads(_git_show(tensordata_repo, f"{ref['commit']}:{ref['path']}"))
     assert report["scenario"]["scenario_id"] == evidence["scenario_id"]
     assert report["criteria_freeze"]["criteria_sha256"] == evidence["criteria_sha256"]
