@@ -64,8 +64,8 @@
       "scenario_validated": true,
       "acceptance_evidence": {
         "scenario_id": "BE-20261115-tensorai-bp-field-extraction",
-        "validation_report_ref": "TensorBench@8c18865cb8b9f2fde39ff61d889d99d810c9942f:docs/pilots/BP-20261115-tensorai-bp-field-extraction/validation_report.json#sha256:f9b88fec299c09435355d5d0eaea5df6191312f524c79cf8d9df1e0138e49428",
-        "review_receipt_ref": "TensorBench@ee5d8289af0e6431e6eef7ccd9825300e0be0f90:docs/pilots/BP-20261115-tensorai-bp-field-extraction/review_receipt_amended.json#sha256:51d7210f016fdb192a204cee377628e6e221fac3ef16b3cea3b7367e68c14cdd",
+        "validation_report_ref": "TensorBench@9736bdd3fb1686e02d7840680b12e9068ec3ad82:docs/pilots/BP-20261115-tensorai-bp-field-extraction/validation_report.json#sha256:f9b88fec299c09435355d5d0eaea5df6191312f524c79cf8d9df1e0138e49428",
+        "review_receipt_ref": "TensorBench@7ce03763fe350b616741755d323da5083deb5138:docs/pilots/BP-20261115-tensorai-bp-field-extraction/review_receipt_amended.json#sha256:6f1376059f5d82ece551c352e94ac17981b55901377a184ddf7465dd2bbce2dc",
         "criteria_sha256": "4bd2e5208cb92500d95efb1cc1a1d3eaa8a1183a61bb24417b35707c6f3dcc5d",
         "reviewed_commit": "8c18865cb8b9f2fde39ff61d889d99d810c9942f",
         "verdict": "pass",

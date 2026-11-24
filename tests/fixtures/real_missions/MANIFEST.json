@@ -15,7 +15,7 @@
         "ci.check_runs",
         "mission.result.evidence.head_commit"
       ],
-      "bundle_sha256": "18f135842d0a0f593d1b708643dc02a7d4c9a4cc26ad3c9216596592690c91b0"
+      "bundle_sha256": "92d940a6ee173dda2f78e76a5120dd942c731e74ce3fef4a2cac13a9cb5ce68d"
     },
     {
       "mission_id": 19694,
@@ -30,7 +30,7 @@
         "deliverables[1](tensorcad-series60/hull.obj).sha256",
         "mission.result.evidence.head_commit"
       ],
-      "bundle_sha256": "1dda7fe399f58aae076f6be1c006d6e107cc86ecbafcf514070ac0a1603600cd"
+      "bundle_sha256": "6f8f72c561f9a94ba8b6d5fb724e771147a18f5be89be00dbc6248ce78046450"
     },
     {
       "mission_id": 18757,
@@ -44,7 +44,7 @@
         "ci.check_runs",
         "mission.result.evidence.head_commit"
       ],
-      "bundle_sha256": "e161621ebb0ae13bd070b80b39bf137b02eeec934ba1cd46d34def7e0b92af13"
+      "bundle_sha256": "1e1d83720cdd0125fe79584000ee846efc6eea12fb3fbbc94645f91fd00eee07"
     },
     {
       "mission_id": 18685,
@@ -72,7 +72,7 @@
         "ci.check_runs",
         "mission.result.evidence.head_commit"
       ],
-      "bundle_sha256": "4dfc133c91f6728e2dd60ecdf51d8f6a40802c1623ff0c081c491a614aa6d67b"
+      "bundle_sha256": "04c1e75e2a51b964073c279c336364133dcb59bcc6abd5ba45c506bd52bb5a5f"
     },
     {
       "mission_id": 20111,
@@ -88,7 +88,7 @@
         "deliverables",
         "pull_request"
       ],
-      "bundle_sha256": "e347e918cb046fd2e9aa880cbe7994c870e30a6412dfef5fc3e7a3b28f65e9e5"
+      "bundle_sha256": "b9673554765f07d49883feff6e9717f11d256e3856e870fd93fd8af0aceaf3a6"
     }
   ],
   "errors": []
