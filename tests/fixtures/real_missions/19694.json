@@ -11,7 +11,7 @@
   "platform": {
     "api_base": "http://127.0.0.1:8010/api/v1",
     "mission_endpoint": "/tensor/missions/19694",
-    "payload_sha256": "cea227f6c6cd3a3b93cb8994f1ae25ed7501ed94ed2f6b292e85c83e641cb654"
+    "payload_sha256": "0cded5830a391a944445a3154afa15cba130ec99077c30968d62af2744cd125f"
   },
   "mission": {
     "id": 19694,
@@ -22,7 +22,7 @@
     "finished_at": "2026-11-14T03:32:48.611064+00:00",
     "goal": "【锚点=GAP-CAD-T2-PARAM-SERIES】【第2轮·调研结合】owner 2026-11-11 两轮法第 2 轮（任务榜接棒）：前轮 m19663 在本锚点 honest-FAIL（fail_stage=未标；failure_reason=未留）。失败是排序信号——本单先调研成熟方法，再结合推进，不重蹈前轮死法。\n① 调研·开源横向：读集群节点 ~/oss-cache 同类实现源码（`SELECT * FROM oss_inventory WHERE feature_slug ILIKE '%SERIES%'`），有现成方法直接学结构；\n② 调研·方法谱系：文献/教科书标准做法+标准算例（external_anchor 记出处）；\n③ 选型沉淀：方法选型+迁移方案落 oss_solutions（feature_slug='GAP-CAD-T2-PARAM-SERIES'）——第 2 轮成果进 TK 可复用；\n④ 结合实现：在本仓推进，验收判据（总账 GAP-CAD-T2-PARAM-SERIES）：【Series60 五档 Cb 生成+静水力对照公开值；gate-power 突变测试沿用 ≥80%；文档】\n部分达标也留真实数据（标 honest 部分分），跑不出=honest-FAIL 留 fail_stage+failure_reason。开工先查 negative_knowledge_ledger keywords='TensorCAD'（含前轮教训）+capability 同域条目（完成记 cited_kb）。验收三件套（maturity_gate 机器复核）。\n报告六段（论文级，判据数字零手抄，基准牵引——做没做对由基准数字裁判）：①问题设定+基准出处（ref 原文/数据源引用）②方法与实现（方程/格式出处+关键代码指针）③参数表（无量纲数完整）④对照表（逐项 ref vs got+误差，基准判据逐条打勾/打叉）⑤收敛性或参数敏感性（至少两分辨率/两参数点）⑥失败模式与工件（repro_cmd+工件路径）。虚报=gate 机器揭穿自动返修。计算>10min 走 cluster_queue 递交。",
     "goal_sha256": "84235b652cc8864d2a02d40f42f301255e975f095568b9db673fca22daa48646",
-    "result_sha256": "8844106dfa0d3aa4e419682eeb9314b0c1e0b6cf7909be9272475e9f606ab585"
+    "result_sha256": "b9d5e76b15a79961841c9044de768789b4bd96901344085e679c453f29f42f8b"
   },
   "pull_request": {
     "number": 455,
@@ -183,7 +183,7 @@
     "total_count": 0
   },
   "source_fingerprints": {
-    "platform_mission": "cea227f6c6cd3a3b93cb8994f1ae25ed7501ed94ed2f6b292e85c83e641cb654",
+    "platform_mission": "0cded5830a391a944445a3154afa15cba130ec99077c30968d62af2744cd125f",
     "pull_request": "b5f72323097ef624615115a448f4067f6b07ea5f979d0812d076e51f007658da",
     "pull_request_files": "89718eb1ee74b6a1179490d91853f90024b3dc0e01f02e934bc142efd5bb023f",
     "check_runs": "52eee86998cce2fbb2226087de4a5117684d00dfa740957b2c070f4d5fbbbf8b",
@@ -195,7 +195,7 @@
     "mission.result.evidence.head_commit"
   ],
   "integrity": {
-    "bundle_sha256": "1dda7fe399f58aae076f6be1c006d6e107cc86ecbafcf514070ac0a1603600cd",
+    "bundle_sha256": "6f8f72c561f9a94ba8b6d5fb724e771147a18f5be89be00dbc6248ce78046450",
     "digest_scope": "canonical_json_of_bundle_excluding_integrity"
   },
   "fixture": {
